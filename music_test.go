@@ -11,20 +11,20 @@ import (
 
 func TestMusicList(t *testing.T) {
 	var tests = []struct {
-		input    json.MusicListJSON
+		input    json.MusicList
 		expected MusicList
 	}{
-		{input: json.MusicListJSON(map[string][]string{
+		{input: json.MusicList(map[string][]string{
 			"m1": []string{"jazz", "old school", "instrumental"}}),
 			expected: MusicList{
 				&Music{id: "m1", tags: []string{"jazz", "old school", "instrumental"}}}},
-		{input: json.MusicListJSON(map[string][]string{
+		{input: json.MusicList(map[string][]string{
 			"m1": []string{"jazz", "old school", "instrumental"},
 			"m2": []string{"samba", "60s"}}),
 			expected: MusicList{
 				&Music{id: "m1", tags: []string{"jazz", "old school", "instrumental"}},
 				&Music{id: "m2", tags: []string{"samba", "60s"}}}},
-		{input: json.MusicListJSON(map[string][]string{
+		{input: json.MusicList(map[string][]string{
 			"m1": []string{"jazz", "old school", "instrumental"},
 			"m2": []string{"samba", "60s"},
 			"m3": []string{"rock", "alternative"}}),
@@ -35,7 +35,11 @@ func TestMusicList(t *testing.T) {
 	}
 
 	for id, test := range tests {
-		actual := NewMusicList(test.input)
+		var actual MusicList
+		if err := actual.BuildFrom(&test.input); err != nil {
+			t.Fatalf("Unexpected error: %s. Test case %d", err, id)
+		}
+
 		sort.Slice(actual, func(i, j int) bool {
 			if strings.Compare(actual[i].id, actual[j].id) == -1 {
 				return true
