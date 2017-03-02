@@ -35,7 +35,7 @@ func (ml *MusicList) BuildFrom(obj json.JSONObject) error {
 func (ml MusicList) String() string {
 	s := "["
 	for _, m := range ml {
-		s += "{id: " + m.id + ", tags: " + fmt.Sprintf("%s", m.tags) + "} "
+		s += fmt.Sprintf("%T ", m) + "{id: " + m.id + ", tags: " + fmt.Sprintf("%s", m.tags) + "}\n"
 	}
 	s = strings.TrimSpace(s) + "]"
 

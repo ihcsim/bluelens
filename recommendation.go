@@ -1,57 +1,89 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
 
-var library MusicList
+const maxRecommendationCount = 10
 
-// Recommendations is a collection of music recommendedation for a user.
-type Recommendations MusicList
+var (
+	library       MusicList
+	libraryByTags map[string]MusicList
+)
 
-// Recommend picks a list of recommendations from the provided list for the specified user.
-func Recommend(u *User) Recommendations {
-	music, doneFolloweesTask, doneHistoryTask := make(chan *Music), make(chan struct{}), make(chan struct{})
-	var recommendations Recommendations
+// Recommendation is a collection of music recommendation for a user.
+type Recommendation struct {
+	// A list of recommended music for the user.
+	list MusicList
+
+	// User who this recommendation is meant for.
+	user *User
+
+	// Maximum number of recommendations for the user.
+	maxCount int
+}
+
+// NewRecommendation returns a new recommendation for the specified user.
+func NewRecommendation(u *User) *Recommendation {
+	return &Recommendation{user: u, maxCount: maxRecommendationCount}
+}
+
+// RunSort picks a list of recommended music from the library sorted by the music ID.
+func (r *Recommendation) RunSort() {
+	r.Run()
+	sort.Slice(r.list, func(i, j int) bool {
+		if strings.Compare(r.list[i].id, r.list[j].id) == -1 {
+			return true
+		}
+		return false
+	})
+}
+
+// Run picks a list of recommended music from the library for the specified user.
+func (r *Recommendation) Run() {
+	if len(r.user.followees) == 0 && len(r.user.history) == 0 {
+		count := len(library)
+		if count > r.maxCount {
+			count = r.maxCount
+		}
+		r.list = library[:count+1]
+		return
+	}
+
+	doneFolloweesTask, doneHistoryTask := make(chan struct{}), make(chan struct{})
+	musicChan := make(chan *Music)
+	exclude := r.buildExcludeList()
 
 	go func() {
 		defer close(doneFolloweesTask)
-		for _, f := range u.followees {
+		for _, f := range r.user.followees {
 			for _, m := range f.history {
-				music <- m
+				musicChan <- m
 			}
 		}
 	}()
 
 	go func() {
 		defer close(doneHistoryTask)
-		for _, h := range u.history {
-			for _, m := range library {
-				if h.id == m.id {
-					continue
-				}
-
-				for _, t := range h.tags {
-					for _, mt := range m.tags {
-						if t == mt {
-							music <- m
-						}
-					}
+		for _, history := range r.user.history {
+			for _, tag := range history.tags {
+				for _, music := range libraryByTags[tag] {
+					musicChan <- music
 				}
 			}
 		}
 	}()
 
-	// use this map to track resources seen so far to avoid duplicates.
-	seen := make(map[string]struct{})
-
-	// Exit loops only when both tasks are done.
-	// Setting each 'done' channel to nil ensures that it will no longer receive. Hence, its case will not be executed.
-	// Closing the 'done' channel won't work because a closed channel always receives.
+	// Exit loops only when both goroutines are done.
+	// Refer https://dave.cheney.net/2013/04/30/curious-channels for info on nil channel's behaviour.
 	for doneFolloweesTask != nil || doneHistoryTask != nil {
 		select {
-		case m := <-music:
-			if _, exists := seen[m.id]; !exists {
-				seen[m.id] = struct{}{}
-				recommendations = append(recommendations, m)
+		case m := <-musicChan:
+			if _, exists := exclude[m.id]; !exists {
+				exclude[m.id] = struct{}{}
+				r.list = append(r.list, m)
 			}
 		case <-doneFolloweesTask:
 			doneFolloweesTask = nil
@@ -59,13 +91,20 @@ func Recommend(u *User) Recommendations {
 			doneHistoryTask = nil
 		}
 	}
+}
 
-	return recommendations
+func (r *Recommendation) buildExcludeList() map[string]struct{} {
+	// initialize the 'exclude' map with the user's music history to avoid adding duplicates later
+	exclude := make(map[string]struct{})
+	for _, h := range r.user.history {
+		exclude[h.id] = struct{}{}
+	}
+	return exclude
 }
 
 // String returns the string representation of the recommendations.
-func (r Recommendations) String() string {
-	return fmt.Sprintf("%s", MusicList(r))
+func (r Recommendation) String() string {
+	return fmt.Sprintf("%s", MusicList(r.list))
 }
 
 // User represents a user of the system. A user has a list of followees and a history of all the music heard.
