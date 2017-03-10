@@ -17,21 +17,21 @@ func TestMusicList(t *testing.T) {
 		{input: json.MusicList(map[string][]string{
 			"m1": []string{"jazz", "old school", "instrumental"}}),
 			expected: MusicList{
-				&Music{id: "m1", tags: []string{"jazz", "old school", "instrumental"}}}},
+				&Music{ID: "m1", Tags: []string{"jazz", "old school", "instrumental"}}}},
 		{input: json.MusicList(map[string][]string{
 			"m1": []string{"jazz", "old school", "instrumental"},
 			"m2": []string{"samba", "60s"}}),
 			expected: MusicList{
-				&Music{id: "m1", tags: []string{"jazz", "old school", "instrumental"}},
-				&Music{id: "m2", tags: []string{"samba", "60s"}}}},
+				&Music{ID: "m1", Tags: []string{"jazz", "old school", "instrumental"}},
+				&Music{ID: "m2", Tags: []string{"samba", "60s"}}}},
 		{input: json.MusicList(map[string][]string{
 			"m1": []string{"jazz", "old school", "instrumental"},
 			"m2": []string{"samba", "60s"},
 			"m3": []string{"rock", "alternative"}}),
 			expected: MusicList{
-				&Music{id: "m1", tags: []string{"jazz", "old school", "instrumental"}},
-				&Music{id: "m2", tags: []string{"samba", "60s"}},
-				&Music{id: "m3", tags: []string{"rock", "alternative"}}}},
+				&Music{ID: "m1", Tags: []string{"jazz", "old school", "instrumental"}},
+				&Music{ID: "m2", Tags: []string{"samba", "60s"}},
+				&Music{ID: "m3", Tags: []string{"rock", "alternative"}}}},
 	}
 
 	for id, test := range tests {
@@ -41,7 +41,7 @@ func TestMusicList(t *testing.T) {
 		}
 
 		sort.Slice(actual, func(i, j int) bool {
-			if strings.Compare(actual[i].id, actual[j].id) == -1 {
+			if strings.Compare(actual[i].ID, actual[j].ID) == -1 {
 				return true
 			}
 			return false

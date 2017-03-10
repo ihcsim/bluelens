@@ -10,8 +10,12 @@ import (
 
 // Music contains metadata of a music resource in the system.
 type Music struct {
-	id   string
-	tags []string
+	ID   string
+	Tags []string
+}
+
+func (m Music) String() string {
+	return fmt.Sprintf("%T {ID: %s, Tags: %s}", m, m.ID, m.Tags)
 }
 
 // MusicList is a collection of music resources.
@@ -25,7 +29,7 @@ func (ml *MusicList) BuildFrom(obj json.JSONObject) error {
 	}
 
 	for id, tags := range *musicList {
-		(*ml) = append((*ml), &Music{id: id, tags: tags})
+		(*ml) = append((*ml), &Music{ID: id, Tags: tags})
 	}
 
 	return nil
@@ -33,11 +37,11 @@ func (ml *MusicList) BuildFrom(obj json.JSONObject) error {
 
 // String returns a string representation of the music list.
 func (ml MusicList) String() string {
-	s := "["
+	var s string
 	for _, m := range ml {
-		s += fmt.Sprintf("%T ", m) + "{id: " + m.id + ", tags: " + fmt.Sprintf("%s", m.tags) + "}\n"
+		s += fmt.Sprintf("%s,\n", m)
 	}
-	s = strings.TrimSpace(s) + "]"
+	s = strings.TrimSuffix(s, ",\n")
 
 	return s
 }
