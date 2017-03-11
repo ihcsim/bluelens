@@ -24,11 +24,11 @@ import (
 	"net/url"
 )
 
-// ListRecommendationsOKAll runs the method List of the given controller with the given parameters.
+// RecommendRecommendationsOKAll runs the method Recommend of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListRecommendationsOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, *app.BluelensRecommendationsAll) {
+func RecommendRecommendationsOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, *app.BluelensRecommendationsAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -62,13 +62,13 @@ func ListRecommendationsOKAll(t goatest.TInterface, ctx context.Context, service
 		ctx = context.Background()
 	}
 	goaCtx := goa.NewContext(goa.WithAction(ctx, "RecommendationsTest"), rw, req, prms)
-	listCtx, err := app.NewListRecommendationsContext(goaCtx, service)
+	recommendCtx, err := app.NewRecommendRecommendationsContext(goaCtx, service)
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
 
 	// Perform action
-	err = ctrl.List(listCtx)
+	err = ctrl.Recommend(recommendCtx)
 
 	// Validate response
 	if err != nil {
@@ -94,11 +94,11 @@ func ListRecommendationsOKAll(t goatest.TInterface, ctx context.Context, service
 	return rw, mt
 }
 
-// ListRecommendationsOK runs the method List of the given controller with the given parameters.
+// RecommendRecommendationsOK runs the method Recommend of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListRecommendationsOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, *app.BluelensRecommendations) {
+func RecommendRecommendationsOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, *app.BluelensRecommendations) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -132,13 +132,13 @@ func ListRecommendationsOK(t goatest.TInterface, ctx context.Context, service *g
 		ctx = context.Background()
 	}
 	goaCtx := goa.NewContext(goa.WithAction(ctx, "RecommendationsTest"), rw, req, prms)
-	listCtx, err := app.NewListRecommendationsContext(goaCtx, service)
+	recommendCtx, err := app.NewRecommendRecommendationsContext(goaCtx, service)
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
 
 	// Perform action
-	err = ctrl.List(listCtx)
+	err = ctrl.Recommend(recommendCtx)
 
 	// Validate response
 	if err != nil {

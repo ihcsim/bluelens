@@ -35,7 +35,7 @@ func initService(service *goa.Service) {
 // RecommendationsController is the controller interface for the Recommendations actions.
 type RecommendationsController interface {
 	goa.Muxer
-	List(*ListRecommendationsContext) error
+	Recommend(*RecommendRecommendationsContext) error
 }
 
 // MountRecommendationsController "mounts" a Recommendations resource controller on the given service.
@@ -49,14 +49,14 @@ func MountRecommendationsController(service *goa.Service, ctrl RecommendationsCo
 			return err
 		}
 		// Build the context
-		rctx, err := NewListRecommendationsContext(ctx, service)
+		rctx, err := NewRecommendRecommendationsContext(ctx, service)
 		if err != nil {
 			return err
 		}
-		return ctrl.List(rctx)
+		return ctrl.Recommend(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:maxCount", ctrl.MuxHandler("List", h, nil))
-	service.LogInfo("mount", "ctrl", "Recommendations", "action", "List", "route", "GET /bluelens/recommendations/:userID/:maxCount")
+	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:maxCount", ctrl.MuxHandler("Recommend", h, nil))
+	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:maxCount")
 }
 
 // SwaggerController is the controller interface for the Swagger actions.
@@ -104,8 +104,8 @@ func handleSwaggerOrigin(h goa.Handler) goa.Handler {
 // UserController is the controller interface for the User actions.
 type UserController interface {
 	goa.Muxer
-	Follows(*FollowsUserContext) error
-	Listens(*ListensUserContext) error
+	Follow(*FollowUserContext) error
+	Listen(*ListenUserContext) error
 }
 
 // MountUserController "mounts" a User resource controller on the given service.
@@ -119,14 +119,14 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 			return err
 		}
 		// Build the context
-		rctx, err := NewFollowsUserContext(ctx, service)
+		rctx, err := NewFollowUserContext(ctx, service)
 		if err != nil {
 			return err
 		}
-		return ctrl.Follows(rctx)
+		return ctrl.Follow(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:followerID/follows/:followeeID", ctrl.MuxHandler("Follows", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Follows", "route", "POST /bluelens/user/:followerID/follows/:followeeID")
+	service.Mux.Handle("POST", "/bluelens/user/:followerID/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:followerID/follows/:followeeID")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -134,12 +134,12 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 			return err
 		}
 		// Build the context
-		rctx, err := NewListensUserContext(ctx, service)
+		rctx, err := NewListenUserContext(ctx, service)
 		if err != nil {
 			return err
 		}
-		return ctrl.Listens(rctx)
+		return ctrl.Listen(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:userID/listen/:musicID", ctrl.MuxHandler("Listens", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Listens", "route", "POST /bluelens/user/:userID/listen/:musicID")
+	service.Mux.Handle("POST", "/bluelens/user/:userID/listen/:musicID", ctrl.MuxHandler("Listen", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:userID/listen/:musicID")
 }

@@ -19,38 +19,40 @@ var _ = Resource("recommendations", func() {
 	BasePath("/recommendations")
 	DefaultMedia(Recommendations)
 
-	Action("list", func() {
+	Action("recommend", func() {
 		Routing(GET("/:userID/:maxCount"))
-		Description("List all the music recommendations for a user.")
+		Description("Make music recommendations for a user.")
 		Params(func() {
 			Param("userID", String, "ID of the user these recommendations are meant for.")
 			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user.")
 		})
-		Response(OK)
+		Response(OK, Recommendations)
 	})
 })
 
 var _ = Resource("user", func() {
 	BasePath("/user")
 
-	Action("listens", func() {
+	Action("listen", func() {
 		Routing(POST("/:userID/listen/:musicID"))
-		Description("A user listens to a music.")
+		Description("Add a music to a user's history.")
 		Params(func() {
 			Param("userID", String, "ID of the user.")
 			Param("musicID", Integer, "ID of the music.")
 		})
 		Response(OK)
+		Response(BadRequest, ErrorMedia)
 	})
 
-	Action("follows", func() {
+	Action("follow", func() {
 		Routing(POST("/:followerID/follows/:followeeID"))
-		Description("A user follows another user.")
+		Description("Add a user to another user's followees list.")
 		Params(func() {
 			Param("followeeID", String, "ID of the followee.")
 			Param("followerID", Integer, "ID of the follower.")
 		})
 		Response(OK)
+		Response(BadRequest, ErrorMedia)
 	})
 })
 
@@ -58,6 +60,7 @@ var Recommendations = MediaType("application/vnd.bluelens.recommendations+json",
 	Description("A list of recommendations for the specified user")
 	ContentType("application/json")
 	Attributes(func() {
+		Attribute("musicID", ArrayOf(String))
 		Attribute("list", CollectionOf("application/vnd.bluelens.music+json"))
 		Attribute("user", User)
 
@@ -70,13 +73,14 @@ var Recommendations = MediaType("application/vnd.bluelens.recommendations+json",
 	})
 
 	View("default", func() {
-		Attribute("list")
+		Attribute("musicID")
 		Attribute("links")
 	})
 
 	View("all", func() {
 		Attribute("list")
 		Attribute("user")
+		Attribute("links")
 	})
 })
 

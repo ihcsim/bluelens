@@ -34,10 +34,10 @@ client/codegen:
 	goagen js --scheme=${SERVER_SCHEME} --host=${SERVER_HOSTNAME} -d ${PACKAGE_DESIGN} -o ${CLIENT_DIR}
 
 client/build:
-	go build -v ${PACKAGE_CLI}
+	go build -v -o blue ${PACKAGE_CLI}
 
 test:
-	go test -v -cover -race $(glide novendor)
+	go test -v -cover -race `glide novendor`
 
 vendor:
 	glide install

@@ -19,12 +19,12 @@ define(['axios'] , function (axios) {
     // URL prefix for all API requests.
     var urlPrefix = scheme + '://' + host;
 
-  // A user follows another user.
+  // Add a user to another user's followees list.
   // path is the request path, the format is "/bluelens/user/:followerID/follows/:followeeID"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.followsUser = function (path, config) {
+  client.followUser = function (path, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
@@ -37,34 +37,34 @@ define(['axios'] , function (axios) {
     return client(cfg);
   }
 
-  // List all the music recommendations for a user.
-  // path is the request path, the format is "/bluelens/recommendations/:userID/:maxCount"
-  // config is an optional object to be merged into the config built by the function prior to making the request.
-  // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
-  // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.listRecommendations = function (path, config) {
-    cfg = {
-      timeout: timeout,
-      url: urlPrefix + path,
-      method: 'get',
-      responseType: 'json'
-    };
-    if (config) {
-      cfg = merge(cfg, config);
-    }
-    return client(cfg);
-  }
-
-  // A user listens to a music.
+  // Add a music to a user's history.
   // path is the request path, the format is "/bluelens/user/:userID/listen/:musicID"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.listensUser = function (path, config) {
+  client.listenUser = function (path, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'post',
+      responseType: 'json'
+    };
+    if (config) {
+      cfg = merge(cfg, config);
+    }
+    return client(cfg);
+  }
+
+  // Make music recommendations for a user.
+  // path is the request path, the format is "/bluelens/recommendations/:userID/:maxCount"
+  // config is an optional object to be merged into the config built by the function prior to making the request.
+  // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
+  // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
+  client.recommendRecommendations = function (path, config) {
+    cfg = {
+      timeout: timeout,
+      url: urlPrefix + path,
+      method: 'get',
       responseType: 'json'
     };
     if (config) {

@@ -18,8 +18,8 @@ import (
 )
 
 type (
-	// ListRecommendationsCommand is the command line data structure for the list action of recommendations
-	ListRecommendationsCommand struct {
+	// RecommendRecommendationsCommand is the command line data structure for the recommend action of recommendations
+	RecommendRecommendationsCommand struct {
 		// Maximum number of recommendations to be returned to the user.
 		MaxCount int
 		// ID of the user these recommendations are meant for.
@@ -27,8 +27,8 @@ type (
 		PrettyPrint bool
 	}
 
-	// FollowsUserCommand is the command line data structure for the follows action of user
-	FollowsUserCommand struct {
+	// FollowUserCommand is the command line data structure for the follow action of user
+	FollowUserCommand struct {
 		// ID of the followee.
 		FolloweeID string
 		// ID of the follower.
@@ -36,8 +36,8 @@ type (
 		PrettyPrint bool
 	}
 
-	// ListensUserCommand is the command line data structure for the listens action of user
-	ListensUserCommand struct {
+	// ListenUserCommand is the command line data structure for the listen action of user
+	ListenUserCommand struct {
 		// ID of the music.
 		MusicID int
 		// ID of the user.
@@ -56,10 +56,10 @@ type (
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "follows",
-		Short: `A user follows another user.`,
+		Use:   "follow",
+		Short: `Add a user to another user's followees list.`,
 	}
-	tmp1 := new(FollowsUserCommand)
+	tmp1 := new(FollowUserCommand)
 	sub = &cobra.Command{
 		Use:   `user ["/bluelens/user/FOLLOWERID/follows/FOLLOWEEID"]`,
 		Short: ``,
@@ -70,12 +70,12 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "list",
-		Short: `List all the music recommendations for a user.`,
+		Use:   "listen",
+		Short: `Add a music to a user's history.`,
 	}
-	tmp2 := new(ListRecommendationsCommand)
+	tmp2 := new(ListenUserCommand)
 	sub = &cobra.Command{
-		Use:   `recommendations ["/bluelens/recommendations/USERID/MAXCOUNT"]`,
+		Use:   `user ["/bluelens/user/USERID/listen/MUSICID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
@@ -84,12 +84,12 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "listens",
-		Short: `A user listens to a music.`,
+		Use:   "recommend",
+		Short: `Make music recommendations for a user.`,
 	}
-	tmp3 := new(ListensUserCommand)
+	tmp3 := new(RecommendRecommendationsCommand)
 	sub = &cobra.Command{
-		Use:   `user ["/bluelens/user/USERID/listen/MUSICID"]`,
+		Use:   `recommendations ["/bluelens/recommendations/USERID/MAXCOUNT"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
@@ -302,8 +302,8 @@ found:
 	return nil
 }
 
-// Run makes the HTTP request corresponding to the ListRecommendationsCommand command.
-func (cmd *ListRecommendationsCommand) Run(c *client.Client, args []string) error {
+// Run makes the HTTP request corresponding to the RecommendRecommendationsCommand command.
+func (cmd *RecommendRecommendationsCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
@@ -312,7 +312,7 @@ func (cmd *ListRecommendationsCommand) Run(c *client.Client, args []string) erro
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListRecommendations(ctx, path)
+	resp, err := c.RecommendRecommendations(ctx, path)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -323,15 +323,15 @@ func (cmd *ListRecommendationsCommand) Run(c *client.Client, args []string) erro
 }
 
 // RegisterFlags registers the command flags with the command line.
-func (cmd *ListRecommendationsCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+func (cmd *RecommendRecommendationsCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var maxCount int
 	cc.Flags().IntVar(&cmd.MaxCount, "maxCount", maxCount, `Maximum number of recommendations to be returned to the user.`)
 	var userID string
 	cc.Flags().StringVar(&cmd.UserID, "userID", userID, `ID of the user these recommendations are meant for.`)
 }
 
-// Run makes the HTTP request corresponding to the FollowsUserCommand command.
-func (cmd *FollowsUserCommand) Run(c *client.Client, args []string) error {
+// Run makes the HTTP request corresponding to the FollowUserCommand command.
+func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
@@ -340,7 +340,7 @@ func (cmd *FollowsUserCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.FollowsUser(ctx, path)
+	resp, err := c.FollowUser(ctx, path)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -351,15 +351,15 @@ func (cmd *FollowsUserCommand) Run(c *client.Client, args []string) error {
 }
 
 // RegisterFlags registers the command flags with the command line.
-func (cmd *FollowsUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+func (cmd *FollowUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var followeeID string
 	cc.Flags().StringVar(&cmd.FolloweeID, "followeeID", followeeID, `ID of the followee.`)
 	var followerID int
 	cc.Flags().IntVar(&cmd.FollowerID, "followerID", followerID, `ID of the follower.`)
 }
 
-// Run makes the HTTP request corresponding to the ListensUserCommand command.
-func (cmd *ListensUserCommand) Run(c *client.Client, args []string) error {
+// Run makes the HTTP request corresponding to the ListenUserCommand command.
+func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
@@ -368,7 +368,7 @@ func (cmd *ListensUserCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListensUser(ctx, path)
+	resp, err := c.ListenUser(ctx, path)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -379,7 +379,7 @@ func (cmd *ListensUserCommand) Run(c *client.Client, args []string) error {
 }
 
 // RegisterFlags registers the command flags with the command line.
-func (cmd *ListensUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+func (cmd *ListenUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var musicID int
 	cc.Flags().IntVar(&cmd.MusicID, "musicID", musicID, `ID of the music.`)
 	var userID string

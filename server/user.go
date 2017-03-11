@@ -15,22 +15,22 @@ func NewUserController(service *goa.Service) *UserController {
 	return &UserController{Controller: service.NewController("UserController")}
 }
 
-// Follows runs the follows action.
-func (c *UserController) Follows(ctx *app.FollowsUserContext) error {
-	// UserController_Follows: start_implement
+// Follow runs the follow action.
+func (c *UserController) Follow(ctx *app.FollowUserContext) error {
+	// UserController_Follow: start_implement
 
 	// Put your logic here
 
-	// UserController_Follows: end_implement
+	// UserController_Follow: end_implement
 	return nil
 }
 
-// Listens runs the listens action.
-func (c *UserController) Listens(ctx *app.ListensUserContext) error {
-	// UserController_Listens: start_implement
+// Listen runs the listen action.
+func (c *UserController) Listen(ctx *app.ListenUserContext) error {
+	// UserController_Listen: start_implement
 
 	// Put your logic here
 
-	// UserController_Listens: end_implement
+	// UserController_Listen: end_implement
 	return nil
 }

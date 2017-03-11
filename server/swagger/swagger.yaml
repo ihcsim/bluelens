@@ -4,57 +4,6 @@ consumes:
 - application/gob
 - application/x-gob
 definitions:
-  BluelensMusic:
-    description: A music resource (default view)
-    example:
-      href: Velit rerum et et ut.
-      id: Necessitatibus exercitationem.
-      tags:
-      - Cumque dolorum dolorem voluptas eveniet.
-      - Cumque dolorum dolorem voluptas eveniet.
-      - Cumque dolorum dolorem voluptas eveniet.
-    properties:
-      href:
-        example: Velit rerum et et ut.
-        type: string
-      id:
-        example: Necessitatibus exercitationem.
-        type: string
-      tags:
-        example:
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
-        items:
-          example: Cumque dolorum dolorem voluptas eveniet.
-          type: string
-        type: array
-    required:
-    - id
-    - href
-    title: 'Mediatype identifier: application/vnd.bluelens.music+json; view=default'
-    type: object
-  BluelensMusicCollection:
-    description: BluelensMusicCollection is the media type for an array of BluelensMusic
-      (default view)
-    example:
-    - href: Velit rerum et et ut.
-      id: Necessitatibus exercitationem.
-      tags:
-      - Cumque dolorum dolorem voluptas eveniet.
-      - Cumque dolorum dolorem voluptas eveniet.
-      - Cumque dolorum dolorem voluptas eveniet.
-    - href: Velit rerum et et ut.
-      id: Necessitatibus exercitationem.
-      tags:
-      - Cumque dolorum dolorem voluptas eveniet.
-      - Cumque dolorum dolorem voluptas eveniet.
-      - Cumque dolorum dolorem voluptas eveniet.
-    items:
-      $ref: '#/definitions/BluelensMusic'
-    title: 'Mediatype identifier: application/vnd.bluelens.music+json; type=collection;
-      view=default'
-    type: array
   BluelensMusicLink:
     description: A music resource (link view)
     example:
@@ -100,29 +49,29 @@ definitions:
         list:
         - href: Velit rerum et et ut.
           id: Necessitatibus exercitationem.
+        - href: Velit rerum et et ut.
+          id: Necessitatibus exercitationem.
+        - href: Velit rerum et et ut.
+          id: Necessitatibus exercitationem.
         user:
-          href: Unde qui eos ut fugiat.
-          id: Quo voluptatum eum deleniti.
-      list:
-      - href: Velit rerum et et ut.
-        id: Necessitatibus exercitationem.
-        tags:
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
-      - href: Velit rerum et et ut.
-        id: Necessitatibus exercitationem.
-        tags:
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
+          href: Eum deleniti id.
+          id: Deserunt quaerat unde dolorem.
+      musicID:
+      - Ratione sed ullam aut.
+      - Ratione sed ullam aut.
+      - Ratione sed ullam aut.
     properties:
       links:
         $ref: '#/definitions/BluelensRecommendationsLinks'
-      list:
-        $ref: '#/definitions/BluelensMusicCollection'
-    required:
-    - list
+      musicID:
+        example:
+        - Ratione sed ullam aut.
+        - Ratione sed ullam aut.
+        - Ratione sed ullam aut.
+        items:
+          example: Ratione sed ullam aut.
+          type: string
+        type: array
     title: 'Mediatype identifier: application/vnd.bluelens.recommendations+json; view=default'
     type: object
   BluelensRecommendationsLinks:
@@ -132,9 +81,13 @@ definitions:
       list:
       - href: Velit rerum et et ut.
         id: Necessitatibus exercitationem.
+      - href: Velit rerum et et ut.
+        id: Necessitatibus exercitationem.
+      - href: Velit rerum et et ut.
+        id: Necessitatibus exercitationem.
       user:
-        href: Unde qui eos ut fugiat.
-        id: Quo voluptatum eum deleniti.
+        href: Eum deleniti id.
+        id: Deserunt quaerat unde dolorem.
     properties:
       list:
         $ref: '#/definitions/BluelensMusicLinkCollection'
@@ -145,19 +98,56 @@ definitions:
   BluelensUserLink:
     description: A user resource (link view)
     example:
-      href: Unde qui eos ut fugiat.
-      id: Quo voluptatum eum deleniti.
+      href: Eum deleniti id.
+      id: Deserunt quaerat unde dolorem.
     properties:
       href:
-        example: Unde qui eos ut fugiat.
+        example: Eum deleniti id.
         type: string
       id:
-        example: Quo voluptatum eum deleniti.
+        example: Deserunt quaerat unde dolorem.
         type: string
     required:
     - id
     - href
     title: 'Mediatype identifier: application/vnd.bluelens.user+json; view=link'
+    type: object
+  error:
+    description: Error response media type (default view)
+    example:
+      code: invalid_value
+      detail: Value of ID must be an integer
+      id: 3F1FKVRR
+      meta:
+        timestamp: 1.458609e+09
+      status: "400"
+    properties:
+      code:
+        description: an application-specific error code, expressed as a string value.
+        example: invalid_value
+        type: string
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        example: Value of ID must be an integer
+        type: string
+      id:
+        description: a unique identifier for this particular occurrence of the problem.
+        example: 3F1FKVRR
+        type: string
+      meta:
+        additionalProperties: true
+        description: a meta object containing non-standard meta-information about
+          the error.
+        example:
+          timestamp: 1.458609e+09
+        type: object
+      status:
+        description: the HTTP status code applicable to this problem, expressed as
+          a string value.
+        example: "400"
+        type: string
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
 host: localhost:8080
 info:
@@ -168,8 +158,8 @@ info:
 paths:
   /bluelens/recommendations/{userID}/{maxCount}:
     get:
-      description: List all the music recommendations for a user.
-      operationId: recommendations#list
+      description: Make music recommendations for a user.
+      operationId: recommendations#recommend
       parameters:
       - description: Maximum number of recommendations to be returned to the user.
         in: path
@@ -188,13 +178,13 @@ paths:
             $ref: '#/definitions/BluelensRecommendations'
       schemes:
       - http
-      summary: list recommendations
+      summary: recommend recommendations
       tags:
       - recommendations
   /bluelens/user/{followerID}/follows/{followeeID}:
     post:
-      description: A user follows another user.
-      operationId: user#follows
+      description: Add a user to another user's followees list.
+      operationId: user#follow
       parameters:
       - description: ID of the followee.
         in: path
@@ -209,15 +199,19 @@ paths:
       responses:
         "200":
           description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
-      summary: follows user
+      summary: follow user
       tags:
       - user
   /bluelens/user/{userID}/listen/{musicID}:
     post:
-      description: A user listens to a music.
-      operationId: user#listens
+      description: Add a music to a user's history.
+      operationId: user#listen
       parameters:
       - description: ID of the music.
         in: path
@@ -232,9 +226,13 @@ paths:
       responses:
         "200":
           description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
-      summary: listens user
+      summary: listen user
       tags:
       - user
   /swagger.json:
@@ -256,8 +254,6 @@ produces:
 responses:
   OK:
     description: OK
-    schema:
-      $ref: '#/definitions/BluelensRecommendations'
 schemes:
 - http
 swagger: "2.0"

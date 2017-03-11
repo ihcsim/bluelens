@@ -7,22 +7,22 @@ import (
 	"net/url"
 )
 
-// FollowsUserPath computes a request path to the follows action of user.
-func FollowsUserPath(followerID int, followeeID string) string {
+// FollowUserPath computes a request path to the follow action of user.
+func FollowUserPath(followerID int, followeeID string) string {
 	return fmt.Sprintf("/bluelens/user/%v/follows/%v", followerID, followeeID)
 }
 
-// A user follows another user.
-func (c *Client) FollowsUser(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewFollowsUserRequest(ctx, path)
+// Add a user to another user's followees list.
+func (c *Client) FollowUser(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewFollowUserRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
 	return c.Client.Do(ctx, req)
 }
 
-// NewFollowsUserRequest create the request corresponding to the follows action endpoint of the user resource.
-func (c *Client) NewFollowsUserRequest(ctx context.Context, path string) (*http.Request, error) {
+// NewFollowUserRequest create the request corresponding to the follow action endpoint of the user resource.
+func (c *Client) NewFollowUserRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
@@ -35,22 +35,22 @@ func (c *Client) NewFollowsUserRequest(ctx context.Context, path string) (*http.
 	return req, nil
 }
 
-// ListensUserPath computes a request path to the listens action of user.
-func ListensUserPath(userID string, musicID int) string {
+// ListenUserPath computes a request path to the listen action of user.
+func ListenUserPath(userID string, musicID int) string {
 	return fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID)
 }
 
-// A user listens to a music.
-func (c *Client) ListensUser(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewListensUserRequest(ctx, path)
+// Add a music to a user's history.
+func (c *Client) ListenUser(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewListenUserRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
 	return c.Client.Do(ctx, req)
 }
 
-// NewListensUserRequest create the request corresponding to the listens action endpoint of the user resource.
-func (c *Client) NewListensUserRequest(ctx context.Context, path string) (*http.Request, error) {
+// NewListenUserRequest create the request corresponding to the listen action endpoint of the user resource.
+func (c *Client) NewListenUserRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"

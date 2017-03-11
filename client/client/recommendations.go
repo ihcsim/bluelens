@@ -7,22 +7,22 @@ import (
 	"net/url"
 )
 
-// ListRecommendationsPath computes a request path to the list action of recommendations.
-func ListRecommendationsPath(userID string, maxCount int) string {
+// RecommendRecommendationsPath computes a request path to the recommend action of recommendations.
+func RecommendRecommendationsPath(userID string, maxCount int) string {
 	return fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, maxCount)
 }
 
-// List all the music recommendations for a user.
-func (c *Client) ListRecommendations(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewListRecommendationsRequest(ctx, path)
+// Make music recommendations for a user.
+func (c *Client) RecommendRecommendations(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewRecommendRecommendationsRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
 	return c.Client.Do(ctx, req)
 }
 
-// NewListRecommendationsRequest create the request corresponding to the list action endpoint of the recommendations resource.
-func (c *Client) NewListRecommendationsRequest(ctx context.Context, path string) (*http.Request, error) {
+// NewRecommendRecommendationsRequest create the request corresponding to the recommend action endpoint of the recommendations resource.
+func (c *Client) NewRecommendRecommendationsRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"

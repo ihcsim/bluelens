@@ -121,8 +121,10 @@ func (c *Client) DecodeBluelensMusicLinkCollection(resp *http.Response) (Bluelen
 //
 // Identifier: application/vnd.bluelens.recommendations+json; view=all
 type BluelensRecommendationsAll struct {
-	List BluelensMusicCollection `form:"list" json:"list" xml:"list"`
-	User *BluelensUser           `form:"user" json:"user" xml:"user"`
+	// Links to related resources
+	Links *BluelensRecommendationsLinks `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
+	List  BluelensMusicCollection       `form:"list" json:"list" xml:"list"`
+	User  *BluelensUser                 `form:"user" json:"user" xml:"user"`
 }
 
 // Validate validates the BluelensRecommendationsAll media type instance.
@@ -132,6 +134,11 @@ func (mt *BluelensRecommendationsAll) Validate() (err error) {
 	}
 	if mt.User == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "user"))
+	}
+	if mt.Links != nil {
+		if err2 := mt.Links.Validate(); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
 	}
 	if err2 := mt.List.Validate(); err2 != nil {
 		err = goa.MergeErrors(err, err2)
@@ -149,22 +156,16 @@ func (mt *BluelensRecommendationsAll) Validate() (err error) {
 // Identifier: application/vnd.bluelens.recommendations+json; view=default
 type BluelensRecommendations struct {
 	// Links to related resources
-	Links *BluelensRecommendationsLinks `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
-	List  BluelensMusicCollection       `form:"list" json:"list" xml:"list"`
+	Links   *BluelensRecommendationsLinks `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
+	MusicID []string                      `form:"musicID,omitempty" json:"musicID,omitempty" xml:"musicID,omitempty"`
 }
 
 // Validate validates the BluelensRecommendations media type instance.
 func (mt *BluelensRecommendations) Validate() (err error) {
-	if mt.List == nil {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "list"))
-	}
 	if mt.Links != nil {
 		if err2 := mt.Links.Validate(); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
-	}
-	if err2 := mt.List.Validate(); err2 != nil {
-		err = goa.MergeErrors(err, err2)
 	}
 	return
 }
@@ -397,4 +398,11 @@ func (c *Client) DecodeBluelensUserLinkCollection(resp *http.Response) (Bluelens
 	var decoded BluelensUserLinkCollection
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return decoded, err
+}
+
+// DecodeErrorResponse decodes the ErrorResponse instance encoded in resp body.
+func (c *Client) DecodeErrorResponse(resp *http.Response) (*goa.ErrorResponse, error) {
+	var decoded goa.ErrorResponse
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
 }

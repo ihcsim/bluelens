@@ -16,8 +16,8 @@ import (
 	"strconv"
 )
 
-// ListRecommendationsContext provides the recommendations list action context.
-type ListRecommendationsContext struct {
+// RecommendRecommendationsContext provides the recommendations recommend action context.
+type RecommendRecommendationsContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
@@ -25,14 +25,14 @@ type ListRecommendationsContext struct {
 	UserID   string
 }
 
-// NewListRecommendationsContext parses the incoming request URL and body, performs validations and creates the
-// context used by the recommendations controller list action.
-func NewListRecommendationsContext(ctx context.Context, service *goa.Service) (*ListRecommendationsContext, error) {
+// NewRecommendRecommendationsContext parses the incoming request URL and body, performs validations and creates the
+// context used by the recommendations controller recommend action.
+func NewRecommendRecommendationsContext(ctx context.Context, service *goa.Service) (*RecommendRecommendationsContext, error) {
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
-	rctx := ListRecommendationsContext{Context: ctx, ResponseData: resp, RequestData: req}
+	rctx := RecommendRecommendationsContext{Context: ctx, ResponseData: resp, RequestData: req}
 	paramMaxCount := req.Params["maxCount"]
 	if len(paramMaxCount) > 0 {
 		rawMaxCount := paramMaxCount[0]
@@ -51,19 +51,19 @@ func NewListRecommendationsContext(ctx context.Context, service *goa.Service) (*
 }
 
 // OKAll sends a HTTP response with status code 200.
-func (ctx *ListRecommendationsContext) OKAll(r *BluelensRecommendationsAll) error {
+func (ctx *RecommendRecommendationsContext) OKAll(r *BluelensRecommendationsAll) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
 // OK sends a HTTP response with status code 200.
-func (ctx *ListRecommendationsContext) OK(r *BluelensRecommendations) error {
+func (ctx *RecommendRecommendationsContext) OK(r *BluelensRecommendations) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
-// FollowsUserContext provides the user follows action context.
-type FollowsUserContext struct {
+// FollowUserContext provides the user follow action context.
+type FollowUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
@@ -71,14 +71,14 @@ type FollowsUserContext struct {
 	FollowerID int
 }
 
-// NewFollowsUserContext parses the incoming request URL and body, performs validations and creates the
-// context used by the user controller follows action.
-func NewFollowsUserContext(ctx context.Context, service *goa.Service) (*FollowsUserContext, error) {
+// NewFollowUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller follow action.
+func NewFollowUserContext(ctx context.Context, service *goa.Service) (*FollowUserContext, error) {
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
-	rctx := FollowsUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	rctx := FollowUserContext{Context: ctx, ResponseData: resp, RequestData: req}
 	paramFolloweeID := req.Params["followeeID"]
 	if len(paramFolloweeID) > 0 {
 		rawFolloweeID := paramFolloweeID[0]
@@ -97,15 +97,21 @@ func NewFollowsUserContext(ctx context.Context, service *goa.Service) (*FollowsU
 }
 
 // OK sends a HTTP response with status code 200.
-func (ctx *FollowsUserContext) OK(resp []byte) error {
+func (ctx *FollowUserContext) OK(resp []byte) error {
 	ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	ctx.ResponseData.WriteHeader(200)
 	_, err := ctx.ResponseData.Write(resp)
 	return err
 }
 
-// ListensUserContext provides the user listens action context.
-type ListensUserContext struct {
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *FollowUserContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// ListenUserContext provides the user listen action context.
+type ListenUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
@@ -113,14 +119,14 @@ type ListensUserContext struct {
 	UserID  string
 }
 
-// NewListensUserContext parses the incoming request URL and body, performs validations and creates the
-// context used by the user controller listens action.
-func NewListensUserContext(ctx context.Context, service *goa.Service) (*ListensUserContext, error) {
+// NewListenUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller listen action.
+func NewListenUserContext(ctx context.Context, service *goa.Service) (*ListenUserContext, error) {
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
-	rctx := ListensUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	rctx := ListenUserContext{Context: ctx, ResponseData: resp, RequestData: req}
 	paramMusicID := req.Params["musicID"]
 	if len(paramMusicID) > 0 {
 		rawMusicID := paramMusicID[0]
@@ -139,9 +145,15 @@ func NewListensUserContext(ctx context.Context, service *goa.Service) (*ListensU
 }
 
 // OK sends a HTTP response with status code 200.
-func (ctx *ListensUserContext) OK(resp []byte) error {
+func (ctx *ListenUserContext) OK(resp []byte) error {
 	ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	ctx.ResponseData.WriteHeader(200)
 	_, err := ctx.ResponseData.Write(resp)
 	return err
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *ListenUserContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
