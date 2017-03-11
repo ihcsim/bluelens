@@ -5,12 +5,12 @@ import "sort"
 // Store provides a set of API to manage resources that are stored in some datastore.
 // The implementer of Store is expected to interface with the API of the actual datastore.
 type Store interface {
-
-	// AddUser adds the user u to the store.
-	AddUser(*User) error
-
 	// LoadUser loads the provided list of users into the store.
 	LoadUsers([]*User) error
+
+	// List users retrieves a list of user resources from the store. The length of the result list
+	// is bounded by maxCount.
+	ListUsers(maxCount int) ([]*User, error)
 
 	// FindUser looks up the user with the specified ID.
 	FindUser(userID string) (*User, error)
@@ -47,18 +47,37 @@ func NewInMemoryStore() Store {
 	}
 }
 
-// AddUser adds the user u to the store.
-func (s *InMemoryStore) AddUser(u *User) error {
-	s.userBase[u.ID] = u
-	return nil
-}
-
 // LoadUser loads the list of provided users into the store.
 func (s *InMemoryStore) LoadUsers(users []*User) error {
 	for _, u := range users {
-		s.AddUser(u)
+		s.userBase[u.ID] = u
 	}
 	return nil
+}
+
+// ListUsers retrieves a list of user resources from the store. The length of
+// the result list is bounded by maxCount.
+func (s *InMemoryStore) ListUsers(maxCount int) ([]*User, error) {
+	if maxCount <= 0 {
+		maxCount = defaultMaxCount
+	}
+
+	list := []*User{}
+	var index int
+	for _, u := range s.userBase {
+		list = append(list, u)
+
+		index += 1
+		if index == maxCount {
+			break
+		}
+	}
+
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].ID < list[j].ID
+	})
+
+	return list, nil
 }
 
 // FindUser looks for the user with the specified id in the store.
