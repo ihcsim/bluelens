@@ -1,6 +1,8 @@
 package main
 
 import (
+	"sync"
+
 	"github.com/ihcsim/bluelens"
 )
 
@@ -11,12 +13,14 @@ var (
 	// to use a different store, assign this varible to the store's constructor function.
 	// store is a function of type func() core.Store
 	store = inmemoryStore
+
+	once sync.Once
 )
 
 func inmemoryStore() core.Store {
-	if instance == nil {
+	once.Do(func() {
 		instance = core.NewInMemoryStore()
-	}
+	})
 
 	return instance
 }

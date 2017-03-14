@@ -20,10 +20,17 @@ This system is constrained by the following pre-defined data model:
 * `user`: Has an ID, follows N other users (see `etc/follows.json`), has heard Y musics in the past (see `etc/listen.json`).
 
 ## Development
-To run all the tests:
+This project uses [glide](https://github.com/Masterminds/glide) to manage its dependencies, and [goa](https://goa.design/) to generate the server and client code.
+
+Use the Makefile `all` target to install the dependencies, run the test, autogenerate and build the server an client code. All the generated code, controller code and `main.go` are found in the `server` folder.
 ```sh
-$ go test -v -cover -race ./...
+$ make
 ```
+To force a re-generation of the controller code and `server/main.go`, set the `$CODEGEN_MAIN_OPTS` environmental variable:
+```sh
+$ CODEGEN_MAIN_OPTS=--force make
+```
+Take a look at the Makefile for other convenient targets that help with daily development tasks such as `test`, `server/build`, `client/build` etc.
 
 ## LICENSE
 Refer the [LICENSE](LICENSE) file.

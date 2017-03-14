@@ -8,6 +8,7 @@ type EntityNotFound struct {
 	kind string
 }
 
+// NewEntityNotFound returns a new instance of EntityNotFound.
 func NewEntityNotFound(id, kind string) error {
 	return &EntityNotFound{id: id, kind: kind}
 }

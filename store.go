@@ -47,7 +47,7 @@ func NewInMemoryStore() Store {
 	}
 }
 
-// LoadUser loads the list of provided users into the store.
+// LoadUsers loads the list of provided users into the store.
 func (s *InMemoryStore) LoadUsers(users []*User) error {
 	for _, u := range users {
 		s.userBase[u.ID] = u
@@ -67,7 +67,7 @@ func (s *InMemoryStore) ListUsers(maxCount int) ([]*User, error) {
 	for _, u := range s.userBase {
 		list = append(list, u)
 
-		index += 1
+		index++
 		if index == maxCount {
 			break
 		}
@@ -117,7 +117,7 @@ func (s *InMemoryStore) ListMusic(maxCount int) (MusicList, error) {
 	for _, m := range s.musicList {
 		ml = append(ml, m)
 
-		index += 1
+		index++
 		if index == maxCount {
 			break
 		}
