@@ -4,6 +4,36 @@ consumes:
 - application/gob
 - application/x-gob
 definitions:
+  BluelensMusic:
+    description: A music resource (default view)
+    example:
+      href: Velit rerum et et ut.
+      id: Necessitatibus exercitationem.
+      tags:
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+    properties:
+      href:
+        example: Velit rerum et et ut.
+        type: string
+      id:
+        example: Necessitatibus exercitationem.
+        type: string
+      tags:
+        example:
+        - Cumque dolorum dolorem voluptas eveniet.
+        - Cumque dolorum dolorem voluptas eveniet.
+        - Cumque dolorum dolorem voluptas eveniet.
+        items:
+          example: Cumque dolorum dolorem voluptas eveniet.
+          type: string
+        type: array
+    required:
+    - id
+    - href
+    title: 'Mediatype identifier: application/vnd.bluelens.music+json; view=default'
+    type: object
   BluelensMusicLink:
     description: A music resource (link view)
     example:
@@ -95,6 +125,34 @@ definitions:
         $ref: '#/definitions/BluelensUserLink'
     title: BluelensRecommendationsLinks
     type: object
+  BluelensUser:
+    description: A user resource (default view)
+    example:
+      href: Dignissimos dolore aliquam dolores unde qui.
+      id: Ut fugiat hic.
+      links:
+        followees:
+        - href: Eum deleniti id.
+          id: Deserunt quaerat unde dolorem.
+        - href: Eum deleniti id.
+          id: Deserunt quaerat unde dolorem.
+        history:
+        - href: Velit rerum et et ut.
+          id: Necessitatibus exercitationem.
+    properties:
+      href:
+        example: Dignissimos dolore aliquam dolores unde qui.
+        type: string
+      id:
+        example: Ut fugiat hic.
+        type: string
+      links:
+        $ref: '#/definitions/BluelensUserLinks'
+    required:
+    - id
+    - href
+    title: 'Mediatype identifier: application/vnd.bluelens.user+json; view=default'
+    type: object
   BluelensUserLink:
     description: A user resource (link view)
     example:
@@ -111,6 +169,35 @@ definitions:
     - id
     - href
     title: 'Mediatype identifier: application/vnd.bluelens.user+json; view=link'
+    type: object
+  BluelensUserLinkCollection:
+    description: BluelensUserLinkCollection is the media type for an array of BluelensUserLink
+      (default view)
+    example:
+    - href: Eum deleniti id.
+      id: Deserunt quaerat unde dolorem.
+    items:
+      $ref: '#/definitions/BluelensUserLink'
+    title: 'Mediatype identifier: application/vnd.bluelens.user+json; type=collection;
+      view=default'
+    type: array
+  BluelensUserLinks:
+    description: BluelensUserLinks contains links to related resources of BluelensUser.
+    example:
+      followees:
+      - href: Eum deleniti id.
+        id: Deserunt quaerat unde dolorem.
+      - href: Eum deleniti id.
+        id: Deserunt quaerat unde dolorem.
+      history:
+      - href: Velit rerum et et ut.
+        id: Necessitatibus exercitationem.
+    properties:
+      followees:
+        $ref: '#/definitions/BluelensUserLinkCollection'
+      history:
+        $ref: '#/definitions/BluelensMusicLinkCollection'
+    title: BluelensUserLinks
     type: object
   error:
     description: Error response media type (default view)
@@ -156,6 +243,26 @@ info:
   title: The bluelens API
   version: ""
 paths:
+  /bluelens/music/{musicID}:
+    get:
+      description: Get a music resource with the given ID
+      operationId: music#get
+      parameters:
+      - description: ID of the music.
+        in: path
+        name: musicID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/BluelensMusic'
+      schemes:
+      - http
+      summary: get music
+      tags:
+      - music
   /bluelens/recommendations/{userID}/{maxCount}:
     get:
       description: Make music recommendations for a user.
@@ -181,9 +288,29 @@ paths:
       summary: recommend recommendations
       tags:
       - recommendations
-  /bluelens/user/{followerID}/follows/{followeeID}:
+  /bluelens/user/{userID}:
+    get:
+      description: Get a user resource with the given ID
+      operationId: user#get
+      parameters:
+      - description: ID of the user.
+        in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/BluelensUser'
+      schemes:
+      - http
+      summary: get user
+      tags:
+      - user
+  /bluelens/user/{userID}/follows/{followeeID}:
     post:
-      description: Add a user to another user's followees list.
+      description: Update a user's followees list with a new followee.
       operationId: user#follow
       parameters:
       - description: ID of the followee.
@@ -193,12 +320,14 @@ paths:
         type: string
       - description: ID of the follower.
         in: path
-        name: followerID
+        name: userID
         required: true
         type: integer
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/BluelensUser'
         "400":
           description: Bad Request
           schema:
@@ -226,6 +355,8 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/BluelensUser'
         "400":
           description: Bad Request
           schema:
@@ -254,6 +385,8 @@ produces:
 responses:
   OK:
     description: OK
+    schema:
+      $ref: '#/definitions/BluelensMusic'
 schemes:
 - http
 swagger: "2.0"

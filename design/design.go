@@ -32,6 +32,16 @@ var _ = Resource("recommendations", func() {
 
 var _ = Resource("user", func() {
 	BasePath("/user")
+	DefaultMedia(User)
+
+	Action("get", func() {
+		Routing(GET("/:userID"))
+		Description("Get a user resource with the given ID")
+		Params(func() {
+			Param("userID", String, "ID of the user.")
+		})
+		Response(OK)
+	})
 
 	Action("listen", func() {
 		Routing(POST("/:userID/listen/:musicID"))
@@ -45,14 +55,28 @@ var _ = Resource("user", func() {
 	})
 
 	Action("follow", func() {
-		Routing(POST("/:followerID/follows/:followeeID"))
-		Description("Add a user to another user's followees list.")
+		Routing(POST("/:userID/follows/:followeeID"))
+		Description("Update a user's followees list with a new followee.")
 		Params(func() {
+			Param("userID", Integer, "ID of the follower.")
 			Param("followeeID", String, "ID of the followee.")
-			Param("followerID", Integer, "ID of the follower.")
 		})
 		Response(OK)
 		Response(BadRequest, ErrorMedia)
+	})
+})
+
+var _ = Resource("music", func() {
+	BasePath("/music")
+	DefaultMedia(Music)
+
+	Action("get", func() {
+		Routing(GET("/:musicID"))
+		Description("Get a music resource with the given ID")
+		Params(func() {
+			Param("musicID", String, "ID of the music.")
+		})
+		Response(OK)
 	})
 })
 

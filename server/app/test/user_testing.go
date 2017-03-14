@@ -28,7 +28,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, followerID int, followeeID string) (http.ResponseWriter, error) {
+func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -49,14 +49,14 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", followerID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["followerID"] = []string{fmt.Sprintf("%v", followerID)}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -90,11 +90,11 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	return rw, mt
 }
 
-// FollowUserOK runs the method Follow of the given controller with the given parameters.
-// It returns the response writer so it's possible to inspect the response headers.
+// FollowUserOKAll runs the method Follow of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, followerID int, followeeID string) http.ResponseWriter {
+func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -115,14 +115,14 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", followerID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["followerID"] = []string{fmt.Sprintf("%v", followerID)}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -143,9 +143,368 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	if rw.Code != 200 {
 		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
 	}
+	var mt *app.BluelensUserAll
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUserAll)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUserAll", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
+}
+
+// FollowUserOK runs the method Follow of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, *app.BluelensUser) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+	}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	followCtx, err := app.NewFollowUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Follow(followCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUser
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUser)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUser", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// FollowUserOKLink runs the method Follow of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, *app.BluelensUserLink) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+	}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	followCtx, err := app.NewFollowUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Follow(followCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUserLink
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUserLink)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUserLink", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// GetUserOKAll runs the method Get of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func GetUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.BluelensUserAll) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+	}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	getCtx, err := app.NewGetUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Get(getCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUserAll
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUserAll)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUserAll", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// GetUserOK runs the method Get of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.BluelensUser) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+	}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	getCtx, err := app.NewGetUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Get(getCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUser
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUser)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUser", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// GetUserOKLink runs the method Get of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func GetUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.BluelensUserLink) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+	}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	getCtx, err := app.NewGetUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Get(getCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUserLink
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUserLink)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUserLink", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
 }
 
 // ListenUserBadRequest runs the method Listen of the given controller with the given parameters.
@@ -214,11 +573,11 @@ func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	return rw, mt
 }
 
-// ListenUserOK runs the method Listen of the given controller with the given parameters.
-// It returns the response writer so it's possible to inspect the response headers.
+// ListenUserOKAll runs the method Listen of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) http.ResponseWriter {
+func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -267,7 +626,159 @@ func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	if rw.Code != 200 {
 		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
 	}
+	var mt *app.BluelensUserAll
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUserAll)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUserAll", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
+}
+
+// ListenUserOK runs the method Listen of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, *app.BluelensUser) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+	}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	listenCtx, err := app.NewListenUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Listen(listenCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUser
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUser)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUser", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// ListenUserOKLink runs the method Listen of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, *app.BluelensUserLink) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	u := &url.URL{
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+	}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "UserTest"), rw, req, prms)
+	listenCtx, err := app.NewListenUserContext(goaCtx, service)
+	if err != nil {
+		panic("invalid test data " + err.Error()) // bug
+	}
+
+	// Perform action
+	err = ctrl.Listen(listenCtx)
+
+	// Validate response
+	if err != nil {
+		t.Fatalf("controller returned %s, logs:\n%s", err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt *app.BluelensUserLink
+	if resp != nil {
+		var ok bool
+		mt, ok = resp.(*app.BluelensUserLink)
+		if !ok {
+			t.Fatalf("invalid response media: got %+v, expected instance of app.BluelensUserLink", resp)
+		}
+		err = mt.Validate()
+		if err != nil {
+			t.Errorf("invalid response media type: %s", err)
+		}
+	}
+
+	// Return results
+	return rw, mt
 }

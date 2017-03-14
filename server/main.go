@@ -18,15 +18,18 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
+	// Mount "music" controller
+	c := NewMusicController(service)
+	app.MountMusicController(service, c)
 	// Mount "recommendations" controller
-	c := NewRecommendationsController(service)
-	app.MountRecommendationsController(service, c)
+	c2 := NewRecommendationsController(service)
+	app.MountRecommendationsController(service, c2)
 	// Mount "swagger" controller
-	c2 := NewSwaggerController(service)
-	app.MountSwaggerController(service, c2)
+	c3 := NewSwaggerController(service)
+	app.MountSwaggerController(service, c3)
 	// Mount "user" controller
-	c3 := NewUserController(service)
-	app.MountUserController(service, c3)
+	c4 := NewUserController(service)
+	app.MountUserController(service, c4)
 
 	// Start service
 	if err := service.ListenAndServe(":8080"); err != nil {

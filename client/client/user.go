@@ -8,11 +8,11 @@ import (
 )
 
 // FollowUserPath computes a request path to the follow action of user.
-func FollowUserPath(followerID int, followeeID string) string {
-	return fmt.Sprintf("/bluelens/user/%v/follows/%v", followerID, followeeID)
+func FollowUserPath(userID int, followeeID string) string {
+	return fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID)
 }
 
-// Add a user to another user's followees list.
+// Update a user's followees list with a new followee.
 func (c *Client) FollowUser(ctx context.Context, path string) (*http.Response, error) {
 	req, err := c.NewFollowUserRequest(ctx, path)
 	if err != nil {
@@ -29,6 +29,34 @@ func (c *Client) NewFollowUserRequest(ctx context.Context, path string) (*http.R
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	return req, nil
+}
+
+// GetUserPath computes a request path to the get action of user.
+func GetUserPath(userID string) string {
+	return fmt.Sprintf("/bluelens/user/%v", userID)
+}
+
+// Get a user resource with the given ID
+func (c *Client) GetUser(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewGetUserRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewGetUserRequest create the request corresponding to the get action endpoint of the user resource.
+func (c *Client) NewGetUserRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}

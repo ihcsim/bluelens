@@ -19,8 +19,8 @@ define(['axios'] , function (axios) {
     // URL prefix for all API requests.
     var urlPrefix = scheme + '://' + host;
 
-  // Add a user to another user's followees list.
-  // path is the request path, the format is "/bluelens/user/:followerID/follows/:followeeID"
+  // Update a user's followees list with a new followee.
+  // path is the request path, the format is "/bluelens/user/:userID/follows/:followeeID"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
@@ -29,6 +29,42 @@ define(['axios'] , function (axios) {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'post',
+      responseType: 'json'
+    };
+    if (config) {
+      cfg = merge(cfg, config);
+    }
+    return client(cfg);
+  }
+
+  // Get a music resource with the given ID
+  // path is the request path, the format is "/bluelens/music/:musicID"
+  // config is an optional object to be merged into the config built by the function prior to making the request.
+  // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
+  // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
+  client.getMusic = function (path, config) {
+    cfg = {
+      timeout: timeout,
+      url: urlPrefix + path,
+      method: 'get',
+      responseType: 'json'
+    };
+    if (config) {
+      cfg = merge(cfg, config);
+    }
+    return client(cfg);
+  }
+
+  // Get a user resource with the given ID
+  // path is the request path, the format is "/bluelens/user/:userID"
+  // config is an optional object to be merged into the config built by the function prior to making the request.
+  // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
+  // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
+  client.getUser = function (path, config) {
+    cfg = {
+      timeout: timeout,
+      url: urlPrefix + path,
+      method: 'get',
       responseType: 'json'
     };
     if (config) {

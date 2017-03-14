@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/server/app"
@@ -25,25 +23,6 @@ func (c *RecommendationsController) Recommend(ctx *app.RecommendRecommendationsC
 		return err
 	}
 
-	res := recommendationsMediaType(recommendations)
+	res := mediaTypeRecommendations(recommendations)
 	return ctx.OK(res)
-}
-
-func recommendationsMediaType(r *core.Recommendations) *app.BluelensRecommendations {
-	musicIDs := []string{}
-	musicLinks := app.BluelensMusicLinkCollection{}
-	for _, m := range r.List {
-		musicIDs = append(musicIDs, m.ID)
-		link := &app.BluelensMusicLink{Href: fmt.Sprintf("/music/%s", m.ID), ID: m.ID}
-		musicLinks = append(musicLinks, link)
-	}
-
-	links := &app.BluelensRecommendationsLinks{
-		List: musicLinks,
-		User: &app.BluelensUserLink{Href: fmt.Sprintf("/users/%s", r.UserID), ID: r.UserID},
-	}
-	return &app.BluelensRecommendations{
-		MusicID: musicIDs,
-		Links:   links,
-	}
 }

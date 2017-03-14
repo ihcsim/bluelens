@@ -32,6 +32,33 @@ func initService(service *goa.Service) {
 	service.Decoder.Register(goa.NewJSONDecoder, "*/*")
 }
 
+// MusicController is the controller interface for the Music actions.
+type MusicController interface {
+	goa.Muxer
+	Get(*GetMusicContext) error
+}
+
+// MountMusicController "mounts" a Music resource controller on the given service.
+func MountMusicController(service *goa.Service, ctrl MusicController) {
+	initService(service)
+	var h goa.Handler
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewGetMusicContext(ctx, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Get(rctx)
+	}
+	service.Mux.Handle("GET", "/bluelens/music/:musicID", ctrl.MuxHandler("Get", h, nil))
+	service.LogInfo("mount", "ctrl", "Music", "action", "Get", "route", "GET /bluelens/music/:musicID")
+}
+
 // RecommendationsController is the controller interface for the Recommendations actions.
 type RecommendationsController interface {
 	goa.Muxer
@@ -105,6 +132,7 @@ func handleSwaggerOrigin(h goa.Handler) goa.Handler {
 type UserController interface {
 	goa.Muxer
 	Follow(*FollowUserContext) error
+	Get(*GetUserContext) error
 	Listen(*ListenUserContext) error
 }
 
@@ -125,8 +153,23 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Follow(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:followerID/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:followerID/follows/:followeeID")
+	service.Mux.Handle("POST", "/bluelens/user/:userID/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:userID/follows/:followeeID")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewGetUserContext(ctx, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Get(rctx)
+	}
+	service.Mux.Handle("GET", "/bluelens/user/:userID", ctrl.MuxHandler("Get", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Get", "route", "GET /bluelens/user/:userID")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

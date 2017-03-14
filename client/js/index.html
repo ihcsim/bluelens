@@ -15,7 +15,7 @@
         }
       });
       requirejs(['client'], function (client) {
-        client().recommendRecommendations ("/bluelens/recommendations/Quis rerum modi exercitationem architecto dolorum quis./7299554911269991301")
+        client().getMusic ("/bluelens/music/Quis rerum modi exercitationem architecto dolorum quis.")
           .then(function (resp) {
             document.getElementById('response').innerHTML = resp.statusText;
           })

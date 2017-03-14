@@ -16,6 +16,42 @@ import (
 	"strconv"
 )
 
+// GetMusicContext provides the music get action context.
+type GetMusicContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	MusicID string
+}
+
+// NewGetMusicContext parses the incoming request URL and body, performs validations and creates the
+// context used by the music controller get action.
+func NewGetMusicContext(ctx context.Context, service *goa.Service) (*GetMusicContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	rctx := GetMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramMusicID := req.Params["musicID"]
+	if len(paramMusicID) > 0 {
+		rawMusicID := paramMusicID[0]
+		rctx.MusicID = rawMusicID
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *GetMusicContext) OK(r *BluelensMusic) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKLink sends a HTTP response with status code 200.
+func (ctx *GetMusicContext) OKLink(r *BluelensMusicLink) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
 // RecommendRecommendationsContext provides the recommendations recommend action context.
 type RecommendRecommendationsContext struct {
 	context.Context
@@ -68,7 +104,7 @@ type FollowUserContext struct {
 	*goa.ResponseData
 	*goa.RequestData
 	FolloweeID string
-	FollowerID int
+	UserID     int
 }
 
 // NewFollowUserContext parses the incoming request URL and body, performs validations and creates the
@@ -84,30 +120,82 @@ func NewFollowUserContext(ctx context.Context, service *goa.Service) (*FollowUse
 		rawFolloweeID := paramFolloweeID[0]
 		rctx.FolloweeID = rawFolloweeID
 	}
-	paramFollowerID := req.Params["followerID"]
-	if len(paramFollowerID) > 0 {
-		rawFollowerID := paramFollowerID[0]
-		if followerID, err2 := strconv.Atoi(rawFollowerID); err2 == nil {
-			rctx.FollowerID = followerID
+	paramUserID := req.Params["userID"]
+	if len(paramUserID) > 0 {
+		rawUserID := paramUserID[0]
+		if userID, err2 := strconv.Atoi(rawUserID); err2 == nil {
+			rctx.UserID = userID
 		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("followerID", rawFollowerID, "integer"))
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("userID", rawUserID, "integer"))
 		}
 	}
 	return &rctx, err
 }
 
+// OKAll sends a HTTP response with status code 200.
+func (ctx *FollowUserContext) OKAll(r *BluelensUserAll) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
 // OK sends a HTTP response with status code 200.
-func (ctx *FollowUserContext) OK(resp []byte) error {
-	ctx.ResponseData.Header().Set("Content-Type", "text/plain")
-	ctx.ResponseData.WriteHeader(200)
-	_, err := ctx.ResponseData.Write(resp)
-	return err
+func (ctx *FollowUserContext) OK(r *BluelensUser) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKLink sends a HTTP response with status code 200.
+func (ctx *FollowUserContext) OKLink(r *BluelensUserLink) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
 // BadRequest sends a HTTP response with status code 400.
 func (ctx *FollowUserContext) BadRequest(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// GetUserContext provides the user get action context.
+type GetUserContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	UserID string
+}
+
+// NewGetUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller get action.
+func NewGetUserContext(ctx context.Context, service *goa.Service) (*GetUserContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	rctx := GetUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramUserID := req.Params["userID"]
+	if len(paramUserID) > 0 {
+		rawUserID := paramUserID[0]
+		rctx.UserID = rawUserID
+	}
+	return &rctx, err
+}
+
+// OKAll sends a HTTP response with status code 200.
+func (ctx *GetUserContext) OKAll(r *BluelensUserAll) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *GetUserContext) OK(r *BluelensUser) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKLink sends a HTTP response with status code 200.
+func (ctx *GetUserContext) OKLink(r *BluelensUserLink) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
 // ListenUserContext provides the user listen action context.
@@ -144,12 +232,22 @@ func NewListenUserContext(ctx context.Context, service *goa.Service) (*ListenUse
 	return &rctx, err
 }
 
+// OKAll sends a HTTP response with status code 200.
+func (ctx *ListenUserContext) OKAll(r *BluelensUserAll) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
 // OK sends a HTTP response with status code 200.
-func (ctx *ListenUserContext) OK(resp []byte) error {
-	ctx.ResponseData.Header().Set("Content-Type", "text/plain")
-	ctx.ResponseData.WriteHeader(200)
-	_, err := ctx.ResponseData.Write(resp)
-	return err
+func (ctx *ListenUserContext) OK(r *BluelensUser) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKLink sends a HTTP response with status code 200.
+func (ctx *ListenUserContext) OKLink(r *BluelensUserLink) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
 // BadRequest sends a HTTP response with status code 400.

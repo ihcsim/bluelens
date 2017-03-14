@@ -27,7 +27,7 @@ server/codegen:
 	goagen swagger -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 
 server/build:
-	go build -v -o bluelens ${PACKAGE_APPS}
+	go build -v -o bluelens ${PACKAGE_SERVER}
 
 client/codegen:
 	goagen client --tool blue -d ${PACKAGE_DESIGN} -o ${CLIENT_DIR}

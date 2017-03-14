@@ -53,6 +53,28 @@ func (f *FixtureStore) Recommendations(maxCount int) (map[string]*Recommendation
 	return recommendations, nil
 }
 
+// FindMusic looks up the music resource with the specified music ID.
+// If no music resources have that ID, an EntityNotFound error is returned.
+func (f *FixtureStore) FindMusic(musicID string) (*Music, error) {
+	m, exists := f.musicList[musicID]
+	if !exists {
+		return nil, NewEntityNotFound(musicID, "music")
+	}
+
+	return m, nil
+}
+
+// FindUser looks up the user resource with the specified user ID.
+// If no user resources have that ID, an EntityNotFound error is returned.
+func (f *FixtureStore) FindUser(userID string) (*User, error) {
+	u, exists := f.userBase[userID]
+	if !exists {
+		return nil, NewEntityNotFound(userID, "user")
+	}
+
+	return u, nil
+}
+
 func (f *FixtureStore) music() MusicList {
 	return MusicList{
 		&Music{ID: "song-00", Tags: []string{"rock", "top-10"}},
