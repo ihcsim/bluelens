@@ -15,6 +15,14 @@ type Store interface {
 	// FindUser looks up the user with the specified ID.
 	FindUser(userID string) (*User, error)
 
+	// UpdateUser updates the attributes of the specified user. If the user doesn't exist, it will
+	// be added to the user base.
+	UpdateUser(user *User) (*User, error)
+
+	// Follow updates a user's followees list with a new followee. The updated user is returned.
+	// If either the user or followee doesn't exist, a NoEntityFound error is returned.
+	Follow(userID, followeeID string) (*User, error)
+
 	// LoadMusic loads the provided list of music into the store.
 	LoadMusic(MusicList) error
 
@@ -27,6 +35,10 @@ type Store interface {
 
 	// FindMusicByTags looks up music resources that satisfied the given tags.
 	FindMusicByTags(tag string) (MusicList, error)
+
+	// Listen updates a user's history listen with the specified music to indicate that the user has listened to that music. The updated user is returned.
+	// If either the user or music doesn't exist, an error is returned.
+	Listen(userID, musicID string) (*User, error)
 }
 
 const defaultMaxCount = 20
@@ -87,7 +99,33 @@ func (s *InMemoryStore) FindUser(id string) (*User, error) {
 	if !exists {
 		return nil, NewEntityNotFound(id, "user")
 	}
-	return v, nil
+
+	clone := *v
+	return &clone, nil
+}
+
+// UpdateUser updates the attributes of the specified user. If the user doesn't exist, it will be
+// created.
+func (s *InMemoryStore) UpdateUser(u *User) (*User, error) {
+	s.userBase[u.ID] = u
+	return u, nil
+}
+
+// Follow updates the specified user's followees list with a new followee. The update user is returned.
+// If either user or followee doesn't exist, a NoEntityFound error is returned.
+func (s *InMemoryStore) Follow(userID, followeeID string) (*User, error) {
+	user, err := s.FindUser(userID)
+	if err != nil {
+		return nil, NewEntityNotFound(userID, "user")
+	}
+
+	followee, err := s.FindUser(followeeID)
+	if err != nil {
+		return nil, NewEntityNotFound(followeeID, "user")
+	}
+
+	user.Followees = append(user.Followees, followee)
+	return s.UpdateUser(user)
 }
 
 // LoadMusic loads the provided list of music into the store.
@@ -137,7 +175,9 @@ func (s *InMemoryStore) FindMusic(musicID string) (*Music, error) {
 	if !exists {
 		return nil, NewEntityNotFound(musicID, "music")
 	}
-	return v, nil
+
+	clone := *v
+	return &clone, nil
 }
 
 // FindMusicByTags retrieves a list of music resources that satisfy the given tags.
@@ -147,4 +187,21 @@ func (s *InMemoryStore) FindMusicByTags(tag string) (MusicList, error) {
 		return nil, NewEntityNotFound(tag, "music tag")
 	}
 	return v, nil
+}
+
+// Listen updates the user's history list with the specified music. The updated user is returned.
+// If either the user or music doesn't exist, a EntityNotFound error is returned.
+func (s *InMemoryStore) Listen(userID, musicID string) (*User, error) {
+	user, err := s.FindUser(userID)
+	if err != nil {
+		return nil, NewEntityNotFound(userID, "user")
+	}
+
+	music, err := s.FindMusic(musicID)
+	if err != nil {
+		return nil, NewEntityNotFound(musicID, "music")
+	}
+
+	user.History = append(user.History, music)
+	return s.UpdateUser(user)
 }

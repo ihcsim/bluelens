@@ -28,7 +28,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, error) {
+func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -94,7 +94,7 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, *app.BluelensUserAll) {
+func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -164,7 +164,7 @@ func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, *app.BluelensUser) {
+func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -234,7 +234,7 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID int, followeeID string) (http.ResponseWriter, *app.BluelensUserLink) {
+func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -511,7 +511,7 @@ func GetUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Servi
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, error) {
+func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -577,7 +577,7 @@ func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, *app.BluelensUserAll) {
+func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -647,7 +647,7 @@ func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, *app.BluelensUser) {
+func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -717,7 +717,7 @@ func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID int) (http.ResponseWriter, *app.BluelensUserLink) {
+func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer

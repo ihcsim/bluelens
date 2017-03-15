@@ -322,7 +322,7 @@ paths:
         in: path
         name: userID
         required: true
-        type: integer
+        type: string
       responses:
         "200":
           description: OK
@@ -346,7 +346,7 @@ paths:
         in: path
         name: musicID
         required: true
-        type: integer
+        type: string
       - description: ID of the user.
         in: path
         name: userID

@@ -8,7 +8,7 @@ import (
 )
 
 // FollowUserPath computes a request path to the follow action of user.
-func FollowUserPath(userID int, followeeID string) string {
+func FollowUserPath(userID string, followeeID string) string {
 	return fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID)
 }
 
@@ -64,7 +64,7 @@ func (c *Client) NewGetUserRequest(ctx context.Context, path string) (*http.Requ
 }
 
 // ListenUserPath computes a request path to the listen action of user.
-func ListenUserPath(userID string, musicID int) string {
+func ListenUserPath(userID string, musicID string) string {
 	return fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID)
 }
 

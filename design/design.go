@@ -48,7 +48,7 @@ var _ = Resource("user", func() {
 		Description("Add a music to a user's history.")
 		Params(func() {
 			Param("userID", String, "ID of the user.")
-			Param("musicID", Integer, "ID of the music.")
+			Param("musicID", String, "ID of the music.")
 		})
 		Response(OK)
 		Response(BadRequest, ErrorMedia)
@@ -58,7 +58,7 @@ var _ = Resource("user", func() {
 		Routing(POST("/:userID/follows/:followeeID"))
 		Description("Update a user's followees list with a new followee.")
 		Params(func() {
-			Param("userID", Integer, "ID of the follower.")
+			Param("userID", String, "ID of the follower.")
 			Param("followeeID", String, "ID of the followee.")
 		})
 		Response(OK)

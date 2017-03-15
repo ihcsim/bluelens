@@ -104,7 +104,7 @@ type FollowUserContext struct {
 	*goa.ResponseData
 	*goa.RequestData
 	FolloweeID string
-	UserID     int
+	UserID     string
 }
 
 // NewFollowUserContext parses the incoming request URL and body, performs validations and creates the
@@ -123,11 +123,7 @@ func NewFollowUserContext(ctx context.Context, service *goa.Service) (*FollowUse
 	paramUserID := req.Params["userID"]
 	if len(paramUserID) > 0 {
 		rawUserID := paramUserID[0]
-		if userID, err2 := strconv.Atoi(rawUserID); err2 == nil {
-			rctx.UserID = userID
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("userID", rawUserID, "integer"))
-		}
+		rctx.UserID = rawUserID
 	}
 	return &rctx, err
 }
@@ -203,7 +199,7 @@ type ListenUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	MusicID int
+	MusicID string
 	UserID  string
 }
 
@@ -218,11 +214,7 @@ func NewListenUserContext(ctx context.Context, service *goa.Service) (*ListenUse
 	paramMusicID := req.Params["musicID"]
 	if len(paramMusicID) > 0 {
 		rawMusicID := paramMusicID[0]
-		if musicID, err2 := strconv.Atoi(rawMusicID); err2 == nil {
-			rctx.MusicID = musicID
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("musicID", rawMusicID, "integer"))
-		}
+		rctx.MusicID = rawMusicID
 	}
 	paramUserID := req.Params["userID"]
 	if len(paramUserID) > 0 {

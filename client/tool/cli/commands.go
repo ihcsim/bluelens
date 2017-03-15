@@ -39,7 +39,7 @@ type (
 		// ID of the followee.
 		FolloweeID string
 		// ID of the follower.
-		UserID      int
+		UserID      string
 		PrettyPrint bool
 	}
 
@@ -53,7 +53,7 @@ type (
 	// ListenUserCommand is the command line data structure for the listen action of user
 	ListenUserCommand struct {
 		// ID of the music.
-		MusicID int
+		MusicID string
 		// ID of the user.
 		UserID      string
 		PrettyPrint bool
@@ -399,7 +399,7 @@ func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/bluelens/user/%v/follows/%v", cmd.UserID, url.QueryEscape(cmd.FolloweeID))
+		path = fmt.Sprintf("/bluelens/user/%v/follows/%v", url.QueryEscape(cmd.UserID), url.QueryEscape(cmd.FolloweeID))
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -417,8 +417,8 @@ func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 func (cmd *FollowUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var followeeID string
 	cc.Flags().StringVar(&cmd.FolloweeID, "followeeID", followeeID, `ID of the followee.`)
-	var userID int
-	cc.Flags().IntVar(&cmd.UserID, "userID", userID, `ID of the follower.`)
+	var userID string
+	cc.Flags().StringVar(&cmd.UserID, "userID", userID, `ID of the follower.`)
 }
 
 // Run makes the HTTP request corresponding to the GetUserCommand command.
@@ -453,7 +453,7 @@ func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/bluelens/user/%v/listen/%v", url.QueryEscape(cmd.UserID), cmd.MusicID)
+		path = fmt.Sprintf("/bluelens/user/%v/listen/%v", url.QueryEscape(cmd.UserID), url.QueryEscape(cmd.MusicID))
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -469,8 +469,8 @@ func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ListenUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var musicID int
-	cc.Flags().IntVar(&cmd.MusicID, "musicID", musicID, `ID of the music.`)
+	var musicID string
+	cc.Flags().StringVar(&cmd.MusicID, "musicID", musicID, `ID of the music.`)
 	var userID string
 	cc.Flags().StringVar(&cmd.UserID, "userID", userID, `ID of the user.`)
 }

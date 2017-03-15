@@ -17,13 +17,22 @@ func NewUserController(service *goa.Service) *UserController {
 
 // Follow runs the follow action.
 func (c *UserController) Follow(ctx *app.FollowUserContext) error {
-	// UserController_Follow: start_implement
+	user, err := store().FindUser(ctx.UserID)
+	if err != nil {
+		return err
+	}
 
-	// Put your logic here
+	// don't follow self and don't add an existing followee
+	if ctx.UserID == ctx.FolloweeID || user.HasFollowee(ctx.FolloweeID) {
+		return ctx.OK(mediaTypeUser(user))
+	}
 
-	// UserController_Follow: end_implement
-	res := &app.BluelensUser{}
-	return ctx.OK(res)
+	updated, err := store().Follow(ctx.UserID, ctx.FolloweeID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.OK(mediaTypeUser(updated))
 }
 
 // Get runs the get action.
@@ -33,17 +42,25 @@ func (c *UserController) Get(ctx *app.GetUserContext) error {
 		return err
 	}
 
-	res := mediaTypeUser(user)
-	return ctx.OK(res)
+	return ctx.OK(mediaTypeUser(user))
 }
 
 // Listen runs the listen action.
 func (c *UserController) Listen(ctx *app.ListenUserContext) error {
-	// UserController_Listen: start_implement
+	user, err := store().FindUser(ctx.UserID)
+	if err != nil {
+		return err
+	}
 
-	// Put your logic here
+	// skip if already part of the user's history
+	if user.HasHistory(ctx.MusicID) {
+		return ctx.OK(mediaTypeUser(user))
+	}
 
-	// UserController_Listen: end_implement
-	res := &app.BluelensUser{}
-	return ctx.OK(res)
+	updated, err := store().Listen(ctx.UserID, ctx.MusicID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.OK(mediaTypeUser(updated))
 }

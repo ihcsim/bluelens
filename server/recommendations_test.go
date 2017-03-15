@@ -36,6 +36,7 @@ func TestRecommendationsController(t *testing.T) {
 	service := goa.New("goatest")
 	ctrl := NewRecommendationsController(service)
 
+	// test the recommendations of all users in the store
 	users, err := store().ListUsers(maxCount)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
