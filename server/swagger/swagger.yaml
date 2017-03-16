@@ -258,6 +258,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensMusic'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
       summary: get music
@@ -283,6 +287,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensRecommendations'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
       summary: recommend recommendations
@@ -303,6 +311,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensUser'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
       summary: get user
@@ -332,6 +344,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
       summary: follow user
@@ -359,6 +375,10 @@ paths:
             $ref: '#/definitions/BluelensUser'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:

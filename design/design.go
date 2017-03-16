@@ -27,6 +27,7 @@ var _ = Resource("recommendations", func() {
 			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user.")
 		})
 		Response(OK, Recommendations)
+		Response(NotFound, ErrorMedia)
 	})
 })
 
@@ -41,6 +42,7 @@ var _ = Resource("user", func() {
 			Param("userID", String, "ID of the user.")
 		})
 		Response(OK)
+		Response(NotFound, ErrorMedia)
 	})
 
 	Action("listen", func() {
@@ -51,6 +53,7 @@ var _ = Resource("user", func() {
 			Param("musicID", String, "ID of the music.")
 		})
 		Response(OK)
+		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
 	})
 
@@ -62,6 +65,7 @@ var _ = Resource("user", func() {
 			Param("followeeID", String, "ID of the followee.")
 		})
 		Response(OK)
+		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
 	})
 })
@@ -77,6 +81,7 @@ var _ = Resource("music", func() {
 			Param("musicID", String, "ID of the music.")
 		})
 		Response(OK)
+		Response(NotFound, ErrorMedia)
 	})
 })
 

@@ -19,7 +19,7 @@ func NewUserController(service *goa.Service) *UserController {
 func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 	user, err := store().FindUser(ctx.UserID)
 	if err != nil {
-		return err
+		return ctx.NotFound(err)
 	}
 
 	// don't follow self and don't add an existing followee
@@ -29,7 +29,7 @@ func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 
 	updated, err := store().Follow(ctx.UserID, ctx.FolloweeID)
 	if err != nil {
-		return err
+		return ctx.NotFound(err)
 	}
 
 	return ctx.OK(mediaTypeUser(updated))
@@ -39,7 +39,7 @@ func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 func (c *UserController) Get(ctx *app.GetUserContext) error {
 	user, err := store().FindUser(ctx.UserID)
 	if err != nil {
-		return err
+		return ctx.NotFound(err)
 	}
 
 	return ctx.OK(mediaTypeUser(user))
@@ -49,7 +49,7 @@ func (c *UserController) Get(ctx *app.GetUserContext) error {
 func (c *UserController) Listen(ctx *app.ListenUserContext) error {
 	user, err := store().FindUser(ctx.UserID)
 	if err != nil {
-		return err
+		return ctx.NotFound(err)
 	}
 
 	// skip if already part of the user's history
@@ -59,7 +59,7 @@ func (c *UserController) Listen(ctx *app.ListenUserContext) error {
 
 	updated, err := store().Listen(ctx.UserID, ctx.MusicID)
 	if err != nil {
-		return err
+		return ctx.NotFound(err)
 	}
 
 	return ctx.OK(mediaTypeUser(updated))

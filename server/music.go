@@ -21,7 +21,7 @@ func NewMusicController(service *goa.Service) *MusicController {
 func (c *MusicController) Get(ctx *app.GetMusicContext) error {
 	m, err := store().FindMusic(ctx.MusicID)
 	if err != nil {
-		return err
+		return ctx.NotFound(err)
 	}
 
 	res := &app.BluelensMusic{

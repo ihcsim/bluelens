@@ -52,6 +52,12 @@ func (ctx *GetMusicContext) OKLink(r *BluelensMusicLink) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
+// NotFound sends a HTTP response with status code 404.
+func (ctx *GetMusicContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
 // RecommendRecommendationsContext provides the recommendations recommend action context.
 type RecommendRecommendationsContext struct {
 	context.Context
@@ -96,6 +102,12 @@ func (ctx *RecommendRecommendationsContext) OKAll(r *BluelensRecommendationsAll)
 func (ctx *RecommendRecommendationsContext) OK(r *BluelensRecommendations) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *RecommendRecommendationsContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
 // FollowUserContext provides the user follow action context.
@@ -152,6 +164,12 @@ func (ctx *FollowUserContext) BadRequest(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
+// NotFound sends a HTTP response with status code 404.
+func (ctx *FollowUserContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
 // GetUserContext provides the user get action context.
 type GetUserContext struct {
 	context.Context
@@ -192,6 +210,12 @@ func (ctx *GetUserContext) OK(r *BluelensUser) error {
 func (ctx *GetUserContext) OKLink(r *BluelensUserLink) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *GetUserContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
 // ListenUserContext provides the user listen action context.
@@ -246,4 +270,10 @@ func (ctx *ListenUserContext) OKLink(r *BluelensUserLink) error {
 func (ctx *ListenUserContext) BadRequest(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ListenUserContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
