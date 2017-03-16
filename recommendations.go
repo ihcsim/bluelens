@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"fmt"
@@ -29,10 +29,7 @@ func RecommendSort(userID string, maxCount int, store Store) (*Recommendations, 
 	}
 
 	sort.Slice(r.List, func(i, j int) bool {
-		if strings.Compare(r.List[i].ID, r.List[j].ID) == -1 {
-			return true
-		}
-		return false
+		return strings.Compare(r.List[i].ID, r.List[j].ID) == -1
 	})
 
 	return r, nil
@@ -112,5 +109,5 @@ func buildExcludeList(u *User) map[string]struct{} {
 
 // String returns the string representation of the recommendations.
 func (r Recommendations) String() string {
-	return fmt.Sprintf("%T {\nUser ID:%q\nList: [%s]\n}", r, r.UserID, MusicList(r.List))
+	return fmt.Sprintf("%T {\nUser ID:%q\nList: [%s]\n}", r, r.UserID, r.List)
 }

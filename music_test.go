@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"reflect"
@@ -41,10 +41,7 @@ func TestMusicList(t *testing.T) {
 		}
 
 		sort.Slice(actual, func(i, j int) bool {
-			if strings.Compare(actual[i].ID, actual[j].ID) == -1 {
-				return true
-			}
-			return false
+			return strings.Compare(actual[i].ID, actual[j].ID) == -1
 		})
 
 		if !reflect.DeepEqual(test.expected, actual) {

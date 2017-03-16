@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"reflect"
@@ -6,18 +6,42 @@ import (
 )
 
 func TestInMemoryStore(t *testing.T) {
-	store := NewInMemoryStore()
+	maxCount := 20
+	store := FixtureStore{
+		&InMemoryStore{
+			musicList:       make(map[string]*Music),
+			musicListByTags: make(map[string]MusicList),
+			userBase:        make(map[string]*User),
+		},
+	}
 
 	t.Run("manage users", func(t *testing.T) {
-		user := &User{ID: "user-01"}
-		store.AddUser(user)
-		actual, err := store.FindUser("user-01")
+		users := []*User{
+			&User{ID: "user-00"},
+			&User{ID: "user-01"},
+			&User{ID: "user-02"},
+		}
+
+		if err := store.LoadUsers(users); err != nil {
+			t.Fatal("Unexpected error: ", err)
+		}
+
+		actual, err := store.ListUsers(maxCount)
+		if err != nil {
+			t.Fatal("Unexpected error: ", err)
+		}
+		if !reflect.DeepEqual(users, actual) {
+			t.Errorf("User list mismatch. Expected %v, but got %v", users, actual)
+		}
+
+		user := users[1]
+		actualUser, err := store.FindUser("user-01")
 		if err != nil {
 			t.Fatal("Unexpected error: ", err)
 		}
 
-		if !reflect.DeepEqual(user, actual) {
-			t.Errorf("User mismatch. Expected %+v, but got %+v", user, actual)
+		if !reflect.DeepEqual(user, actualUser) {
+			t.Errorf("User mismatch. Expected %+v, but got %+v", user, actualUser)
 		}
 
 		_, err = store.FindUser("non-existent")

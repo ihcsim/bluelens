@@ -1,0 +1,15 @@
+package: github.com/ihcsim/bluelens
+import:
+- package: github.com/goadesign/goa
+  version: ^1.1.0
+  subpackages:
+  - client
+  - design
+  - design/apidsl
+  - goatest
+  - middleware
+  - uuid
+- package: github.com/spf13/cobra
+- package: golang.org/x/net
+  subpackages:
+  - context
