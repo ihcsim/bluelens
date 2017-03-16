@@ -13,6 +13,50 @@ The following is the list of rules to determine the recommendations:
 * Followees of user. And maybe even followees of the followees.
 * Preferences to be given to songs that are new to the user.
 
+## Getting Started
+Use the Makefile to build the server and client:
+```sh
+$ make
+```
+Run the `bluelens` binary to start the server:
+```sh
+$ ./bluelens
+2017/03/16 16:22:18 [INFO] mount ctrl=Music action=Get route=GET /bluelens/music/:musicID
+2017/03/16 16:22:18 [INFO] mount ctrl=Recommendations action=Recommend route=GET /bluelens/recommendations/:userID/:maxCount
+2017/03/16 16:22:18 [INFO] mount ctrl=Swagger files=server/swagger/swagger.json route=GET /swagger.json
+2017/03/16 16:22:18 [INFO] mount ctrl=User action=Follow route=POST /bluelens/user/:userID/follows/:followeeID
+2017/03/16 16:22:18 [INFO] mount ctrl=User action=Get route=GET /bluelens/user/:userID
+2017/03/16 16:22:18 [INFO] mount ctrl=User action=Listen route=POST /bluelens/user/:userID/listen/:musicID
+2017/03/16 16:22:18 [INFO] listen transport=http addr=:8080
+```
+Use the `blue` client to interact with the server:
+```sh
+$ ./blue --help
+CLI client for the bluelens service
+
+Usage:
+  bluelens-cli [command]
+
+Available Commands:
+  download    Download file with given path
+  follow      Update a user's followees list with a new followee.
+  get         get action
+  help        Help about any command
+  listen      Add a music to a user's history.
+  recommend   Make music recommendations for a user.
+
+Flags:
+      --dump               Dump HTTP request and response.
+  -H, --host string        API hostname (default "localhost:8080")
+  -s, --scheme string      Set the requests scheme
+  -t, --timeout duration   Set the request timeout (default 20s)
+
+Use "bluelens-cli [command] --help" for more information about a command.
+```
+
+## API
+The `design/design.go` contains all the endpoints specifications. The swagger doc is accessible at http://localhost:8080/swagger.json
+
 ## Data Model
 This system is constrained by the following pre-defined data model:
 
