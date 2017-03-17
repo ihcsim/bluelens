@@ -1,0 +1,10 @@
+{
+  "description": "hold the lists that each user heard before",
+  "userIds":{
+    "user-01": ["song-02","song-06"],
+    "user-02": ["song-04","song-09"],
+    "user-03": ["song-08","song-07"],
+    "user-04": ["song-02","song-06","song-07"],
+    "user-05": ["song-11"]
+  }
+}

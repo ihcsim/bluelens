@@ -1,14 +1,14 @@
 {
-  "m1" : ["jazz","old school", "instrumental"],
-  "m2" : ["samba", "60s"],
-  "m3" : ["rock", "alternative"],
-  "m4" : ["rock", "alternative"],
-  "m5" : ["folk", "instrumental"],
-  "m6" : ["60s", "rock", "old school"],
-  "m7" : ["alternative", "dance"],
-  "m8" : ["electronic", "pop"],
-  "m9" : ["60s","rock"],
-  "m10": ["60s", "jazz"],
-  "m11": ["samba"],
-  "m12": ["jazz", "instrumental"]
+  "song-01" : ["jazz","old school", "instrumental"],
+  "song-02" : ["samba", "60s"],
+  "song-03" : ["rock", "alternative"],
+  "song-04" : ["rock", "alternative"],
+  "song-05" : ["folk", "instrumental"],
+  "song-06" : ["60s", "rock", "old school"],
+  "song-07" : ["alternative", "dance"],
+  "song-08" : ["electronic", "pop"],
+  "song-09" : ["60s","rock"],
+  "song-010": ["60s", "jazz"],
+  "song-011": ["samba"],
+  "song-012": ["jazz", "instrumental"]
 }
