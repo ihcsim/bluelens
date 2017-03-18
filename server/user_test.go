@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/goadesign/goa"
@@ -9,20 +10,26 @@ import (
 	"github.com/ihcsim/bluelens/server/app/test"
 )
 
-// store singleton
-var userCtrlStoreFixture core.Store
+var (
+	// store singleton
+	userCtrlStoreFixture core.Store
+
+	// ensures test store is init only once
+	testStoreInit sync.Once
+)
 
 func TestUserController(t *testing.T) {
 	// mock the store() function
 	storeFunc := store
 	storeFuncMock := func() core.Store {
 		var err error
-		once.Do(func() {
+		testStoreInit.Do(func() {
 			userCtrlStoreFixture, err = core.NewFixtureStore()
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
 		})
+
 		return userCtrlStoreFixture
 	}
 	store = storeFuncMock

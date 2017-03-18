@@ -15,8 +15,10 @@ type UserHistory struct {
 // If r isn't a valid JSON structure, a JSON decoding error is returned.
 func (m *UserHistory) Decode(r io.Reader) error {
 	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&m); err != nil {
-		return err
+	for decoder.More() {
+		if err := decoder.Decode(&m); err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -1,5 +1,5 @@
 hash: fda2985bb2aae606ccdc987542f95aaa714410414fb1bfe776263339e065d242
-updated: 2017-03-09T20:11:34.982535076-08:00
+updated: 2017-03-16T21:52:15.749657674-07:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -11,6 +11,7 @@ imports:
   version: 8f0fdca409904318050f9e03579c3878f8928826
   subpackages:
   - client
+  - cors
   - design
   - design/apidsl
   - dslengine

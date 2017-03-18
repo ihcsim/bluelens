@@ -15,8 +15,10 @@ type UserFollowees struct {
 // If r isn't a valid JSON data structure, a JSON decoding error is returned.
 func (f *UserFollowees) Decode(r io.Reader) error {
 	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&f); err != nil {
-		return err
+	for decoder.More() {
+		if err := decoder.Decode(&f); err != nil {
+			return err
+		}
 	}
 
 	return nil

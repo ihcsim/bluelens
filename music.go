@@ -1,7 +1,6 @@
 package core
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -26,7 +25,7 @@ type MusicList []*Music
 func (ml *MusicList) Unmarshal(obj json.JSONObject) error {
 	musicList, ok := obj.(*json.MusicList)
 	if !ok {
-		return errors.New("Unable to parse music list JSON object. Type assertion failed.")
+		return ErrTypeAssertion
 	}
 
 	for id, tags := range *musicList {

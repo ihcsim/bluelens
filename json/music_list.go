@@ -12,8 +12,10 @@ type MusicList map[string][]string
 // If r isn't a valid JSON structure, a JSON decoding error is returned.
 func (ml *MusicList) Decode(r io.Reader) error {
 	decoder := json.NewDecoder(r)
-	if err := decoder.Decode(&ml); err != nil {
-		return err
+	for decoder.More() {
+		if err := decoder.Decode(&ml); err != nil {
+			return err
+		}
 	}
 
 	return nil
