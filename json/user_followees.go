@@ -5,10 +5,10 @@ import (
 	"io"
 )
 
-// UserFollowees is a JSON object of user ID pairs such that the pair ["a", "b"] is interpreted as user "a" follows user "b".
+// UserFollowees is a JSON object with a "Follows" array attribute. Each element of "Follows" is a user-ID pair such that the pair ["a", "b"] means user "a" follows user "b".
 type UserFollowees struct {
 	Description string
-	History     [][]string `json:"operations"`
+	Follows     [][]string `json:"operations"`
 }
 
 // Decode reads a the followees data from r into f.

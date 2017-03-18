@@ -74,9 +74,9 @@ func (f *FixtureStore) music() MusicList {
 	}
 }
 
-func (f *FixtureStore) users() []*User {
+func (f *FixtureStore) users() UserList {
 	fixtureMusic := f.music()
-	usersWithHistory := []*User{
+	usersWithHistory := UserList{
 		&User{ID: "user-new"},
 		&User{ID: "user-01", History: MusicList{fixtureMusic[1]}},
 		&User{ID: "user-02", History: MusicList{fixtureMusic[1], fixtureMusic[2]}},
@@ -85,17 +85,17 @@ func (f *FixtureStore) users() []*User {
 	}
 	users := usersWithHistory
 
-	usersWithFollowees := []*User{
-		&User{ID: "user-05", Followees: []*User{users[1]}},
-		&User{ID: "user-06", Followees: []*User{users[1], users[2]}},
-		&User{ID: "user-07", Followees: []*User{users[4]}},
+	usersWithFollowees := UserList{
+		&User{ID: "user-05", Followees: UserList{users[1]}},
+		&User{ID: "user-06", Followees: UserList{users[1], users[2]}},
+		&User{ID: "user-07", Followees: UserList{users[4]}},
 	}
 	users = append(users, usersWithFollowees...)
 
-	usersWithHistoryAndFollowees := []*User{
-		&User{ID: "user-08", History: MusicList{fixtureMusic[1]}, Followees: []*User{users[1]}},
-		&User{ID: "user-09", History: MusicList{fixtureMusic[15]}, Followees: []*User{users[3], users[2]}},
-		&User{ID: "user-10", History: MusicList{fixtureMusic[0]}, Followees: []*User{users[4]}},
+	usersWithHistoryAndFollowees := UserList{
+		&User{ID: "user-08", History: MusicList{fixtureMusic[1]}, Followees: UserList{users[1]}},
+		&User{ID: "user-09", History: MusicList{fixtureMusic[15]}, Followees: UserList{users[3], users[2]}},
+		&User{ID: "user-10", History: MusicList{fixtureMusic[0]}, Followees: UserList{users[4]}},
 	}
 	users = append(users, usersWithHistoryAndFollowees...)
 

@@ -49,8 +49,8 @@ func TestMusicHistory(t *testing.T) {
 				t.Fatalf("Unexpected error: %s. Test case %d", err, id)
 			}
 
-			if !reflect.DeepEqual(test.expected, m.History) {
-				t.Errorf("Events mismatch. Test case %d. Expected %+v, but got %+v", id, test.expected, m.History)
+			if !reflect.DeepEqual(test.expected, m.Listens) {
+				t.Errorf("Events mismatch. Test case %d. Expected %+v, but got %+v", id, test.expected, m.Listens)
 			}
 		}
 	})

@@ -49,8 +49,8 @@ func TestFollowHistory(t *testing.T) {
 				t.Fatalf("Unexpected error: %s. Test case %d", err, id)
 			}
 
-			if !reflect.DeepEqual(test.expected, f.History) {
-				t.Errorf("Follow history mismatch. Test case %d. Expected %v, but got %v", id, test.expected, f.History)
+			if !reflect.DeepEqual(test.expected, f.Follows) {
+				t.Errorf("Follow history mismatch. Test case %d. Expected %v, but got %v", id, test.expected, f.Follows)
 			}
 		}
 	})

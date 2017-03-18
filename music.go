@@ -14,6 +14,7 @@ type Music struct {
 	Tags []string
 }
 
+// String returns a string representation of m.
 func (m Music) String() string {
 	return fmt.Sprintf("%T {ID: %s, Tags: %s}", m, m.ID, m.Tags)
 }
@@ -21,8 +22,8 @@ func (m Music) String() string {
 // MusicList is a collection of music resources.
 type MusicList []*Music
 
-// BuildFrom creates a list of music from the provided data.
-func (ml *MusicList) BuildFrom(obj json.JSONObject) error {
+// Unmarshal creates a list of music from the provided data.
+func (ml *MusicList) Unmarshal(obj json.JSONObject) error {
 	musicList, ok := obj.(*json.MusicList)
 	if !ok {
 		return errors.New("Unable to parse music list JSON object. Type assertion failed.")
