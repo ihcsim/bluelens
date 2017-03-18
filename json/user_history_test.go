@@ -14,7 +14,7 @@ func TestMusicHistory(t *testing.T) {
 		raw := json.RawMessage(fmt.Sprintf(`{"description": %q}}`, description))
 		r := bytes.NewReader(raw)
 
-		var m MusicHistory
+		var m UserHistory
 		if err := m.Decode(r); err != nil {
 			t.Fatal("Unexpected error: ", err)
 		}
@@ -44,13 +44,13 @@ func TestMusicHistory(t *testing.T) {
 		for id, test := range tests {
 			r := bytes.NewReader(test.data)
 
-			var m MusicHistory
+			var m UserHistory
 			if err := m.Decode(r); err != nil {
 				t.Fatalf("Unexpected error: %s. Test case %d", err, id)
 			}
 
-			if !reflect.DeepEqual(test.expected, m.History) {
-				t.Errorf("Events mismatch. Test case %d. Expected %+v, but got %+v", id, test.expected, m.History)
+			if !reflect.DeepEqual(test.expected, m.Listens) {
+				t.Errorf("Events mismatch. Test case %d. Expected %+v, but got %+v", id, test.expected, m.Listens)
 			}
 		}
 	})

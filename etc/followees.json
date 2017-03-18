@@ -1,0 +1,28 @@
+{
+  "description": "understand the list as [0] is following [1]",
+  "operations": [
+    ["user-01","user-02"],
+    ["user-01","user-03"],
+    ["user-02","user-03"],
+    ["user-02","user-04"],
+    ["user-02","user-05"],
+    ["user-03","user-01"],
+    ["user-03","user-01"],
+    ["user-04","user-07"],
+    ["user-04","user-08"],
+    ["user-05","user-02"],
+    ["user-06","user-08"],
+    ["user-06","user-03"],
+    ["user-06","user-04"],
+    ["user-06","user-03"],
+    ["user-07","user-10"],
+    ["user-08",""],
+    ["user-09","user-10"],
+    ["user-09","user-10"],
+    ["user-09","user-07"],
+    ["user-09","user-03"],
+    ["user-09","user-01"],
+    ["user-09","user-06"],
+    ["user-11","user-10"]
+  ]
+}

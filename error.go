@@ -1,6 +1,14 @@
 package core
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	// ErrTypeAssertion is the error for a type assertion failure.
+	ErrTypeAssertion = errors.New("Type assertion failed")
+)
 
 // EntityNotFound is the error used to capture the case where the specified there are no entities of the specified kind and ID.
 type EntityNotFound struct {

@@ -14,7 +14,7 @@ func TestFollowHistory(t *testing.T) {
 		raw := json.RawMessage(fmt.Sprintf(`{"description": %q}`, description))
 		r := bytes.NewReader(raw)
 
-		var f FollowHistory
+		var f UserFollowees
 		if err := f.Decode(r); err != nil {
 			t.Fatal("Unexpected error: ", err)
 		}
@@ -44,13 +44,13 @@ func TestFollowHistory(t *testing.T) {
 		for id, test := range tests {
 			r := bytes.NewReader(test.data)
 
-			var f FollowHistory
+			var f UserFollowees
 			if err := f.Decode(r); err != nil {
 				t.Fatalf("Unexpected error: %s. Test case %d", err, id)
 			}
 
-			if !reflect.DeepEqual(test.expected, f.History) {
-				t.Errorf("Follow history mismatch. Test case %d. Expected %v, but got %v", id, test.expected, f.History)
+			if !reflect.DeepEqual(test.expected, f.Follows) {
+				t.Errorf("Follow history mismatch. Test case %d. Expected %v, but got %v", id, test.expected, f.Follows)
 			}
 		}
 	})

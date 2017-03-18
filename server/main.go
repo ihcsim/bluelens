@@ -3,12 +3,23 @@
 package main
 
 import (
+	"os"
+
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/ihcsim/bluelens/server/app"
 )
 
 func main() {
+	config, err := parseFlags(os.Args[1:])
+	if err != nil {
+		os.Exit(1)
+	}
+
+	if err := initStore(config); err != nil {
+		os.Exit(1)
+	}
+
 	// Create service
 	service := goa.New("bluelens")
 

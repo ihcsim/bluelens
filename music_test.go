@@ -36,7 +36,7 @@ func TestMusicList(t *testing.T) {
 
 	for id, test := range tests {
 		var actual MusicList
-		if err := actual.BuildFrom(&test.input); err != nil {
+		if err := actual.Unmarshal(&test.input); err != nil {
 			t.Fatalf("Unexpected error: %s. Test case %d", err, id)
 		}
 

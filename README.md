@@ -5,11 +5,11 @@
 bluelens makes music recommendations to its users based on the users' social activities.
 
 ## Introduction
-Our fictional client has asked us to build a music recommendation system for his customers. The system has to take note of what music a user has listened to, which people they follow and from there recommend some songs.
+Our fictional client has asked us to build a music recommendation system for his customers. The system shall make music recommendations based on a user's listening history and who they follow.
 
 The following is the list of rules to determine the recommendations:
 
-* History of all the music a user has heard before
+* History of all the music a user has heard before.
 * Followees of user. And maybe even followees of the followees.
 * Preferences to be given to songs that are new to the user.
 

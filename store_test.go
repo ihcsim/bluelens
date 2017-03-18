@@ -16,7 +16,7 @@ func TestInMemoryStore(t *testing.T) {
 	}
 
 	t.Run("manage users", func(t *testing.T) {
-		users := []*User{
+		users := UserList{
 			&User{ID: "user-00"},
 			&User{ID: "user-01"},
 			&User{ID: "user-02"},

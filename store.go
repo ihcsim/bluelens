@@ -6,11 +6,11 @@ import "sort"
 // The implementer of Store is expected to interface with the API of the actual datastore.
 type Store interface {
 	// LoadUser loads the provided list of users into the store.
-	LoadUsers([]*User) error
+	LoadUsers(UserList) error
 
 	// List users retrieves a list of user resources from the store. The length of the result list
 	// is bounded by maxCount.
-	ListUsers(maxCount int) ([]*User, error)
+	ListUsers(maxCount int) (UserList, error)
 
 	// FindUser looks up the user with the specified ID.
 	FindUser(userID string) (*User, error)
@@ -60,7 +60,7 @@ func NewInMemoryStore() Store {
 }
 
 // LoadUsers loads the list of provided users into the store.
-func (s *InMemoryStore) LoadUsers(users []*User) error {
+func (s *InMemoryStore) LoadUsers(users UserList) error {
 	for _, u := range users {
 		s.userBase[u.ID] = u
 	}
@@ -69,12 +69,12 @@ func (s *InMemoryStore) LoadUsers(users []*User) error {
 
 // ListUsers retrieves a list of user resources from the store. The length of
 // the result list is bounded by maxCount.
-func (s *InMemoryStore) ListUsers(maxCount int) ([]*User, error) {
+func (s *InMemoryStore) ListUsers(maxCount int) (UserList, error) {
 	if maxCount <= 0 {
 		maxCount = defaultMaxCount
 	}
 
-	list := []*User{}
+	list := UserList{}
 	var index int
 	for _, u := range s.userBase {
 		list = append(list, u)
