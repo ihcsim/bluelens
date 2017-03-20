@@ -86,7 +86,9 @@ func Recommend(userID string, maxCount int, store Store) (*Recommendations, erro
 		case m := <-musicChan:
 			if _, exists := exclude[m.ID]; !exists {
 				exclude[m.ID] = struct{}{}
-				r.List = append(r.List, m)
+				if err := r.List.Add(m); err != nil {
+					return nil, err
+				}
 			}
 		case <-doneFolloweesTask:
 			doneFolloweesTask = nil

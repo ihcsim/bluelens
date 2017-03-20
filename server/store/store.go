@@ -132,7 +132,10 @@ func initUserDB(c *config.UserConfig) error {
 				u1.Followees = u2.Followees
 			}
 		}
-		merged = append(merged, u1)
+
+		if err := merged.Add(u1); err != nil {
+			return err
+		}
 	}
 
 	for _, u2 := range followeesList {
@@ -145,7 +148,9 @@ func initUserDB(c *config.UserConfig) error {
 		}
 
 		if !found {
-			merged = append(merged, u2)
+			if err := merged.Add(u2); err != nil {
+				return err
+			}
 		}
 	}
 

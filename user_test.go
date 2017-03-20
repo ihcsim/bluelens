@@ -16,12 +16,12 @@ func TestUser(t *testing.T) {
 			t.Error("Expected user with no followees and history to be labeled as 'new'")
 		}
 
-		user.Followees = append(user.Followees, &User{ID: "user-02"})
+		user.AddFollowees(&User{ID: "user-02"})
 		if user.IsNew() {
 			t.Error("Expected user with followees and history to not be labeled as 'new'")
 		}
 
-		user.History = append(user.History, &Music{ID: "song-01"})
+		user.AddHistory(&Music{ID: "song-01"})
 		if user.IsNew() {
 			t.Error("Expected user with followees and history to not be labeled as 'new'")
 		}
@@ -34,7 +34,7 @@ func TestUser(t *testing.T) {
 			t.Error("Expected user to not have a followee")
 		}
 
-		user.Followees = append(user.Followees, followee)
+		user.AddFollowees(followee)
 		if !user.HasFollowee(followee.ID) {
 			t.Error("Expected user to have a followee")
 		}
@@ -47,11 +47,126 @@ func TestUser(t *testing.T) {
 			t.Error("Expected user to not have a music history")
 		}
 
-		user.History = append(user.History, history)
+		user.AddHistory(history)
 		if !user.HasHistory(history.ID) {
 			t.Error("Expected user to have a music history")
 		}
 	})
+
+	t.Run("AddFollowees", func(t *testing.T) {
+		user := &User{ID: "user-01"}
+		tests := []struct {
+			followees UserList
+		}{
+			{followees: UserList{&User{ID: "user-02"}}},
+			{followees: UserList{&User{ID: "user-02"}, &User{ID: "user-03"}}},
+		}
+
+		for id, test := range tests {
+			for _, f := range test.followees {
+				if err := user.AddFollowees(f); err != nil {
+					t.Error("Unexpected error occurred. Test case ", id)
+				}
+
+				if !user.HasFollowee(f.ID) {
+					t.Error("Expected followees to be added. Test case ", id)
+				}
+			}
+		}
+
+		t.Run("malformed", func(t *testing.T) {
+			user := &User{ID: "user-01"}
+			followees := []*User{nil, &User{}}
+			for _, f := range followees {
+				if err := user.AddFollowees(f); err != ErrMalformedEntity {
+					t.Error("Expected 'malformed entity' error to occur")
+				}
+			}
+		})
+
+		t.Run("duplicates", func(t *testing.T) {
+			user := &User{ID: "user-01"}
+			followees := UserList{&User{ID: "user-02"}, &User{ID: "user-02"}}
+			for id, f := range followees {
+				if err := user.AddFollowees(f); err != nil {
+					t.Error("Unexpected error occurred. Test case ", id)
+				}
+
+				if !user.HasFollowee(f.ID) {
+					t.Error("Expected followees to be added. Test case ", id)
+				}
+			}
+
+			var found bool
+			for _, f := range user.Followees {
+				if f.ID == "user-02" {
+					if !found {
+						found = true
+					} else {
+						t.Error("Expect no duplicates in the list")
+					}
+				}
+			}
+		})
+	})
+
+	t.Run("AddHistory", func(t *testing.T) {
+		user := &User{ID: "user-01"}
+		tests := []struct {
+			history MusicList
+		}{
+			{history: MusicList{&Music{ID: "song-02"}}},
+			{history: MusicList{&Music{ID: "song-02"}, &Music{ID: "song-03"}}},
+		}
+
+		for id, test := range tests {
+			for _, h := range test.history {
+				if err := user.AddHistory(h); err != nil {
+					t.Error("Unexpected error occurred. Test case ", id)
+				}
+
+				if !user.HasHistory(h.ID) {
+					t.Error("Expected followees to be added. Test case ", id)
+				}
+			}
+		}
+
+		t.Run("malformed", func(t *testing.T) {
+			user := &User{ID: "user-01"}
+			history := []*Music{nil, &Music{}}
+			for _, h := range history {
+				if err := user.AddHistory(h); err != ErrMalformedEntity {
+					t.Error("Expected 'malformed entity' error to occur")
+				}
+			}
+		})
+
+		t.Run("duplicates", func(t *testing.T) {
+			user := &User{ID: "user-01"}
+			history := MusicList{&Music{ID: "song-02"}, &Music{ID: "music-02"}}
+			for id, h := range history {
+				if err := user.AddHistory(h); err != nil {
+					t.Error("Unexpected error occurred. Test case ", id)
+				}
+
+				if !user.HasHistory(h.ID) {
+					t.Error("Expected followees to be added. Test case ", id)
+				}
+			}
+
+			var found bool
+			for _, h := range user.History {
+				if h.ID == "song-02" {
+					if !found {
+						found = true
+					} else {
+						t.Error("Expect no duplicates in the list")
+					}
+				}
+			}
+		})
+	})
+
 }
 
 func TestUserList(t *testing.T) {

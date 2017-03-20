@@ -81,7 +81,11 @@ func TestUserController(t *testing.T) {
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
-			user.Followees = append(user.Followees, followee)
+
+			if err := user.AddFollowees(followee); err != nil {
+				t.Fatal("Unexpected error: ", err)
+			}
+
 			expected := mediaTypeUser(user)
 
 			if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, followee.ID); !reflect.DeepEqual(expected, actual) {
@@ -130,7 +134,10 @@ func TestUserController(t *testing.T) {
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
-			user.History = append(user.History, music)
+
+			if err := user.AddHistory(music); err != nil {
+				t.Fatal("Unexpected error: ", err)
+			}
 
 			expected := mediaTypeUser(user)
 			if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, music.ID); !reflect.DeepEqual(expected, actual) {

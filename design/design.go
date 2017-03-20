@@ -37,7 +37,9 @@ var _ = Resource("recommendations", func() {
 		Description("Make music recommendations for a user.")
 		Params(func() {
 			Param("userID", String, "ID of the user these recommendations are meant for.")
-			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user.")
+			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user. Set to zero to use server's default.", func() {
+				Minimum(0)
+			})
 		})
 		Response(OK, Recommendations)
 		Response(NotFound, ErrorMedia)
@@ -47,13 +49,13 @@ var _ = Resource("recommendations", func() {
 var _ = Resource("user", func() {
 	BasePath("/user")
 	DefaultMedia(User)
+	Params(func() {
+		Param("userID", String, "ID of the user.")
+	})
 
 	Action("get", func() {
 		Routing(GET("/:userID"))
 		Description("Get a user resource with the given ID")
-		Params(func() {
-			Param("userID", String, "ID of the user.")
-		})
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 	})
@@ -62,7 +64,6 @@ var _ = Resource("user", func() {
 		Routing(POST("/:userID/listen/:musicID"))
 		Description("Add a music to a user's history.")
 		Params(func() {
-			Param("userID", String, "ID of the user.")
 			Param("musicID", String, "ID of the music.")
 		})
 		Response(OK)
@@ -74,7 +75,6 @@ var _ = Resource("user", func() {
 		Routing(POST("/:userID/follows/:followeeID"))
 		Description("Update a user's followees list with a new followee.")
 		Params(func() {
-			Param("userID", String, "ID of the follower.")
 			Param("followeeID", String, "ID of the followee.")
 		})
 		Response(OK)
@@ -145,12 +145,11 @@ var User = MediaType("application/vnd.bluelens.user+json", func() {
 
 	View("default", func() {
 		Attribute("id")
-		Attribute("links")
 		Attribute("href")
+		Attribute("links")
 	})
 
 	View("link", func() {
-		Attribute("id")
 		Attribute("href")
 	})
 
@@ -180,7 +179,6 @@ var Music = MediaType("application/vnd.bluelens.music+json", func() {
 	})
 
 	View("link", func() {
-		Attribute("id")
 		Attribute("href")
 	})
 })

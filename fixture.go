@@ -19,7 +19,11 @@ func NewFixtureStore() (*FixtureStore, error) {
 		return nil, err
 	}
 
-	if err := store.LoadUsers(store.users()); err != nil {
+	userList, err := store.users()
+	if err != nil {
+		return nil, err
+	}
+	if err := store.LoadUsers(userList); err != nil {
 		return nil, err
 	}
 
@@ -74,7 +78,7 @@ func (f *FixtureStore) music() MusicList {
 	}
 }
 
-func (f *FixtureStore) users() UserList {
+func (f *FixtureStore) users() (UserList, error) {
 	fixtureMusic := f.music()
 	usersWithHistory := UserList{
 		&User{ID: "user-new"},
@@ -90,14 +94,23 @@ func (f *FixtureStore) users() UserList {
 		&User{ID: "user-06", Followees: UserList{users[1], users[2]}},
 		&User{ID: "user-07", Followees: UserList{users[4]}},
 	}
-	users = append(users, usersWithFollowees...)
+
+	for _, u := range usersWithFollowees {
+		if err := users.Add(u); err != nil {
+			return nil, err
+		}
+	}
 
 	usersWithHistoryAndFollowees := UserList{
 		&User{ID: "user-08", History: MusicList{fixtureMusic[1]}, Followees: UserList{users[1]}},
 		&User{ID: "user-09", History: MusicList{fixtureMusic[15]}, Followees: UserList{users[3], users[2]}},
 		&User{ID: "user-10", History: MusicList{fixtureMusic[0]}, Followees: UserList{users[4]}},
 	}
-	users = append(users, usersWithHistoryAndFollowees...)
+	for _, u := range usersWithHistoryAndFollowees {
+		if err := users.Add(u); err != nil {
+			return nil, err
+		}
+	}
 
-	return users
+	return users, nil
 }

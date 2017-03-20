@@ -19,6 +19,11 @@ func (u *User) IsNew() bool {
 	return len(u.Followees) == 0 && len(u.History) == 0
 }
 
+// AddFollowees add the provided followee to the user's followees list.
+func (u *User) AddFollowees(f *User) error {
+	return u.Followees.Add(f)
+}
+
 // HasFollowee returns true if the user has a followee with the specified ID. Otherwise, it returns false.
 func (u *User) HasFollowee(id string) bool {
 	for _, followee := range u.Followees {
@@ -27,6 +32,11 @@ func (u *User) HasFollowee(id string) bool {
 		}
 	}
 	return false
+}
+
+// AddHistory add the provided music to the user's history list.
+func (u *User) AddHistory(m *Music) error {
+	return u.History.Add(m)
 }
 
 // HasHistory returns true if the user has listened to the music of the sepcified ID. Otherwise, it returns false.
@@ -58,6 +68,25 @@ func (u User) String() string {
 // UserList is a collection of user resources.
 type UserList []*User
 
+// Add adds the provided user to the user list.
+// If the user already exists in the list, it is ignored.
+// If the user is nil or it's missing an ID, an ErrMalformedEntity error is returned.
+func (ul *UserList) Add(u *User) error {
+	if u == nil || u.ID == "" {
+		return ErrMalformedEntity
+	}
+
+	// avoid duplicates
+	for _, user := range *ul {
+		if user.ID == u.ID {
+			return nil
+		}
+	}
+
+	*ul = append(*ul, u)
+	return nil
+}
+
 // Unmarshal fills the provided user list with user resources extracted from the given JSON object.
 func (ul *UserList) Unmarshal(obj json.JSONObject) error {
 	switch list := obj.(type) {
@@ -76,11 +105,11 @@ func (ul *UserList) unmarshalUserHistory(obj *json.UserHistory) {
 	for userID, historyIDs := range obj.Listens {
 		var history MusicList
 		for _, id := range historyIDs {
-			history = append(history, &Music{ID: id})
+			history.Add(&Music{ID: id})
 		}
 
 		user := &User{ID: userID, History: history}
-		(*ul) = append((*ul), user)
+		ul.Add(user)
 	}
 }
 
@@ -92,13 +121,13 @@ func (ul *UserList) unmarshalUserFollowees(obj *json.UserFollowees) {
 		if !exist {
 			users[userID] = &User{ID: userID, Followees: UserList{followee}}
 		} else {
-			user.Followees = append(user.Followees, followee)
+			user.AddFollowees(followee)
 			users[userID] = user
 		}
 	}
 
 	for _, user := range users {
-		(*ul) = append((*ul), user)
+		ul.Add(user)
 	}
 }
 
