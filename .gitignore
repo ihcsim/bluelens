@@ -2,3 +2,11 @@
 /bluelens
 /blue
 vendor
+
+# Ignore these auto-generated controllers code. All the working controllers code are found in the server/ctrl folder.
+# Changes to the controllers code (as a result of changing the design/design.go spec) must be manually compared with and copied
+# to the server/ctrl folder.
+server/music.go
+server/recommendations.go
+server/swagger.go
+server/user.go

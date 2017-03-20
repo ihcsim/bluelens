@@ -8,6 +8,8 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/ihcsim/bluelens/server/app"
+	"github.com/ihcsim/bluelens/server/ctrl"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 func main() {
@@ -16,7 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := initStore(config); err != nil {
+	if err := store.Initialize(config); err != nil {
 		os.Exit(1)
 	}
 
@@ -30,16 +32,16 @@ func main() {
 	service.Use(middleware.Recover())
 
 	// Mount "music" controller
-	c := NewMusicController(service)
+	c := ctrl.NewMusicController(service)
 	app.MountMusicController(service, c)
 	// Mount "recommendations" controller
-	c2 := NewRecommendationsController(service)
+	c2 := ctrl.NewRecommendationsController(service)
 	app.MountRecommendationsController(service, c2)
 	// Mount "swagger" controller
-	c3 := NewSwaggerController(service)
+	c3 := ctrl.NewSwaggerController(service)
 	app.MountSwaggerController(service, c3)
 	// Mount "user" controller
-	c4 := NewUserController(service)
+	c4 := ctrl.NewUserController(service)
 	app.MountUserController(service, c4)
 
 	// Start service

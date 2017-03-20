@@ -1,10 +1,11 @@
-package main
+package ctrl
 
 import (
 	"fmt"
 
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/server/app"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 // MusicController implements the music resource.
@@ -19,7 +20,7 @@ func NewMusicController(service *goa.Service) *MusicController {
 
 // Get runs the get action.
 func (c *MusicController) Get(ctx *app.GetMusicContext) error {
-	m, err := store().FindMusic(ctx.MusicID)
+	m, err := store.Instance().FindMusic(ctx.MusicID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}

@@ -1,4 +1,4 @@
-package main
+package ctrl
 
 import (
 	"reflect"
@@ -7,11 +7,12 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/server/app/test"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 func TestMusicController(t *testing.T) {
 	// mock the store() function
-	storeFunc := store
+	storeFunc := store.Instance
 	storeFuncMock := func() core.Store {
 		s, err := core.NewFixtureStore()
 		if err != nil {
@@ -19,9 +20,9 @@ func TestMusicController(t *testing.T) {
 		}
 		return s
 	}
-	store = storeFuncMock
+	store.Instance = storeFuncMock
 	defer func() {
-		store = storeFunc
+		store.Instance = storeFunc
 	}()
 
 	svc := goa.New("goatest")
@@ -30,7 +31,7 @@ func TestMusicController(t *testing.T) {
 	t.Run("get", func(t *testing.T) {
 		t.Run("found", func(t *testing.T) {
 			musicID := "song-00"
-			music, err := store().FindMusic(musicID)
+			music, err := store.Instance().FindMusic(musicID)
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}

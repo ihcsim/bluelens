@@ -1,9 +1,10 @@
-package main
+package ctrl
 
 import (
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/server/app"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 // RecommendationsController implements the recommendations resource.
@@ -18,7 +19,7 @@ func NewRecommendationsController(service *goa.Service) *RecommendationsControll
 
 // Recommend runs the recommend action.
 func (c *RecommendationsController) Recommend(ctx *app.RecommendRecommendationsContext) error {
-	recommendations, err := core.RecommendSort(ctx.UserID, ctx.MaxCount, store())
+	recommendations, err := core.RecommendSort(ctx.UserID, ctx.MaxCount, store.Instance())
 	if err != nil {
 		return err
 	}

@@ -22,7 +22,7 @@ server: server/codegen server/build
 client: client/codegen client/build
 
 server/codegen:
-	goagen main ${GOAGEN_MAIN_OPTS} -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
+	goagen main -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 	goagen app -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 	goagen swagger -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 

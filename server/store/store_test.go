@@ -1,9 +1,11 @@
-package main
+package store
 
 import (
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/ihcsim/bluelens/server/config"
 )
 
 // test data to be written into temp data files
@@ -29,8 +31,8 @@ var (
 
 func TestStoreInit(t *testing.T) {
 	t.Run("without data files", func(t *testing.T) {
-		c := &userConfig{}
-		if err := initStore(c); err == nil {
+		c := &config.UserConfig{}
+		if err := Initialize(c); err == nil {
 			t.Fatal("Expected error to occur")
 		}
 	})
@@ -54,14 +56,14 @@ func TestStoreInit(t *testing.T) {
 		}
 		defer os.Remove(followeesFile.Name())
 
-		c := &userConfig{
-			musicFile:     musicFile.Name(),
-			historyFile:   historyFile.Name(),
-			followeesFile: followeesFile.Name(),
+		c := &config.UserConfig{
+			MusicFile:     musicFile.Name(),
+			HistoryFile:   historyFile.Name(),
+			FolloweesFile: followeesFile.Name(),
 		}
 
 		t.Run("empty data", func(t *testing.T) {
-			if err := initStore(c); err != nil {
+			if err := Initialize(c); err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
 		})
@@ -71,7 +73,7 @@ func TestStoreInit(t *testing.T) {
 				t.Fatal("Unexpected error: ", err)
 			}
 
-			if err := initStore(c); err != nil {
+			if err := Initialize(c); err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
 		})
@@ -85,7 +87,7 @@ func TestStoreInit(t *testing.T) {
 				t.Fatal("Unexpected error: ", err)
 			}
 
-			if err := initStore(c); err != nil {
+			if err := Initialize(c); err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
 		})
@@ -103,7 +105,7 @@ func TestStoreInit(t *testing.T) {
 				t.Fatal("Unexpected error: ", err)
 			}
 
-			if err := initStore(c); err != nil {
+			if err := Initialize(c); err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
 		})

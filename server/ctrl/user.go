@@ -1,8 +1,9 @@
-package main
+package ctrl
 
 import (
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/server/app"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 // UserController implements the user resource.
@@ -17,7 +18,7 @@ func NewUserController(service *goa.Service) *UserController {
 
 // Follow runs the follow action.
 func (c *UserController) Follow(ctx *app.FollowUserContext) error {
-	user, err := store().FindUser(ctx.UserID)
+	user, err := store.Instance().FindUser(ctx.UserID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
@@ -27,7 +28,7 @@ func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 		return ctx.OK(mediaTypeUser(user))
 	}
 
-	updated, err := store().Follow(ctx.UserID, ctx.FolloweeID)
+	updated, err := store.Instance().Follow(ctx.UserID, ctx.FolloweeID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
@@ -37,7 +38,7 @@ func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 
 // Get runs the get action.
 func (c *UserController) Get(ctx *app.GetUserContext) error {
-	user, err := store().FindUser(ctx.UserID)
+	user, err := store.Instance().FindUser(ctx.UserID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
@@ -47,7 +48,7 @@ func (c *UserController) Get(ctx *app.GetUserContext) error {
 
 // Listen runs the listen action.
 func (c *UserController) Listen(ctx *app.ListenUserContext) error {
-	user, err := store().FindUser(ctx.UserID)
+	user, err := store.Instance().FindUser(ctx.UserID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
@@ -57,7 +58,7 @@ func (c *UserController) Listen(ctx *app.ListenUserContext) error {
 		return ctx.OK(mediaTypeUser(user))
 	}
 
-	updated, err := store().Listen(ctx.UserID, ctx.MusicID)
+	updated, err := store.Instance().Listen(ctx.UserID, ctx.MusicID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
