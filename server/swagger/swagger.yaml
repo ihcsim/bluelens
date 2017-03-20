@@ -1,8 +1,5 @@
 consumes:
 - application/json
-- application/xml
-- application/gob
-- application/x-gob
 definitions:
   BluelensMusic:
     description: A music resource (default view)
@@ -236,10 +233,16 @@ definitions:
         type: string
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
+externalDocs:
+  description: Swagger docs
+  url: http://localhost:8080/swagger.json
 host: localhost:8080
 info:
   description: This API provides a set of endpoints to manage users' followees, music
     history and recommendations.
+  license:
+    name: MIT
+    url: https://github.com/ihcsim/bluelens/blob/master/LICENSE
   title: The bluelens API
   version: ""
 paths:
@@ -399,9 +402,6 @@ paths:
       summary: Download server/swagger/swagger.json
 produces:
 - application/json
-- application/xml
-- application/gob
-- application/x-gob
 responses:
   OK:
     description: OK

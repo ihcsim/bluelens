@@ -21,11 +21,7 @@ import (
 func initService(service *goa.Service) {
 	// Setup encoders and decoders
 	service.Encoder.Register(goa.NewJSONEncoder, "application/json")
-	service.Encoder.Register(goa.NewGobEncoder, "application/gob", "application/x-gob")
-	service.Encoder.Register(goa.NewXMLEncoder, "application/xml")
 	service.Decoder.Register(goa.NewJSONDecoder, "application/json")
-	service.Decoder.Register(goa.NewGobDecoder, "application/gob", "application/x-gob")
-	service.Decoder.Register(goa.NewXMLDecoder, "application/xml")
 
 	// Setup default encoder and decoder
 	service.Encoder.Register(goa.NewJSONEncoder, "*/*")

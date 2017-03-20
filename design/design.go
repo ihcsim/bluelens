@@ -13,6 +13,19 @@ var _ = API("bluelens", func() {
 	Host(apiHost)
 	Scheme("http")
 	BasePath("/bluelens")
+
+	License(func() {
+		Name("MIT")
+		URL("https://github.com/ihcsim/bluelens/blob/master/LICENSE")
+	})
+
+	Docs(func() {
+		Description("Swagger docs")
+		URL("http://localhost:8080/swagger.json")
+	})
+
+	Consumes("application/json")
+	Produces("application/json")
 })
 
 var _ = Resource("recommendations", func() {
