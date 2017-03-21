@@ -2,12 +2,12 @@
 
 PACKAGE_ROOT = github.com/ihcsim/bluelens
 PACKAGE_DESIGN = ${PACKAGE_ROOT}/design
-PACKAGE_SERVER = ${PACKAGE_ROOT}/server
-PACKAGE_CLIENT = ${PACKAGE_ROOT}/client
+PACKAGE_SERVER = ${PACKAGE_ROOT}/cmd/blued
+PACKAGE_CLIENT = ${PACKAGE_ROOT}/cmd/blue
 PACKAGE_CLI = ${PACKAGE_CLIENT}/tool/blue
 
-CLIENT_DIR = client
-SERVER_DIR = server
+CLIENT_DIR = cmd/blue
+SERVER_DIR = cmd/blued
 SERVER_HOSTNAME ?= localhost
 SERVER_SCHEME ?= http
 
@@ -24,7 +24,7 @@ server: server/codegen server/build
 client: client/codegen client/build
 
 server/codegen:
-	goagen main -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
+	goagen main ${CODEGEN_MAIN_OPTS} -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 	goagen app -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 	goagen swagger -d ${PACKAGE_DESIGN} -o ${SERVER_DIR}
 
