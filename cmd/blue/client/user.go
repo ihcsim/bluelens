@@ -15,8 +15,8 @@ func CreateUserPath() string {
 }
 
 // CreateUser makes a request to the create action endpoint of the user resource
-func (c *Client) CreateUser(ctx context.Context, path string, payload *User, id *string) (*http.Response, error) {
-	req, err := c.NewCreateUserRequest(ctx, path, payload, id)
+func (c *Client) CreateUser(ctx context.Context, path string, payload *User) (*http.Response, error) {
+	req, err := c.NewCreateUserRequest(ctx, path, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (c *Client) CreateUser(ctx context.Context, path string, payload *User, id 
 }
 
 // NewCreateUserRequest create the request corresponding to the create action endpoint of the user resource.
-func (c *Client) NewCreateUserRequest(ctx context.Context, path string, payload *User, id *string) (*http.Request, error) {
+func (c *Client) NewCreateUserRequest(ctx context.Context, path string, payload *User) (*http.Request, error) {
 	var body bytes.Buffer
 	err := c.Encoder.Encode(payload, &body, "*/*")
 	if err != nil {
@@ -35,11 +35,6 @@ func (c *Client) NewCreateUserRequest(ctx context.Context, path string, payload 
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	if id != nil {
-		values.Set("id", *id)
-	}
-	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("POST", u.String(), &body)
 	if err != nil {
 		return nil, err
@@ -81,8 +76,8 @@ func ListUserPath() string {
 }
 
 // List up to N user resources. N can be adjusted using the 'limit' and 'offset' parameters.
-func (c *Client) ListUser(ctx context.Context, path string, id *string, limit *int, offset *int) (*http.Response, error) {
-	req, err := c.NewListUserRequest(ctx, path, id, limit, offset)
+func (c *Client) ListUser(ctx context.Context, path string, limit *int, offset *int) (*http.Response, error) {
+	req, err := c.NewListUserRequest(ctx, path, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -90,16 +85,13 @@ func (c *Client) ListUser(ctx context.Context, path string, id *string, limit *i
 }
 
 // NewListUserRequest create the request corresponding to the list action endpoint of the user resource.
-func (c *Client) NewListUserRequest(ctx context.Context, path string, id *string, limit *int, offset *int) (*http.Request, error) {
+func (c *Client) NewListUserRequest(ctx context.Context, path string, limit *int, offset *int) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
-	if id != nil {
-		values.Set("id", *id)
-	}
 	if limit != nil {
 		tmp12 := strconv.Itoa(*limit)
 		values.Set("limit", tmp12)

@@ -29,7 +29,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateMusicCreated(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id *string, payload *app.Music) (http.ResponseWriter, *app.BluelensMusic) {
+func CreateMusicCreated(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, payload *app.Music) (http.ResponseWriter, *app.BluelensMusic) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -60,24 +60,14 @@ func CreateMusicCreated(t goatest.TInterface, ctx context.Context, service *goa.
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/bluelens/music"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/bluelens/music"),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -119,7 +109,7 @@ func CreateMusicCreated(t goatest.TInterface, ctx context.Context, service *goa.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateMusicCreatedFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id *string, payload *app.Music) (http.ResponseWriter, *app.BluelensMusicFull) {
+func CreateMusicCreatedFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, payload *app.Music) (http.ResponseWriter, *app.BluelensMusicFull) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -150,24 +140,14 @@ func CreateMusicCreatedFull(t goatest.TInterface, ctx context.Context, service *
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/bluelens/music"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/bluelens/music"),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -209,7 +189,7 @@ func CreateMusicCreatedFull(t goatest.TInterface, ctx context.Context, service *
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateMusicCreatedLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id *string, payload *app.Music) (http.ResponseWriter, *app.BluelensMusicLink) {
+func CreateMusicCreatedLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, payload *app.Music) (http.ResponseWriter, *app.BluelensMusicLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -240,24 +220,14 @@ func CreateMusicCreatedLink(t goatest.TInterface, ctx context.Context, service *
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/bluelens/music"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/bluelens/music"),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -299,7 +269,7 @@ func CreateMusicCreatedLink(t goatest.TInterface, ctx context.Context, service *
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id *string, limit int, offset int) (http.ResponseWriter, app.BluelensMusicCollection) {
+func ListMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, limit int, offset int) (http.ResponseWriter, app.BluelensMusicCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -320,10 +290,6 @@ func ListMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service
 	// Setup request context
 	rw := httptest.NewRecorder()
 	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		query["limit"] = sliceVal
@@ -341,10 +307,6 @@ func ListMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		prms["limit"] = sliceVal
@@ -393,7 +355,7 @@ func ListMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListMusicOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id *string, limit int, offset int) (http.ResponseWriter, app.BluelensMusicFullCollection) {
+func ListMusicOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, limit int, offset int) (http.ResponseWriter, app.BluelensMusicFullCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -414,10 +376,6 @@ func ListMusicOKFull(t goatest.TInterface, ctx context.Context, service *goa.Ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		query["limit"] = sliceVal
@@ -435,10 +393,6 @@ func ListMusicOKFull(t goatest.TInterface, ctx context.Context, service *goa.Ser
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		prms["limit"] = sliceVal
@@ -487,7 +441,7 @@ func ListMusicOKFull(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id *string, limit int, offset int) (http.ResponseWriter, app.BluelensMusicLinkCollection) {
+func ListMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, limit int, offset int) (http.ResponseWriter, app.BluelensMusicLinkCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -508,10 +462,6 @@ func ListMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		query["limit"] = sliceVal
@@ -529,10 +479,6 @@ func ListMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Ser
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		prms["limit"] = sliceVal

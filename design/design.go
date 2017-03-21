@@ -49,9 +49,6 @@ var _ = Resource("recommendations", func() {
 var _ = Resource("user", func() {
 	BasePath("/user")
 	DefaultMedia(UserMediaType)
-	Params(func() {
-		Param("id")
-	})
 
 	Action("list", func() {
 		Routing(GET(""))
@@ -71,6 +68,9 @@ var _ = Resource("user", func() {
 	Action("show", func() {
 		Routing(GET("/:id"))
 		Description("Get a user resource with the given ID.")
+		Params(func() {
+			Param("id")
+		})
 
 		Response(OK, func() {
 			Media(UserMediaType, "full")
@@ -115,9 +115,6 @@ var _ = Resource("user", func() {
 var _ = Resource("music", func() {
 	BasePath("/music")
 	DefaultMedia(MusicMediaType)
-	Params(func() {
-		Param("id")
-	})
 
 	Action("list", func() {
 		Routing(GET(""))
@@ -137,6 +134,9 @@ var _ = Resource("music", func() {
 	Action("show", func() {
 		Routing(GET("/:id"))
 		Description("Get a music resource with the given ID")
+		Params(func() {
+			Param("id")
+		})
 
 		Response(OK, func() {
 			Media(MusicMediaType, "full")

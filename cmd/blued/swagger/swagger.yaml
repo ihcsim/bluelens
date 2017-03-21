@@ -496,10 +496,6 @@ paths:
         and 'offset' parameters.
       operationId: music#list
       parameters:
-      - in: query
-        name: id
-        required: false
-        type: string
       - default: 20
         in: query
         name: limit
@@ -523,10 +519,6 @@ paths:
     post:
       operationId: music#create
       parameters:
-      - in: query
-        name: id
-        required: false
-        type: string
       - description: A music resource
         in: body
         name: payload
@@ -603,10 +595,6 @@ paths:
         and 'offset' parameters.
       operationId: user#list
       parameters:
-      - in: query
-        name: id
-        required: false
-        type: string
       - default: 20
         in: query
         name: limit
@@ -630,10 +618,6 @@ paths:
     post:
       operationId: user#create
       parameters:
-      - in: query
-        name: id
-        required: false
-        type: string
       - description: A user resource
         in: body
         name: payload

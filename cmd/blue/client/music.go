@@ -15,8 +15,8 @@ func CreateMusicPath() string {
 }
 
 // CreateMusic makes a request to the create action endpoint of the music resource
-func (c *Client) CreateMusic(ctx context.Context, path string, payload *Music, id *string) (*http.Response, error) {
-	req, err := c.NewCreateMusicRequest(ctx, path, payload, id)
+func (c *Client) CreateMusic(ctx context.Context, path string, payload *Music) (*http.Response, error) {
+	req, err := c.NewCreateMusicRequest(ctx, path, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (c *Client) CreateMusic(ctx context.Context, path string, payload *Music, i
 }
 
 // NewCreateMusicRequest create the request corresponding to the create action endpoint of the music resource.
-func (c *Client) NewCreateMusicRequest(ctx context.Context, path string, payload *Music, id *string) (*http.Request, error) {
+func (c *Client) NewCreateMusicRequest(ctx context.Context, path string, payload *Music) (*http.Request, error) {
 	var body bytes.Buffer
 	err := c.Encoder.Encode(payload, &body, "*/*")
 	if err != nil {
@@ -35,11 +35,6 @@ func (c *Client) NewCreateMusicRequest(ctx context.Context, path string, payload
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	if id != nil {
-		values.Set("id", *id)
-	}
-	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("POST", u.String(), &body)
 	if err != nil {
 		return nil, err
@@ -53,8 +48,8 @@ func ListMusicPath() string {
 }
 
 // List up to N music resources. N can be adjusted using the 'limit' and 'offset' parameters.
-func (c *Client) ListMusic(ctx context.Context, path string, id *string, limit *int, offset *int) (*http.Response, error) {
-	req, err := c.NewListMusicRequest(ctx, path, id, limit, offset)
+func (c *Client) ListMusic(ctx context.Context, path string, limit *int, offset *int) (*http.Response, error) {
+	req, err := c.NewListMusicRequest(ctx, path, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -62,16 +57,13 @@ func (c *Client) ListMusic(ctx context.Context, path string, id *string, limit *
 }
 
 // NewListMusicRequest create the request corresponding to the list action endpoint of the music resource.
-func (c *Client) NewListMusicRequest(ctx context.Context, path string, id *string, limit *int, offset *int) (*http.Request, error) {
+func (c *Client) NewListMusicRequest(ctx context.Context, path string, limit *int, offset *int) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
-	if id != nil {
-		values.Set("id", *id)
-	}
 	if limit != nil {
 		tmp10 := strconv.Itoa(*limit)
 		values.Set("limit", tmp10)

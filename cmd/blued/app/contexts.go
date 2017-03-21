@@ -21,7 +21,6 @@ type CreateMusicContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	ID      *string
 	Payload *Music
 }
 
@@ -33,11 +32,6 @@ func NewCreateMusicContext(ctx context.Context, service *goa.Service) (*CreateMu
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := CreateMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramID := req.Params["id"]
-	if len(paramID) > 0 {
-		rawID := paramID[0]
-		rctx.ID = &rawID
-	}
 	return &rctx, err
 }
 
@@ -52,7 +46,6 @@ type ListMusicContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	ID     *string
 	Limit  int
 	Offset int
 }
@@ -65,11 +58,6 @@ func NewListMusicContext(ctx context.Context, service *goa.Service) (*ListMusicC
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := ListMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramID := req.Params["id"]
-	if len(paramID) > 0 {
-		rawID := paramID[0]
-		rctx.ID = &rawID
-	}
 	paramLimit := req.Params["limit"]
 	if len(paramLimit) > 0 {
 		rawLimit := paramLimit[0]
@@ -214,7 +202,6 @@ type CreateUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	ID      *string
 	Payload *User
 }
 
@@ -226,11 +213,6 @@ func NewCreateUserContext(ctx context.Context, service *goa.Service) (*CreateUse
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := CreateUserContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramID := req.Params["id"]
-	if len(paramID) > 0 {
-		rawID := paramID[0]
-		rctx.ID = &rawID
-	}
 	return &rctx, err
 }
 
@@ -305,7 +287,6 @@ type ListUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	ID     *string
 	Limit  int
 	Offset int
 }
@@ -318,11 +299,6 @@ func NewListUserContext(ctx context.Context, service *goa.Service) (*ListUserCon
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := ListUserContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramID := req.Params["id"]
-	if len(paramID) > 0 {
-		rawID := paramID[0]
-		rctx.ID = &rawID
-	}
 	paramLimit := req.Params["limit"]
 	if len(paramLimit) > 0 {
 		rawLimit := paramLimit[0]

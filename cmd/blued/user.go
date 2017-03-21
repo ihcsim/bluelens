@@ -27,16 +27,6 @@ func (c *UserController) Create(ctx *app.CreateUserContext) error {
 
 // Follow runs the follow action.
 func (c *UserController) Follow(ctx *app.FollowUserContext) error {
-	user, err := store().FindUser(ctx.ID)
-	if err != nil {
-		return ctx.NotFound(err)
-	}
-
-	// don't follow self and don't add an existing followee
-	if ctx.ID == ctx.FolloweeID || user.HasFollowee(ctx.FolloweeID) {
-		return ctx.OK(mediaTypeUser(user))
-	}
-
 	updated, err := store().Follow(ctx.ID, ctx.FolloweeID)
 	if err != nil {
 		return ctx.NotFound(err)
@@ -59,16 +49,6 @@ func (c *UserController) List(ctx *app.ListUserContext) error {
 
 // Listen runs the listen action.
 func (c *UserController) Listen(ctx *app.ListenUserContext) error {
-	user, err := store().FindUser(ctx.ID)
-	if err != nil {
-		return ctx.NotFound(err)
-	}
-
-	// skip if already part of the user's history
-	if user.HasHistory(ctx.MusicID) {
-		return ctx.OK(mediaTypeUser(user))
-	}
-
 	updated, err := store().Listen(ctx.ID, ctx.MusicID)
 	if err != nil {
 		return ctx.NotFound(err)

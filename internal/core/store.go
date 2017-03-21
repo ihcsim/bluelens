@@ -121,6 +121,11 @@ func (s *InMemoryStore) Follow(userID, followeeID string) (*User, error) {
 		return nil, NewEntityNotFound(userID, "user")
 	}
 
+	// don't follow self
+	if userID == followeeID {
+		return user, nil
+	}
+
 	followee, err := s.FindUser(followeeID)
 	if err != nil {
 		return nil, NewEntityNotFound(followeeID, "user")

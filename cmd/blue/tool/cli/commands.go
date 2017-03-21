@@ -22,13 +22,11 @@ type (
 	CreateMusicCommand struct {
 		Payload     string
 		ContentType string
-		ID          string
 		PrettyPrint bool
 	}
 
 	// ListMusicCommand is the command line data structure for the list action of music
 	ListMusicCommand struct {
-		ID          string
 		Limit       int
 		Offset      int
 		PrettyPrint bool
@@ -53,7 +51,6 @@ type (
 	CreateUserCommand struct {
 		Payload     string
 		ContentType string
-		ID          string
 		PrettyPrint bool
 	}
 
@@ -67,7 +64,6 @@ type (
 
 	// ListUserCommand is the command line data structure for the list action of user
 	ListUserCommand struct {
-		ID          string
 		Limit       int
 		Offset      int
 		PrettyPrint bool
@@ -549,7 +545,7 @@ func (cmd *CreateMusicCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.CreateMusic(ctx, path, &payload, stringFlagVal("id", cmd.ID))
+	resp, err := c.CreateMusic(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -563,8 +559,6 @@ func (cmd *CreateMusicCommand) Run(c *client.Client, args []string) error {
 func (cmd *CreateMusicCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
-	var id string
-	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 }
 
 // Run makes the HTTP request corresponding to the ListMusicCommand command.
@@ -577,7 +571,7 @@ func (cmd *ListMusicCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListMusic(ctx, path, stringFlagVal("id", cmd.ID), intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
+	resp, err := c.ListMusic(ctx, path, intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -589,8 +583,6 @@ func (cmd *ListMusicCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ListMusicCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var id string
-	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 	cc.Flags().IntVar(&cmd.Limit, "limit", 20, ``)
 	var offset int
 	cc.Flags().IntVar(&cmd.Offset, "offset", offset, ``)
@@ -667,7 +659,7 @@ func (cmd *CreateUserCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.CreateUser(ctx, path, &payload, stringFlagVal("id", cmd.ID))
+	resp, err := c.CreateUser(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -681,8 +673,6 @@ func (cmd *CreateUserCommand) Run(c *client.Client, args []string) error {
 func (cmd *CreateUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
-	var id string
-	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 }
 
 // Run makes the HTTP request corresponding to the FollowUserCommand command.
@@ -723,7 +713,7 @@ func (cmd *ListUserCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListUser(ctx, path, stringFlagVal("id", cmd.ID), intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
+	resp, err := c.ListUser(ctx, path, intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -735,8 +725,6 @@ func (cmd *ListUserCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ListUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var id string
-	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 	cc.Flags().IntVar(&cmd.Limit, "limit", 20, ``)
 	var offset int
 	cc.Flags().IntVar(&cmd.Offset, "offset", offset, ``)

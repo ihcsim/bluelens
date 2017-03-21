@@ -22,18 +22,14 @@ define(['axios'] , function (axios) {
   // createMusic calls the create action of the music resource.
   // path is the request path, the format is "/bluelens/music"
   // data contains the action payload (request body)
-  // id is used to build the request query string.
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.createMusic = function (path, data, id, config) {
+  client.createMusic = function (path, data, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'post',
-      params: {
-        id: id
-      },
     data: data,
       responseType: 'json'
     };
@@ -46,18 +42,14 @@ define(['axios'] , function (axios) {
   // createUser calls the create action of the user resource.
   // path is the request path, the format is "/bluelens/user"
   // data contains the action payload (request body)
-  // id is used to build the request query string.
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.createUser = function (path, data, id, config) {
+  client.createUser = function (path, data, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'post',
-      params: {
-        id: id
-      },
     data: data,
       responseType: 'json'
     };
@@ -87,17 +79,16 @@ define(['axios'] , function (axios) {
 
   // List up to N music resources. N can be adjusted using the 'limit' and 'offset' parameters.
   // path is the request path, the format is "/bluelens/music"
-  // id, limit, offset are used to build the request query string.
+  // limit, offset are used to build the request query string.
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.listMusic = function (path, id, limit, offset, config) {
+  client.listMusic = function (path, limit, offset, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'get',
       params: {
-        id: id,
         limit: limit,
         offset: offset
       },
@@ -111,17 +102,16 @@ define(['axios'] , function (axios) {
 
   // List up to N user resources. N can be adjusted using the 'limit' and 'offset' parameters.
   // path is the request path, the format is "/bluelens/user"
-  // id, limit, offset are used to build the request query string.
+  // limit, offset are used to build the request query string.
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.listUser = function (path, id, limit, offset, config) {
+  client.listUser = function (path, limit, offset, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'get',
       params: {
-        id: id,
         limit: limit,
         offset: offset
       },

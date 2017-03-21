@@ -29,7 +29,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateUserCreated(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id *string, payload *app.User) (http.ResponseWriter, *app.BluelensUser) {
+func CreateUserCreated(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, payload *app.User) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -60,24 +60,14 @@ func CreateUserCreated(t goatest.TInterface, ctx context.Context, service *goa.S
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/bluelens/user"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/bluelens/user"),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -119,7 +109,7 @@ func CreateUserCreated(t goatest.TInterface, ctx context.Context, service *goa.S
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateUserCreatedFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id *string, payload *app.User) (http.ResponseWriter, *app.BluelensUserFull) {
+func CreateUserCreatedFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, payload *app.User) (http.ResponseWriter, *app.BluelensUserFull) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -150,24 +140,14 @@ func CreateUserCreatedFull(t goatest.TInterface, ctx context.Context, service *g
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/bluelens/user"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/bluelens/user"),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -209,7 +189,7 @@ func CreateUserCreatedFull(t goatest.TInterface, ctx context.Context, service *g
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateUserCreatedLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id *string, payload *app.User) (http.ResponseWriter, *app.BluelensUserLink) {
+func CreateUserCreatedLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, payload *app.User) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -240,24 +220,14 @@ func CreateUserCreatedLink(t goatest.TInterface, ctx context.Context, service *g
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/bluelens/user"),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/bluelens/user"),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -641,7 +611,7 @@ func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Se
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id *string, limit int, offset int) (http.ResponseWriter, app.BluelensUserCollection) {
+func ListUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, limit int, offset int) (http.ResponseWriter, app.BluelensUserCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -662,10 +632,6 @@ func ListUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 	// Setup request context
 	rw := httptest.NewRecorder()
 	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		query["limit"] = sliceVal
@@ -683,10 +649,6 @@ func ListUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		prms["limit"] = sliceVal
@@ -735,7 +697,7 @@ func ListUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id *string, limit int, offset int) (http.ResponseWriter, app.BluelensUserFullCollection) {
+func ListUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, limit int, offset int) (http.ResponseWriter, app.BluelensUserFullCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -756,10 +718,6 @@ func ListUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Serv
 	// Setup request context
 	rw := httptest.NewRecorder()
 	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		query["limit"] = sliceVal
@@ -777,10 +735,6 @@ func ListUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Serv
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		prms["limit"] = sliceVal
@@ -829,7 +783,7 @@ func ListUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Serv
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id *string, limit int, offset int) (http.ResponseWriter, app.BluelensUserLinkCollection) {
+func ListUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, limit int, offset int) (http.ResponseWriter, app.BluelensUserLinkCollection) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -850,10 +804,6 @@ func ListUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Serv
 	// Setup request context
 	rw := httptest.NewRecorder()
 	query := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		query["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		query["limit"] = sliceVal
@@ -871,10 +821,6 @@ func ListUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Serv
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	if id != nil {
-		sliceVal := []string{*id}
-		prms["id"] = sliceVal
-	}
 	{
 		sliceVal := []string{strconv.Itoa(limit)}
 		prms["limit"] = sliceVal
