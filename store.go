@@ -77,7 +77,9 @@ func (s *InMemoryStore) ListUsers(maxCount int) (UserList, error) {
 	list := UserList{}
 	var index int
 	for _, u := range s.userBase {
-		list = append(list, u)
+		if err := list.Add(u); err != nil {
+			return nil, err
+		}
 
 		index++
 		if index == maxCount {
@@ -124,7 +126,10 @@ func (s *InMemoryStore) Follow(userID, followeeID string) (*User, error) {
 		return nil, NewEntityNotFound(followeeID, "user")
 	}
 
-	user.Followees = append(user.Followees, followee)
+	if err := user.AddFollowees(followee); err != nil {
+		return nil, err
+	}
+
 	return s.UpdateUser(user)
 }
 
@@ -153,7 +158,9 @@ func (s *InMemoryStore) ListMusic(maxCount int) (MusicList, error) {
 	var ml MusicList
 	var index int
 	for _, m := range s.musicList {
-		ml = append(ml, m)
+		if err := ml.Add(m); err != nil {
+			return nil, err
+		}
 
 		index++
 		if index == maxCount {
@@ -202,6 +209,9 @@ func (s *InMemoryStore) Listen(userID, musicID string) (*User, error) {
 		return nil, NewEntityNotFound(musicID, "music")
 	}
 
-	user.History = append(user.History, music)
+	if err := user.AddHistory(music); err != nil {
+		return nil, err
+	}
+
 	return s.UpdateUser(user)
 }

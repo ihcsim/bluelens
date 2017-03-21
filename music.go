@@ -21,6 +21,25 @@ func (m Music) String() string {
 // MusicList is a collection of music resources.
 type MusicList []*Music
 
+// Add appends the provided music resource to the music list.
+// If the music resource already exists in the list, it is ignored.
+// If the music resource is nil or it's missing an ID, an ErrMalformedEntity error is returned.
+func (ml *MusicList) Add(m *Music) error {
+	if m == nil || m.ID == "" {
+		return ErrMalformedEntity
+	}
+
+	// avoid duplicates
+	for _, music := range *ml {
+		if music.ID == m.ID {
+			return nil
+		}
+	}
+
+	*ml = append(*ml, m)
+	return nil
+}
+
 // Unmarshal creates a list of music from the provided data.
 func (ml *MusicList) Unmarshal(obj json.JSONObject) error {
 	musicList, ok := obj.(*json.MusicList)
@@ -29,7 +48,9 @@ func (ml *MusicList) Unmarshal(obj json.JSONObject) error {
 	}
 
 	for id, tags := range *musicList {
-		(*ml) = append((*ml), &Music{ID: id, Tags: tags})
+		if err := ml.Add(&Music{ID: id, Tags: tags}); err != nil {
+			return err
+		}
 	}
 
 	return nil

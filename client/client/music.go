@@ -8,8 +8,8 @@ import (
 )
 
 // GetMusicPath computes a request path to the get action of music.
-func GetMusicPath(musicID string) string {
-	return fmt.Sprintf("/bluelens/music/%v", musicID)
+func GetMusicPath(id string) string {
+	return fmt.Sprintf("/bluelens/music/%v", id)
 }
 
 // Get a music resource with the given ID

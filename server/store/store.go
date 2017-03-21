@@ -1,4 +1,4 @@
-package main
+package store
 
 import (
 	"io"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/json"
+	"github.com/ihcsim/bluelens/server/config"
 )
 
 const (
@@ -16,12 +17,12 @@ const (
 )
 
 var (
+	// Instance returns the global instance active store. It is a function of type func() core.Instance.
+	// To use a different store type, assign this varible to the store's constructor function.
+	Instance = inmemoryStore
+
 	// singleton instance of the store
 	instance core.Store
-
-	// to use a different store, assign this varible to the store's constructor function.
-	// store is a function of type func() core.Store
-	store = inmemoryStore
 
 	// ensures store is init only once
 	liveStoreInit sync.Once
@@ -35,7 +36,8 @@ func inmemoryStore() core.Store {
 	return instance
 }
 
-func initStore(c *userConfig) error {
+// Initialize initializes the global store with data found in the paths specified in the provided configurations.
+func Initialize(c *config.UserConfig) error {
 	if err := initMusicDB(c); err != nil {
 		if err == io.EOF { // if music file is empty, return nil
 			return nil
@@ -51,8 +53,8 @@ func initStore(c *userConfig) error {
 	return nil
 }
 
-func initMusicDB(c *userConfig) error {
-	data, err := readDataFile(c.musicFile)
+func initMusicDB(c *config.UserConfig) error {
+	data, err := readDataFile(c.MusicFile)
 	if err != nil {
 		return err
 	}
@@ -65,14 +67,14 @@ func initMusicDB(c *userConfig) error {
 	if err := ml.Unmarshal(jsonMusicList); err != nil {
 		return err
 	}
-	if err := store().LoadMusic(ml); err != nil {
+	if err := Instance().LoadMusic(ml); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func initUserDB(c *userConfig) error {
+func initUserDB(c *config.UserConfig) error {
 	historyList, followeesList := core.UserList{}, core.UserList{}
 	doneHistoryTask, doneFolloweesTask, errChan := make(chan struct{}), make(chan struct{}), make(chan error)
 
@@ -81,7 +83,7 @@ func initUserDB(c *userConfig) error {
 			doneHistoryTask <- struct{}{}
 		}()
 
-		historyData, err := readDataFile(c.historyFile)
+		historyData, err := readDataFile(c.HistoryFile)
 		if err != nil && err != io.EOF { // empty or non-existent file permitted
 			errChan <- err
 		}
@@ -99,7 +101,7 @@ func initUserDB(c *userConfig) error {
 			doneFolloweesTask <- struct{}{}
 		}()
 
-		followeesData, err := readDataFile(c.followeesFile)
+		followeesData, err := readDataFile(c.FolloweesFile)
 		if err != nil && err != io.EOF { // empty or non-existent file permitted
 			errChan <- err
 		}
@@ -130,7 +132,10 @@ func initUserDB(c *userConfig) error {
 				u1.Followees = u2.Followees
 			}
 		}
-		merged = append(merged, u1)
+
+		if err := merged.Add(u1); err != nil {
+			return err
+		}
 	}
 
 	for _, u2 := range followeesList {
@@ -143,11 +148,13 @@ func initUserDB(c *userConfig) error {
 		}
 
 		if !found {
-			merged = append(merged, u2)
+			if err := merged.Add(u2); err != nil {
+				return err
+			}
 		}
 	}
 
-	if err := store().LoadUsers(merged); err != nil {
+	if err := Instance().LoadUsers(merged); err != nil {
 		return nil
 	}
 	return nil

@@ -21,7 +21,7 @@ type GetMusicContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	MusicID string
+	ID string
 }
 
 // NewGetMusicContext parses the incoming request URL and body, performs validations and creates the
@@ -32,10 +32,10 @@ func NewGetMusicContext(ctx context.Context, service *goa.Service) (*GetMusicCon
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := GetMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramMusicID := req.Params["musicID"]
-	if len(paramMusicID) > 0 {
-		rawMusicID := paramMusicID[0]
-		rctx.MusicID = rawMusicID
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = rawID
 	}
 	return &rctx, err
 }
@@ -83,6 +83,9 @@ func NewRecommendRecommendationsContext(ctx context.Context, service *goa.Servic
 		} else {
 			err = goa.MergeErrors(err, goa.InvalidParamTypeError("maxCount", rawMaxCount, "integer"))
 		}
+		if rctx.MaxCount < 0 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError(`maxCount`, rctx.MaxCount, 0, true))
+		}
 	}
 	paramUserID := req.Params["userID"]
 	if len(paramUserID) > 0 {
@@ -116,7 +119,7 @@ type FollowUserContext struct {
 	*goa.ResponseData
 	*goa.RequestData
 	FolloweeID string
-	UserID     string
+	ID         string
 }
 
 // NewFollowUserContext parses the incoming request URL and body, performs validations and creates the
@@ -132,10 +135,10 @@ func NewFollowUserContext(ctx context.Context, service *goa.Service) (*FollowUse
 		rawFolloweeID := paramFolloweeID[0]
 		rctx.FolloweeID = rawFolloweeID
 	}
-	paramUserID := req.Params["userID"]
-	if len(paramUserID) > 0 {
-		rawUserID := paramUserID[0]
-		rctx.UserID = rawUserID
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = rawID
 	}
 	return &rctx, err
 }
@@ -175,7 +178,7 @@ type GetUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	UserID string
+	ID string
 }
 
 // NewGetUserContext parses the incoming request URL and body, performs validations and creates the
@@ -186,10 +189,10 @@ func NewGetUserContext(ctx context.Context, service *goa.Service) (*GetUserConte
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := GetUserContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramUserID := req.Params["userID"]
-	if len(paramUserID) > 0 {
-		rawUserID := paramUserID[0]
-		rctx.UserID = rawUserID
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = rawID
 	}
 	return &rctx, err
 }
@@ -223,8 +226,8 @@ type ListenUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
+	ID      string
 	MusicID string
-	UserID  string
 }
 
 // NewListenUserContext parses the incoming request URL and body, performs validations and creates the
@@ -235,15 +238,15 @@ func NewListenUserContext(ctx context.Context, service *goa.Service) (*ListenUse
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := ListenUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = rawID
+	}
 	paramMusicID := req.Params["musicID"]
 	if len(paramMusicID) > 0 {
 		rawMusicID := paramMusicID[0]
 		rctx.MusicID = rawMusicID
-	}
-	paramUserID := req.Params["userID"]
-	if len(paramUserID) > 0 {
-		rawUserID := paramUserID[0]
-		rctx.UserID = rawUserID
 	}
 	return &rctx, err
 }

@@ -1,4 +1,4 @@
-package main
+package ctrl
 
 import (
 	"fmt"
@@ -19,13 +19,10 @@ func TestMediaTypeRecommendations(t *testing.T) {
 		MusicID: []string{"song-00", "song-01"},
 		Links: &app.BluelensRecommendationsLinks{
 			List: app.BluelensMusicLinkCollection{
-				&app.BluelensMusicLink{Href: "/music/song-00", ID: "song-00"},
-				&app.BluelensMusicLink{Href: "/music/song-01", ID: "song-01"},
+				&app.BluelensMusicLink{Href: "/music/song-00"},
+				&app.BluelensMusicLink{Href: "/music/song-01"},
 			},
-			User: &app.BluelensUserLink{
-				Href: "/users/user-00",
-				ID:   "user-00",
-			},
+			User: &app.BluelensUserLink{Href: "/users/user-00"},
 		},
 	}
 	actual := mediaTypeRecommendations(recommendations)
@@ -63,12 +60,12 @@ func TestMediaTypeUser(t *testing.T) {
 	}
 
 	followeesLinks := app.BluelensUserLinkCollection{
-		&app.BluelensUserLink{ID: "user-01", Href: "/users/user-01"},
-		&app.BluelensUserLink{ID: "user-02", Href: "/users/user-02"},
+		&app.BluelensUserLink{Href: "/users/user-01"},
+		&app.BluelensUserLink{Href: "/users/user-02"},
 	}
 	historyLinks := app.BluelensMusicLinkCollection{
-		&app.BluelensMusicLink{ID: "song-01", Href: "/music/song-01"},
-		&app.BluelensMusicLink{ID: "song-02", Href: "/music/song-02"},
+		&app.BluelensMusicLink{Href: "/music/song-01"},
+		&app.BluelensMusicLink{Href: "/music/song-02"},
 	}
 	links := &app.BluelensUserLinks{
 		Followees: followeesLinks,

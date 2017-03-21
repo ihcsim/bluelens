@@ -13,6 +13,19 @@ var _ = API("bluelens", func() {
 	Host(apiHost)
 	Scheme("http")
 	BasePath("/bluelens")
+
+	License(func() {
+		Name("MIT")
+		URL("https://github.com/ihcsim/bluelens/blob/master/LICENSE")
+	})
+
+	Docs(func() {
+		Description("Swagger docs")
+		URL("http://localhost:8080/swagger.json")
+	})
+
+	Consumes("application/json")
+	Produces("application/json")
 })
 
 var _ = Resource("recommendations", func() {
@@ -24,9 +37,11 @@ var _ = Resource("recommendations", func() {
 		Description("Make music recommendations for a user.")
 		Params(func() {
 			Param("userID", String, "ID of the user these recommendations are meant for.")
-			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user.")
+			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user. Set to zero to use server's default.", func() {
+				Minimum(0)
+			})
 		})
-		Response(OK, Recommendations)
+		Response(OK)
 		Response(NotFound, ErrorMedia)
 	})
 })
@@ -34,22 +49,21 @@ var _ = Resource("recommendations", func() {
 var _ = Resource("user", func() {
 	BasePath("/user")
 	DefaultMedia(User)
+	Params(func() {
+		Param("id")
+	})
 
 	Action("get", func() {
-		Routing(GET("/:userID"))
+		Routing(GET("/:id"))
 		Description("Get a user resource with the given ID")
-		Params(func() {
-			Param("userID", String, "ID of the user.")
-		})
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 	})
 
 	Action("listen", func() {
-		Routing(POST("/:userID/listen/:musicID"))
+		Routing(POST("/:id/listen/:musicID"))
 		Description("Add a music to a user's history.")
 		Params(func() {
-			Param("userID", String, "ID of the user.")
 			Param("musicID", String, "ID of the music.")
 		})
 		Response(OK)
@@ -58,10 +72,9 @@ var _ = Resource("user", func() {
 	})
 
 	Action("follow", func() {
-		Routing(POST("/:userID/follows/:followeeID"))
+		Routing(POST("/:id/follows/:followeeID"))
 		Description("Update a user's followees list with a new followee.")
 		Params(func() {
-			Param("userID", String, "ID of the follower.")
 			Param("followeeID", String, "ID of the followee.")
 		})
 		Response(OK)
@@ -73,13 +86,13 @@ var _ = Resource("user", func() {
 var _ = Resource("music", func() {
 	BasePath("/music")
 	DefaultMedia(Music)
+	Params(func() {
+		Param("id")
+	})
 
 	Action("get", func() {
-		Routing(GET("/:musicID"))
+		Routing(GET("/:id"))
 		Description("Get a music resource with the given ID")
-		Params(func() {
-			Param("musicID", String, "ID of the music.")
-		})
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 	})
@@ -88,6 +101,7 @@ var _ = Resource("music", func() {
 var Recommendations = MediaType("application/vnd.bluelens.recommendations+json", func() {
 	Description("A list of recommendations for the specified user")
 	ContentType("application/json")
+
 	Attributes(func() {
 		Attribute("musicID", ArrayOf(String))
 		Attribute("list", CollectionOf("application/vnd.bluelens.music+json"))
@@ -116,6 +130,7 @@ var Recommendations = MediaType("application/vnd.bluelens.recommendations+json",
 var User = MediaType("application/vnd.bluelens.user+json", func() {
 	Description("A user resource")
 	ContentType("application/json")
+
 	Attributes(func() {
 		Attribute("id", String)
 		Attribute("followees", CollectionOf("application/vnd.bluelens.user+json"))
@@ -132,12 +147,11 @@ var User = MediaType("application/vnd.bluelens.user+json", func() {
 
 	View("default", func() {
 		Attribute("id")
-		Attribute("links")
 		Attribute("href")
+		Attribute("links")
 	})
 
 	View("link", func() {
-		Attribute("id")
 		Attribute("href")
 	})
 
@@ -152,6 +166,7 @@ var User = MediaType("application/vnd.bluelens.user+json", func() {
 var Music = MediaType("application/vnd.bluelens.music+json", func() {
 	Description("A music resource")
 	ContentType("application/json")
+
 	Attributes(func() {
 		Attribute("id", String)
 		Attribute("tags", ArrayOf(String))
@@ -167,7 +182,6 @@ var Music = MediaType("application/vnd.bluelens.music+json", func() {
 	})
 
 	View("link", func() {
-		Attribute("id")
 		Attribute("href")
 	})
 })

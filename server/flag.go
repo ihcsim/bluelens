@@ -1,34 +1,18 @@
 package main
 
-import "flag"
+import (
+	"flag"
 
-const (
-	defaultMusicFile     = "etc/music.json"
-	defaultHistoryFile   = "etc/history.json"
-	defaultFolloweesFile = "etc/followees.json"
+	"github.com/ihcsim/bluelens/server/config"
 )
 
-type userConfig struct {
-	musicFile     string
-	historyFile   string
-	followeesFile string
-}
-
-func newUserConfig() *userConfig {
-	return &userConfig{
-		musicFile:     defaultMusicFile,
-		historyFile:   defaultHistoryFile,
-		followeesFile: defaultFolloweesFile,
-	}
-}
-
-func parseFlags(args []string) (*userConfig, error) {
-	c := &userConfig{}
+func parseFlags(args []string) (*config.UserConfig, error) {
+	c := &config.UserConfig{}
 
 	flagSet := flag.NewFlagSet("bluelensFlags", flag.ContinueOnError)
-	flagSet.StringVar(&c.musicFile, "music", defaultMusicFile, "Path to read music data from")
-	flagSet.StringVar(&c.historyFile, "history", defaultHistoryFile, "Path to read user's history data from")
-	flagSet.StringVar(&c.followeesFile, "followees", defaultFolloweesFile, "Path to read user's followees data from")
+	flagSet.StringVar(&c.MusicFile, "music", config.DefaultMusicFile, "Path to read music data from")
+	flagSet.StringVar(&c.HistoryFile, "history", config.DefaultHistoryFile, "Path to read user's history data from")
+	flagSet.StringVar(&c.FolloweesFile, "followees", config.DefaultFolloweesFile, "Path to read user's followees data from")
 
 	if !flagSet.Parsed() {
 		if err := flagSet.Parse(args); err != nil {

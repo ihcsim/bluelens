@@ -28,7 +28,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, error) {
+func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -49,14 +49,14 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -94,7 +94,7 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, error) {
+func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -115,14 +115,14 @@ func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -160,7 +160,7 @@ func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, *app.BluelensUserAll) {
+func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -181,14 +181,14 @@ func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -230,7 +230,7 @@ func FollowUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, *app.BluelensUser) {
+func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -251,14 +251,14 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -300,7 +300,7 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, followeeID string) (http.ResponseWriter, *app.BluelensUserLink) {
+func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -321,14 +321,14 @@ func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Se
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID),
+		Path: fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["followeeID"] = []string{fmt.Sprintf("%v", followeeID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -370,7 +370,7 @@ func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Se
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, error) {
+func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -391,14 +391,14 @@ func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+		Path: fmt.Sprintf("/bluelens/user/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -435,7 +435,7 @@ func GetUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.BluelensUserAll) {
+func GetUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -456,14 +456,14 @@ func GetUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+		Path: fmt.Sprintf("/bluelens/user/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -504,7 +504,7 @@ func GetUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Servic
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.BluelensUser) {
+func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -525,14 +525,14 @@ func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, 
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+		Path: fmt.Sprintf("/bluelens/user/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -573,7 +573,7 @@ func GetUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, 
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string) (http.ResponseWriter, *app.BluelensUserLink) {
+func GetUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -594,14 +594,14 @@ func GetUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Servi
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v", userID),
+		Path: fmt.Sprintf("/bluelens/user/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -642,7 +642,7 @@ func GetUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Servi
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, error) {
+func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -663,14 +663,14 @@ func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -708,7 +708,7 @@ func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, error) {
+func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -729,14 +729,14 @@ func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -774,7 +774,7 @@ func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, *app.BluelensUserAll) {
+func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, *app.BluelensUserAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -795,14 +795,14 @@ func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -844,7 +844,7 @@ func ListenUserOKAll(t goatest.TInterface, ctx context.Context, service *goa.Ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, *app.BluelensUser) {
+func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -865,14 +865,14 @@ func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
 	if ctx == nil {
 		ctx = context.Background()
@@ -914,7 +914,7 @@ func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, userID string, musicID string) (http.ResponseWriter, *app.BluelensUserLink) {
+func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -935,14 +935,14 @@ func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Se
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID),
+		Path: fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
 	if ctx == nil {
 		ctx = context.Background()

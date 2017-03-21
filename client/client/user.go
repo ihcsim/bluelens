@@ -8,8 +8,8 @@ import (
 )
 
 // FollowUserPath computes a request path to the follow action of user.
-func FollowUserPath(userID string, followeeID string) string {
-	return fmt.Sprintf("/bluelens/user/%v/follows/%v", userID, followeeID)
+func FollowUserPath(id string, followeeID string) string {
+	return fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID)
 }
 
 // Update a user's followees list with a new followee.
@@ -36,8 +36,8 @@ func (c *Client) NewFollowUserRequest(ctx context.Context, path string) (*http.R
 }
 
 // GetUserPath computes a request path to the get action of user.
-func GetUserPath(userID string) string {
-	return fmt.Sprintf("/bluelens/user/%v", userID)
+func GetUserPath(id string) string {
+	return fmt.Sprintf("/bluelens/user/%v", id)
 }
 
 // Get a user resource with the given ID
@@ -64,8 +64,8 @@ func (c *Client) NewGetUserRequest(ctx context.Context, path string) (*http.Requ
 }
 
 // ListenUserPath computes a request path to the listen action of user.
-func ListenUserPath(userID string, musicID string) string {
-	return fmt.Sprintf("/bluelens/user/%v/listen/%v", userID, musicID)
+func ListenUserPath(id string, musicID string) string {
+	return fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID)
 }
 
 // Add a music to a user's history.

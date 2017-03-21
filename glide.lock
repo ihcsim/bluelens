@@ -1,5 +1,5 @@
-hash: fda2985bb2aae606ccdc987542f95aaa714410414fb1bfe776263339e065d242
-updated: 2017-03-16T21:52:15.749657674-07:00
+hash: ce6421ad3b79124163ea1a552bf60cf4675bd75874625dcb771bd7dee4cd4d13
+updated: 2017-03-20T17:09:13.717290074-07:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -26,6 +26,8 @@ imports:
   version: bfd5150e4e41705ded2129ec33379de1cb90b513
 - name: github.com/satori/go.uuid
   version: b061729afc07e77a8aa4fad0a2fd840958f1942a
+- name: github.com/sirupsen/logrus
+  version: ba1b36c82c5e05c4f912a88eab0dcd91a171688f
 - name: github.com/spf13/cobra
   version: fcd0c5a1df88f5d6784cb4feead962c3f3d0b66c
 - name: github.com/spf13/pflag
@@ -37,4 +39,8 @@ imports:
   subpackages:
   - context
   - websocket
+- name: golang.org/x/sys
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
+  subpackages:
+  - unix
 testImports: []

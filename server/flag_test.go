@@ -1,14 +1,18 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/ihcsim/bluelens/server/config"
+)
 
 func TestParseFlags(t *testing.T) {
 	tests := []struct {
 		args     []string
-		expected *userConfig
+		expected *config.UserConfig
 	}{
-		{args: []string{}, expected: &userConfig{musicFile: defaultMusicFile, historyFile: defaultHistoryFile, followeesFile: defaultFolloweesFile}},
-		{args: []string{"-music", "music.json", "-history", "history.json", "-followees", "followees.json"}, expected: &userConfig{musicFile: "music.json", historyFile: "history.json", followeesFile: "followees.json"}},
+		{args: []string{}, expected: &config.UserConfig{MusicFile: config.DefaultMusicFile, HistoryFile: config.DefaultHistoryFile, FolloweesFile: config.DefaultFolloweesFile}},
+		{args: []string{"-music", "music.json", "-history", "history.json", "-followees", "followees.json"}, expected: &config.UserConfig{MusicFile: "music.json", HistoryFile: "history.json", FolloweesFile: "followees.json"}},
 	}
 
 	for _, test := range tests {
@@ -17,16 +21,16 @@ func TestParseFlags(t *testing.T) {
 			t.Fatal("Unexpected error: ", err)
 		}
 
-		if actual.musicFile != test.expected.musicFile {
-			t.Errorf("File path mismatch. Expected %q, but got %q", test.expected.musicFile, actual.musicFile)
+		if actual.MusicFile != test.expected.MusicFile {
+			t.Errorf("File path mismatch. Expected %q, but got %q", test.expected.MusicFile, actual.MusicFile)
 		}
 
-		if actual.historyFile != test.expected.historyFile {
-			t.Errorf("File path mismatch. Expected %q, but got %q", test.expected.historyFile, actual.historyFile)
+		if actual.HistoryFile != test.expected.HistoryFile {
+			t.Errorf("File path mismatch. Expected %q, but got %q", test.expected.HistoryFile, actual.HistoryFile)
 		}
 
-		if actual.followeesFile != test.expected.followeesFile {
-			t.Errorf("File path mismatch. Expected %q, but got %q", test.expected.followeesFile, actual.followeesFile)
+		if actual.FolloweesFile != test.expected.FolloweesFile {
+			t.Errorf("File path mismatch. Expected %q, but got %q", test.expected.FolloweesFile, actual.FolloweesFile)
 		}
 	}
 }

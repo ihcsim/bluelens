@@ -20,7 +20,7 @@ define(['axios'] , function (axios) {
     var urlPrefix = scheme + '://' + host;
 
   // Update a user's followees list with a new followee.
-  // path is the request path, the format is "/bluelens/user/:userID/follows/:followeeID"
+  // path is the request path, the format is "/bluelens/user/:id/follows/:followeeID"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
@@ -38,7 +38,7 @@ define(['axios'] , function (axios) {
   }
 
   // Get a music resource with the given ID
-  // path is the request path, the format is "/bluelens/music/:musicID"
+  // path is the request path, the format is "/bluelens/music/:id"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
@@ -56,7 +56,7 @@ define(['axios'] , function (axios) {
   }
 
   // Get a user resource with the given ID
-  // path is the request path, the format is "/bluelens/user/:userID"
+  // path is the request path, the format is "/bluelens/user/:id"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
@@ -74,7 +74,7 @@ define(['axios'] , function (axios) {
   }
 
   // Add a music to a user's history.
-  // path is the request path, the format is "/bluelens/user/:userID/listen/:musicID"
+  // path is the request path, the format is "/bluelens/user/:id/listen/:musicID"
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.

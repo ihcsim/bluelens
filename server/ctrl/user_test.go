@@ -1,4 +1,4 @@
-package main
+package ctrl
 
 import (
 	"reflect"
@@ -8,6 +8,7 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/server/app/test"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 var (
@@ -20,7 +21,7 @@ var (
 
 func TestUserController(t *testing.T) {
 	// mock the store() function
-	storeFunc := store
+	storeFunc := store.Instance
 	storeFuncMock := func() core.Store {
 		var err error
 		testStoreInit.Do(func() {
@@ -32,9 +33,9 @@ func TestUserController(t *testing.T) {
 
 		return userCtrlStoreFixture
 	}
-	store = storeFuncMock
+	store.Instance = storeFuncMock
 	defer func() {
-		store = storeFunc
+		store.Instance = storeFunc
 		userCtrlStoreFixture = nil
 	}()
 
@@ -43,7 +44,7 @@ func TestUserController(t *testing.T) {
 
 	t.Run("get", func(t *testing.T) {
 		t.Run("found", func(t *testing.T) {
-			user, err := store().FindUser("user-01")
+			user, err := store.Instance().FindUser("user-01")
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
@@ -62,7 +63,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("follow", func(t *testing.T) {
-		user, err := store().FindUser("user-01")
+		user, err := store.Instance().FindUser("user-01")
 		if err != nil {
 			t.Fatal("Unexpected error: ", err)
 		}
@@ -76,11 +77,15 @@ func TestUserController(t *testing.T) {
 		})
 
 		t.Run("new followee", func(t *testing.T) {
-			followee, err := store().FindUser("user-03")
+			followee, err := store.Instance().FindUser("user-03")
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
-			user.Followees = append(user.Followees, followee)
+
+			if err := user.AddFollowees(followee); err != nil {
+				t.Fatal("Unexpected error: ", err)
+			}
+
 			expected := mediaTypeUser(user)
 
 			if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, followee.ID); !reflect.DeepEqual(expected, actual) {
@@ -111,7 +116,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("listen", func(t *testing.T) {
-		user, err := store().FindUser("user-01")
+		user, err := store.Instance().FindUser("user-01")
 		if err != nil {
 			t.Fatal("Unexpected error: ", err)
 		}
@@ -125,11 +130,14 @@ func TestUserController(t *testing.T) {
 		})
 
 		t.Run("new music", func(t *testing.T) {
-			music, err := store().FindMusic("song-05")
+			music, err := store.Instance().FindMusic("song-05")
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
-			user.History = append(user.History, music)
+
+			if err := user.AddHistory(music); err != nil {
+				t.Fatal("Unexpected error: ", err)
+			}
 
 			expected := mediaTypeUser(user)
 			if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, music.ID); !reflect.DeepEqual(expected, actual) {
@@ -156,7 +164,6 @@ func TestUserController(t *testing.T) {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})
-
 		})
 	})
 }

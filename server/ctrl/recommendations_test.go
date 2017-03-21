@@ -1,4 +1,4 @@
-package main
+package ctrl
 
 import (
 	"reflect"
@@ -7,13 +7,14 @@ import (
 	"github.com/goadesign/goa"
 	core "github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/server/app/test"
+	"github.com/ihcsim/bluelens/server/store"
 )
 
 const maxCount = 20
 
 func TestRecommendationsController(t *testing.T) {
 	// mock the store() function
-	storeFunc := store
+	storeFunc := store.Instance
 	storeFuncMock := func() core.Store {
 		s, err := core.NewFixtureStore()
 		if err != nil {
@@ -21,11 +22,11 @@ func TestRecommendationsController(t *testing.T) {
 		}
 		return s
 	}
-	store = storeFuncMock
+	store.Instance = storeFuncMock
 	defer func() {
-		store = storeFunc
+		store.Instance = storeFunc
 	}()
-	fixtureStore := store().(*core.FixtureStore)
+	fixtureStore := store.Instance().(*core.FixtureStore)
 
 	// retrieve the expected recommendations from the fixture store
 	recommendations, err := fixtureStore.Recommendations(maxCount)
@@ -37,7 +38,7 @@ func TestRecommendationsController(t *testing.T) {
 	ctrl := NewRecommendationsController(service)
 
 	// test the recommendations of all users in the store
-	users, err := store().ListUsers(maxCount)
+	users, err := store.Instance().ListUsers(maxCount)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}

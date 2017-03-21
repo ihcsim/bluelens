@@ -53,7 +53,7 @@ func Recommend(userID string, maxCount int, store Store) (*Recommendations, erro
 	}
 
 	doneFolloweesTask, doneHistoryTask := make(chan struct{}), make(chan struct{})
-	musicChan := make(chan *Music)
+	musicChan, errChan := make(chan *Music), make(chan error)
 	exclude := buildExcludeList(user)
 
 	go func() {
@@ -71,6 +71,7 @@ func Recommend(userID string, maxCount int, store Store) (*Recommendations, erro
 			for _, tag := range history.Tags {
 				musicByTags, err := store.FindMusicByTags(tag)
 				if err != nil {
+					errChan <- err
 				}
 				for _, music := range musicByTags {
 					musicChan <- music
@@ -86,8 +87,12 @@ func Recommend(userID string, maxCount int, store Store) (*Recommendations, erro
 		case m := <-musicChan:
 			if _, exists := exclude[m.ID]; !exists {
 				exclude[m.ID] = struct{}{}
-				r.List = append(r.List, m)
+				if err := r.List.Add(m); err != nil {
+					return nil, err
+				}
 			}
+		case e := <-errChan:
+			return nil, e
 		case <-doneFolloweesTask:
 			doneFolloweesTask = nil
 		case <-doneHistoryTask:
