@@ -48,14 +48,14 @@ func TestUserController(t *testing.T) {
 				t.Fatal("Unexpected error: ", err)
 			}
 
-			expected := mediaTypeUser(user)
-			if _, actual := test.GetUserOK(t, nil, nil, ctrl, user.ID); !reflect.DeepEqual(expected, actual) {
+			expected := mediaTypeUserFull(user)
+			if _, actual := test.ShowUserOKFull(t, nil, nil, ctrl, user.ID); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("Media type mismatch. Expected %+v, but got %+v", expected, actual)
 			}
 		})
 
 		t.Run("not found", func(t *testing.T) {
-			if _, err := test.GetUserNotFound(t, nil, nil, ctrl, "example"); err == nil {
+			if _, err := test.ShowUserNotFound(t, nil, nil, ctrl, "example"); err == nil {
 				t.Errorf("Expected EntityNotFound error to occur")
 			}
 		})

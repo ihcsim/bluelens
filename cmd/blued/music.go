@@ -17,17 +17,38 @@ func NewMusicController(service *goa.Service) *MusicController {
 	return &MusicController{Controller: service.NewController("MusicController")}
 }
 
-// Get runs the get action.
-func (c *MusicController) Get(ctx *app.GetMusicContext) error {
+// Create runs the create action.
+func (c *MusicController) Create(ctx *app.CreateMusicContext) error {
+	// MusicController_Create: start_implement
+
+	// Put your logic here
+
+	// MusicController_Create: end_implement
+	return nil
+}
+
+// List runs the list action.
+func (c *MusicController) List(ctx *app.ListMusicContext) error {
+	// MusicController_List: start_implement
+
+	// Put your logic here
+
+	// MusicController_List: end_implement
+	res := app.BluelensMusicCollection{}
+	return ctx.OK(res)
+}
+
+// Show runs the show action.
+func (c *MusicController) Show(ctx *app.ShowMusicContext) error {
 	m, err := store().FindMusic(ctx.ID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
 
-	res := &app.BluelensMusic{
+	res := &app.BluelensMusicFull{
 		ID:   m.ID,
 		Href: fmt.Sprintf("/music/%s", m.ID),
 		Tags: m.Tags,
 	}
-	return ctx.OK(res)
+	return ctx.OKFull(res)
 }

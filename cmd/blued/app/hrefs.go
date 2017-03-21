@@ -9,3 +9,20 @@
 // The content of this file is auto-generated, DO NOT MODIFY
 
 package app
+
+import (
+	"fmt"
+	"strings"
+)
+
+// MusicHref returns the resource href.
+func MusicHref(id interface{}) string {
+	paramid := strings.TrimLeftFunc(fmt.Sprintf("%v", id), func(r rune) bool { return r == '/' })
+	return fmt.Sprintf("/bluelens/music/%v", paramid)
+}
+
+// UserHref returns the resource href.
+func UserHref(id interface{}) string {
+	paramid := strings.TrimLeftFunc(fmt.Sprintf("%v", id), func(r rune) bool { return r == '/' })
+	return fmt.Sprintf("/bluelens/user/%v", paramid)
+}

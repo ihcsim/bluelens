@@ -15,6 +15,16 @@ func NewUserController(service *goa.Service) *UserController {
 	return &UserController{Controller: service.NewController("UserController")}
 }
 
+// Create runs the create action.
+func (c *UserController) Create(ctx *app.CreateUserContext) error {
+	// UserController_Create: start_implement
+
+	// Put your logic here
+
+	// UserController_Create: end_implement
+	return nil
+}
+
 // Follow runs the follow action.
 func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 	user, err := store().FindUser(ctx.ID)
@@ -33,16 +43,18 @@ func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 	}
 
 	return ctx.OK(mediaTypeUser(updated))
+
 }
 
-// Get runs the get action.
-func (c *UserController) Get(ctx *app.GetUserContext) error {
-	user, err := store().FindUser(ctx.ID)
-	if err != nil {
-		return ctx.NotFound(err)
-	}
+// List runs the list action.
+func (c *UserController) List(ctx *app.ListUserContext) error {
+	// UserController_List: start_implement
 
-	return ctx.OK(mediaTypeUser(user))
+	// Put your logic here
+
+	// UserController_List: end_implement
+	res := app.BluelensUserCollection{}
+	return ctx.OK(res)
 }
 
 // Listen runs the listen action.
@@ -63,4 +75,14 @@ func (c *UserController) Listen(ctx *app.ListenUserContext) error {
 	}
 
 	return ctx.OK(mediaTypeUser(updated))
+}
+
+// Show runs the show action.
+func (c *UserController) Show(ctx *app.ShowUserContext) error {
+	user, err := store().FindUser(ctx.ID)
+	if err != nil {
+		return ctx.NotFound(err)
+	}
+
+	return ctx.OKFull(mediaTypeUserFull(user))
 }

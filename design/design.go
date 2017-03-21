@@ -30,7 +30,7 @@ var _ = API("bluelens", func() {
 
 var _ = Resource("recommendations", func() {
 	BasePath("/recommendations")
-	DefaultMedia(Recommendations)
+	DefaultMedia(RecommendationsMediaType)
 
 	Action("recommend", func() {
 		Routing(GET("/:userID/:maxCount"))
@@ -48,16 +48,43 @@ var _ = Resource("recommendations", func() {
 
 var _ = Resource("user", func() {
 	BasePath("/user")
-	DefaultMedia(User)
+	DefaultMedia(UserMediaType)
 	Params(func() {
 		Param("id")
 	})
 
-	Action("get", func() {
+	Action("list", func() {
+		Routing(GET(""))
+		Description("List up to N user resources. N can be adjusted using the 'limit' and 'offset' parameters.")
+		Params(func() {
+			Param("limit", Integer, func() {
+				Default(20)
+			})
+			Param("offset", Integer, func() {
+				Default(0)
+			})
+		})
+
+		Response(OK, CollectionOf(UserMediaType))
+	})
+
+	Action("show", func() {
 		Routing(GET("/:id"))
-		Description("Get a user resource with the given ID")
-		Response(OK)
+		Description("Get a user resource with the given ID.")
+
+		Response(OK, func() {
+			Media(UserMediaType, "full")
+		})
 		Response(NotFound, ErrorMedia)
+	})
+
+	Action("create", func() {
+		Routing(POST(""))
+		Payload(User)
+
+		Response(Created, func() {
+			Media(UserMediaType, "link")
+		})
 	})
 
 	Action("listen", func() {
@@ -66,6 +93,7 @@ var _ = Resource("user", func() {
 		Params(func() {
 			Param("musicID", String, "ID of the music.")
 		})
+
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
@@ -77,6 +105,7 @@ var _ = Resource("user", func() {
 		Params(func() {
 			Param("followeeID", String, "ID of the followee.")
 		})
+
 		Response(OK)
 		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
@@ -85,27 +114,54 @@ var _ = Resource("user", func() {
 
 var _ = Resource("music", func() {
 	BasePath("/music")
-	DefaultMedia(Music)
+	DefaultMedia(MusicMediaType)
 	Params(func() {
 		Param("id")
 	})
 
-	Action("get", func() {
+	Action("list", func() {
+		Routing(GET(""))
+		Description("List up to N music resources. N can be adjusted using the 'limit' and 'offset' parameters.")
+		Params(func() {
+			Param("limit", Integer, func() {
+				Default(20)
+			})
+			Param("offset", Integer, func() {
+				Default(0)
+			})
+		})
+
+		Response(OK, CollectionOf(MusicMediaType))
+	})
+
+	Action("show", func() {
 		Routing(GET("/:id"))
 		Description("Get a music resource with the given ID")
-		Response(OK)
+
+		Response(OK, func() {
+			Media(MusicMediaType, "full")
+		})
 		Response(NotFound, ErrorMedia)
+	})
+
+	Action("create", func() {
+		Routing(POST(""))
+		Payload(Music)
+
+		Response(Created, func() {
+			Media(MusicMediaType, "link")
+		})
 	})
 })
 
-var Recommendations = MediaType("application/vnd.bluelens.recommendations+json", func() {
+var RecommendationsMediaType = MediaType("application/vnd.bluelens.recommendations+json", func() {
 	Description("A list of recommendations for the specified user")
 	ContentType("application/json")
 
 	Attributes(func() {
 		Attribute("musicID", ArrayOf(String))
-		Attribute("list", CollectionOf("application/vnd.bluelens.music+json"))
-		Attribute("user", User)
+		Attribute("list", CollectionOf(MusicMediaType))
+		Attribute("user", UserMediaType)
 
 		Links(func() {
 			Link("list")
@@ -127,14 +183,25 @@ var Recommendations = MediaType("application/vnd.bluelens.recommendations+json",
 	})
 })
 
-var User = MediaType("application/vnd.bluelens.user+json", func() {
+var User = Type("user", func() {
 	Description("A user resource")
+
+	Attribute("id", String)
+	Attribute("followees", ArrayOf("user")) // avoid initialization loop
+	Attribute("history", ArrayOf(Music))
+
+	Required("id")
+})
+
+var UserMediaType = MediaType("application/vnd.bluelens.user+json", func() {
+	Description("Media type of a user resource")
+	Reference(User)
 	ContentType("application/json")
 
 	Attributes(func() {
-		Attribute("id", String)
-		Attribute("followees", CollectionOf("application/vnd.bluelens.user+json"))
-		Attribute("history", CollectionOf("application/vnd.bluelens.music+json"))
+		Attribute("id")
+		Attribute("followees", CollectionOf("application/vnd.bluelens.user+json")) // avoid initialization loop
+		Attribute("history", CollectionOf(MusicMediaType))
 		Attribute("href", String)
 
 		Links(func() {
@@ -155,7 +222,7 @@ var User = MediaType("application/vnd.bluelens.user+json", func() {
 		Attribute("href")
 	})
 
-	View("all", func() {
+	View("full", func() {
 		Attribute("id")
 		Attribute("followees")
 		Attribute("history")
@@ -163,19 +230,35 @@ var User = MediaType("application/vnd.bluelens.user+json", func() {
 	})
 })
 
-var Music = MediaType("application/vnd.bluelens.music+json", func() {
+var Music = Type("music", func() {
 	Description("A music resource")
+
+	Attribute("id", String)
+	Attribute("tags", ArrayOf(String))
+
+	Required("id")
+})
+
+var MusicMediaType = MediaType("application/vnd.bluelens.music+json", func() {
+	Description("Media type of a music resource")
+	Reference(Music)
 	ContentType("application/json")
 
 	Attributes(func() {
-		Attribute("id", String)
-		Attribute("tags", ArrayOf(String))
-		Attribute("href", String)
+		Attribute("id")
+		Attribute("tags")
+		Attribute("href")
 
 		Required("id", "href")
 	})
 
 	View("default", func() {
+		Attribute("id")
+		Attribute("tags")
+		Attribute("href")
+	})
+
+	View("full", func() {
 		Attribute("id")
 		Attribute("tags")
 		Attribute("href")

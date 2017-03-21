@@ -36,14 +36,28 @@ func TestMediaTypeMusic(t *testing.T) {
 		ID:   "song-00",
 		Tags: []string{"rock", "80's"},
 	}
-	expected := &app.BluelensMusic{
-		ID:   music.ID,
-		Href: fmt.Sprintf("/music/%s", music.ID),
-		Tags: music.Tags,
-	}
-	if actual := mediaTypeMusic(music); !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Meida type mismatch. Expected %v, but got %v", expected, actual)
-	}
+
+	t.Run("view=default", func(t *testing.T) {
+		expected := &app.BluelensMusic{
+			ID:   music.ID,
+			Href: fmt.Sprintf("/music/%s", music.ID),
+			Tags: music.Tags,
+		}
+		if actual := mediaTypeMusic(music); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("Meida type mismatch. Expected %v, but got %v", expected, actual)
+		}
+	})
+
+	t.Run("view=full", func(t *testing.T) {
+		expected := &app.BluelensMusicFull{
+			ID:   music.ID,
+			Href: fmt.Sprintf("/music/%s", music.ID),
+			Tags: music.Tags,
+		}
+		if actual := mediaTypeMusicFull(music); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("Media type mismatch. Expected %v, but got %v", expected, actual)
+		}
+	})
 }
 
 func TestMediaTypeUser(t *testing.T) {
@@ -59,25 +73,56 @@ func TestMediaTypeUser(t *testing.T) {
 		},
 	}
 
-	followeesLinks := app.BluelensUserLinkCollection{
-		&app.BluelensUserLink{Href: "/users/user-01"},
-		&app.BluelensUserLink{Href: "/users/user-02"},
-	}
-	historyLinks := app.BluelensMusicLinkCollection{
-		&app.BluelensMusicLink{Href: "/music/song-01"},
-		&app.BluelensMusicLink{Href: "/music/song-02"},
-	}
-	links := &app.BluelensUserLinks{
-		Followees: followeesLinks,
-		History:   historyLinks,
-	}
-	expected := &app.BluelensUser{
-		ID:    user.ID,
-		Href:  fmt.Sprintf("/users/%s", user.ID),
-		Links: links,
-	}
+	t.Run("view=default", func(t *testing.T) {
+		followeesLinks := app.BluelensUserLinkCollection{
+			&app.BluelensUserLink{Href: "/users/user-01"},
+			&app.BluelensUserLink{Href: "/users/user-02"},
+		}
+		historyLinks := app.BluelensMusicLinkCollection{
+			&app.BluelensMusicLink{Href: "/music/song-01"},
+			&app.BluelensMusicLink{Href: "/music/song-02"},
+		}
+		links := &app.BluelensUserLinks{
+			Followees: followeesLinks,
+			History:   historyLinks,
+		}
+		expected := &app.BluelensUser{
+			ID:    user.ID,
+			Href:  fmt.Sprintf("/users/%s", user.ID),
+			Links: links,
+		}
+		if actual := mediaTypeUser(user); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("Media type mismatch. Expected %+v, but got %+v", expected, actual)
+		}
+	})
 
-	if actual := mediaTypeUser(user); !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Media type mismatch. Expected %s, but got %s", expected, actual)
-	}
+	t.Run("view=full", func(t *testing.T) {
+		followees := app.BluelensUserCollection{
+			&app.BluelensUser{ID: "user-01", Href: "/users/user-01",
+				Links: &app.BluelensUserLinks{
+					Followees: app.BluelensUserLinkCollection{},
+					History:   app.BluelensMusicLinkCollection{},
+				}},
+			&app.BluelensUser{ID: "user-02", Href: "/users/user-02",
+				Links: &app.BluelensUserLinks{
+					Followees: app.BluelensUserLinkCollection{},
+					History:   app.BluelensMusicLinkCollection{},
+				}},
+		}
+		history := app.BluelensMusicCollection{
+			&app.BluelensMusic{ID: "song-01", Href: "/music/song-01"},
+			&app.BluelensMusic{ID: "song-02", Href: "/music/song-02"},
+		}
+
+		expected := &app.BluelensUserFull{
+			ID:        user.ID,
+			Href:      fmt.Sprintf("/users/%s", user.ID),
+			Followees: followees,
+			History:   history,
+		}
+
+		if actual := mediaTypeUserFull(user); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("Media type mismatch.\nExpected %s\nBut got %s", expected, actual)
+		}
+	})
 }

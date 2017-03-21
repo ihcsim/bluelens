@@ -10,3 +10,126 @@
 // The content of this file is auto-generated, DO NOT MODIFY
 
 package client
+
+import (
+	"github.com/goadesign/goa"
+)
+
+// A music resource
+type music struct {
+	ID   *string  `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	Tags []string `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+}
+
+// Validate validates the music type instance.
+func (ut *music) Validate() (err error) {
+	if ut.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	return
+}
+
+// Publicize creates Music from music
+func (ut *music) Publicize() *Music {
+	var pub Music
+	if ut.ID != nil {
+		pub.ID = *ut.ID
+	}
+	if ut.Tags != nil {
+		pub.Tags = ut.Tags
+	}
+	return &pub
+}
+
+// A music resource
+type Music struct {
+	ID   string   `form:"id" json:"id" xml:"id"`
+	Tags []string `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+}
+
+// Validate validates the Music type instance.
+func (ut *Music) Validate() (err error) {
+	if ut.ID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	return
+}
+
+// A user resource
+type user struct {
+	Followees []*user  `form:"followees,omitempty" json:"followees,omitempty" xml:"followees,omitempty"`
+	History   []*music `form:"history,omitempty" json:"history,omitempty" xml:"history,omitempty"`
+	ID        *string  `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+}
+
+// Validate validates the user type instance.
+func (ut *user) Validate() (err error) {
+	if ut.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	for _, e := range ut.Followees {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range ut.History {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// Publicize creates User from user
+func (ut *user) Publicize() *User {
+	var pub User
+	if ut.Followees != nil {
+		pub.Followees = make([]*User, len(ut.Followees))
+		for i2, elem2 := range ut.Followees {
+			pub.Followees[i2] = elem2.Publicize()
+		}
+	}
+	if ut.History != nil {
+		pub.History = make([]*Music, len(ut.History))
+		for i2, elem2 := range ut.History {
+			pub.History[i2] = elem2.Publicize()
+		}
+	}
+	if ut.ID != nil {
+		pub.ID = *ut.ID
+	}
+	return &pub
+}
+
+// A user resource
+type User struct {
+	Followees []*User  `form:"followees,omitempty" json:"followees,omitempty" xml:"followees,omitempty"`
+	History   []*Music `form:"history,omitempty" json:"history,omitempty" xml:"history,omitempty"`
+	ID        string   `form:"id" json:"id" xml:"id"`
+}
+
+// Validate validates the User type instance.
+func (ut *User) Validate() (err error) {
+	if ut.ID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	for _, e := range ut.Followees {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	for _, e := range ut.History {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}

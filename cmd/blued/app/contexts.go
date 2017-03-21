@@ -16,22 +16,124 @@ import (
 	"strconv"
 )
 
-// GetMusicContext provides the music get action context.
-type GetMusicContext struct {
+// CreateMusicContext provides the music create action context.
+type CreateMusicContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	ID      *string
+	Payload *Music
+}
+
+// NewCreateMusicContext parses the incoming request URL and body, performs validations and creates the
+// context used by the music controller create action.
+func NewCreateMusicContext(ctx context.Context, service *goa.Service) (*CreateMusicContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	rctx := CreateMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = &rawID
+	}
+	return &rctx, err
+}
+
+// CreatedLink sends a HTTP response with status code 201.
+func (ctx *CreateMusicContext) CreatedLink(r *BluelensMusicLink) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
+}
+
+// ListMusicContext provides the music list action context.
+type ListMusicContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	ID     *string
+	Limit  int
+	Offset int
+}
+
+// NewListMusicContext parses the incoming request URL and body, performs validations and creates the
+// context used by the music controller list action.
+func NewListMusicContext(ctx context.Context, service *goa.Service) (*ListMusicContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	rctx := ListMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = &rawID
+	}
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) > 0 {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
+		}
+	}
+	paramOffset := req.Params["offset"]
+	if len(paramOffset) > 0 {
+		rawOffset := paramOffset[0]
+		if offset, err2 := strconv.Atoi(rawOffset); err2 == nil {
+			rctx.Offset = offset
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("offset", rawOffset, "integer"))
+		}
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ListMusicContext) OK(r BluelensMusicCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.bluelens.music+json; type=collection")
+	if r == nil {
+		r = BluelensMusicCollection{}
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKFull sends a HTTP response with status code 200.
+func (ctx *ListMusicContext) OKFull(r BluelensMusicFullCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.bluelens.music+json; type=collection")
+	if r == nil {
+		r = BluelensMusicFullCollection{}
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKLink sends a HTTP response with status code 200.
+func (ctx *ListMusicContext) OKLink(r BluelensMusicLinkCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.bluelens.music+json; type=collection")
+	if r == nil {
+		r = BluelensMusicLinkCollection{}
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// ShowMusicContext provides the music show action context.
+type ShowMusicContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
 	ID string
 }
 
-// NewGetMusicContext parses the incoming request URL and body, performs validations and creates the
-// context used by the music controller get action.
-func NewGetMusicContext(ctx context.Context, service *goa.Service) (*GetMusicContext, error) {
+// NewShowMusicContext parses the incoming request URL and body, performs validations and creates the
+// context used by the music controller show action.
+func NewShowMusicContext(ctx context.Context, service *goa.Service) (*ShowMusicContext, error) {
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
-	rctx := GetMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
+	rctx := ShowMusicContext{Context: ctx, ResponseData: resp, RequestData: req}
 	paramID := req.Params["id"]
 	if len(paramID) > 0 {
 		rawID := paramID[0]
@@ -40,20 +142,14 @@ func NewGetMusicContext(ctx context.Context, service *goa.Service) (*GetMusicCon
 	return &rctx, err
 }
 
-// OK sends a HTTP response with status code 200.
-func (ctx *GetMusicContext) OK(r *BluelensMusic) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/json")
-	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
-}
-
-// OKLink sends a HTTP response with status code 200.
-func (ctx *GetMusicContext) OKLink(r *BluelensMusicLink) error {
+// OKFull sends a HTTP response with status code 200.
+func (ctx *ShowMusicContext) OKFull(r *BluelensMusicFull) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
 // NotFound sends a HTTP response with status code 404.
-func (ctx *GetMusicContext) NotFound(r error) error {
+func (ctx *ShowMusicContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
@@ -113,6 +209,37 @@ func (ctx *RecommendRecommendationsContext) NotFound(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
+// CreateUserContext provides the user create action context.
+type CreateUserContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	ID      *string
+	Payload *User
+}
+
+// NewCreateUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller create action.
+func NewCreateUserContext(ctx context.Context, service *goa.Service) (*CreateUserContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	rctx := CreateUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = &rawID
+	}
+	return &rctx, err
+}
+
+// CreatedLink sends a HTTP response with status code 201.
+func (ctx *CreateUserContext) CreatedLink(r *BluelensUserLink) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
+}
+
 // FollowUserContext provides the user follow action context.
 type FollowUserContext struct {
 	context.Context
@@ -143,14 +270,14 @@ func NewFollowUserContext(ctx context.Context, service *goa.Service) (*FollowUse
 	return &rctx, err
 }
 
-// OKAll sends a HTTP response with status code 200.
-func (ctx *FollowUserContext) OKAll(r *BluelensUserAll) error {
+// OK sends a HTTP response with status code 200.
+func (ctx *FollowUserContext) OK(r *BluelensUser) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
-// OK sends a HTTP response with status code 200.
-func (ctx *FollowUserContext) OK(r *BluelensUser) error {
+// OKFull sends a HTTP response with status code 200.
+func (ctx *FollowUserContext) OKFull(r *BluelensUserFull) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
@@ -173,52 +300,75 @@ func (ctx *FollowUserContext) NotFound(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
-// GetUserContext provides the user get action context.
-type GetUserContext struct {
+// ListUserContext provides the user list action context.
+type ListUserContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	ID string
+	ID     *string
+	Limit  int
+	Offset int
 }
 
-// NewGetUserContext parses the incoming request URL and body, performs validations and creates the
-// context used by the user controller get action.
-func NewGetUserContext(ctx context.Context, service *goa.Service) (*GetUserContext, error) {
+// NewListUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller list action.
+func NewListUserContext(ctx context.Context, service *goa.Service) (*ListUserContext, error) {
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
-	rctx := GetUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	rctx := ListUserContext{Context: ctx, ResponseData: resp, RequestData: req}
 	paramID := req.Params["id"]
 	if len(paramID) > 0 {
 		rawID := paramID[0]
-		rctx.ID = rawID
+		rctx.ID = &rawID
+	}
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) > 0 {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
+		}
+	}
+	paramOffset := req.Params["offset"]
+	if len(paramOffset) > 0 {
+		rawOffset := paramOffset[0]
+		if offset, err2 := strconv.Atoi(rawOffset); err2 == nil {
+			rctx.Offset = offset
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("offset", rawOffset, "integer"))
+		}
 	}
 	return &rctx, err
 }
 
-// OKAll sends a HTTP response with status code 200.
-func (ctx *GetUserContext) OKAll(r *BluelensUserAll) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+// OK sends a HTTP response with status code 200.
+func (ctx *ListUserContext) OK(r BluelensUserCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.bluelens.user+json; type=collection")
+	if r == nil {
+		r = BluelensUserCollection{}
+	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
-// OK sends a HTTP response with status code 200.
-func (ctx *GetUserContext) OK(r *BluelensUser) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+// OKFull sends a HTTP response with status code 200.
+func (ctx *ListUserContext) OKFull(r BluelensUserFullCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.bluelens.user+json; type=collection")
+	if r == nil {
+		r = BluelensUserFullCollection{}
+	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
 // OKLink sends a HTTP response with status code 200.
-func (ctx *GetUserContext) OKLink(r *BluelensUserLink) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+func (ctx *ListUserContext) OKLink(r BluelensUserLinkCollection) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.bluelens.user+json; type=collection")
+	if r == nil {
+		r = BluelensUserLinkCollection{}
+	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
-}
-
-// NotFound sends a HTTP response with status code 404.
-func (ctx *GetUserContext) NotFound(r error) error {
-	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
-	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
 // ListenUserContext provides the user listen action context.
@@ -251,14 +401,14 @@ func NewListenUserContext(ctx context.Context, service *goa.Service) (*ListenUse
 	return &rctx, err
 }
 
-// OKAll sends a HTTP response with status code 200.
-func (ctx *ListenUserContext) OKAll(r *BluelensUserAll) error {
+// OK sends a HTTP response with status code 200.
+func (ctx *ListenUserContext) OK(r *BluelensUser) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
-// OK sends a HTTP response with status code 200.
-func (ctx *ListenUserContext) OK(r *BluelensUser) error {
+// OKFull sends a HTTP response with status code 200.
+func (ctx *ListenUserContext) OKFull(r *BluelensUserFull) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
@@ -277,6 +427,42 @@ func (ctx *ListenUserContext) BadRequest(r error) error {
 
 // NotFound sends a HTTP response with status code 404.
 func (ctx *ListenUserContext) NotFound(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// ShowUserContext provides the user show action context.
+type ShowUserContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	ID string
+}
+
+// NewShowUserContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user controller show action.
+func NewShowUserContext(ctx context.Context, service *goa.Service) (*ShowUserContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	rctx := ShowUserContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		rctx.ID = rawID
+	}
+	return &rctx, err
+}
+
+// OKFull sends a HTTP response with status code 200.
+func (ctx *ShowUserContext) OKFull(r *BluelensUserFull) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ShowUserContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
