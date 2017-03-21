@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/goadesign/goa"
-	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
+	"github.com/ihcsim/bluelens/internal/core"
 )
 
 // RecommendationsController implements the recommendations resource.

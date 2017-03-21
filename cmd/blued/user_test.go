@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/goadesign/goa"
-	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/cmd/blued/app/test"
+	"github.com/ihcsim/bluelens/internal/core"
 )
 
 var (

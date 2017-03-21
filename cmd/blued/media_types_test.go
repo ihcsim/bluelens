@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
+	"github.com/ihcsim/bluelens/internal/core"
 )
 
 func TestMediaTypeRecommendations(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ihcsim/bluelens/json"
+	"github.com/ihcsim/bluelens/internal/core/json"
 )
 
 func TestMusicList(t *testing.T) {

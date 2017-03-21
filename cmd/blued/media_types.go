@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/ihcsim/bluelens"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
+	"github.com/ihcsim/bluelens/internal/core"
 )
 
 func mediaTypeRecommendations(r *core.Recommendations) *app.BluelensRecommendations {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ihcsim/bluelens/json"
+	"github.com/ihcsim/bluelens/internal/core/json"
 )
 
 // User represents a user of the system. A user has a list of followees and a history of all the music heard.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ihcsim/bluelens/json"
+	"github.com/ihcsim/bluelens/internal/core/json"
 )
 
 // Music contains metadata of a music resource in the system.

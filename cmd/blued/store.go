@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/ihcsim/bluelens"
-	"github.com/ihcsim/bluelens/json"
+	"github.com/ihcsim/bluelens/internal/core"
+	"github.com/ihcsim/bluelens/internal/core/json"
 )
 
 const (
