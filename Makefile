@@ -17,7 +17,9 @@ ifndef GLIDE
 $(error "Please install glide. Installation instruction can be found at https://github.com/Masterminds/glide#install")
 endif
 
-all: vendor test server client
+all: vendor test codegen build
+codegen: server/codegen client/codegen
+build: server/build client/build
 server: server/codegen server/build
 client: client/codegen client/build
 

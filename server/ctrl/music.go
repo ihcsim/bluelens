@@ -20,7 +20,7 @@ func NewMusicController(service *goa.Service) *MusicController {
 
 // Get runs the get action.
 func (c *MusicController) Get(ctx *app.GetMusicContext) error {
-	m, err := store.Instance().FindMusic(ctx.MusicID)
+	m, err := store.Instance().FindMusic(ctx.ID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}

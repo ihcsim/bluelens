@@ -5,6 +5,8 @@ package main
 import (
 	"os"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/ihcsim/bluelens/server/app"
@@ -15,11 +17,15 @@ import (
 func main() {
 	config, err := parseFlags(os.Args[1:])
 	if err != nil {
-		os.Exit(1)
+		log.WithFields(log.Fields{
+			"Cause": err},
+		).Fatal("Error while parsing runtime configuration flags")
 	}
 
 	if err := store.Initialize(config); err != nil {
-		os.Exit(1)
+		log.WithFields(log.Fields{
+			"Cause": err},
+		).Fatal("Error while initializing data store")
 	}
 
 	// Create service

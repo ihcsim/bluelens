@@ -12,13 +12,13 @@ func mediaTypeRecommendations(r *core.Recommendations) *app.BluelensRecommendati
 	musicLinks := app.BluelensMusicLinkCollection{}
 	for _, m := range r.List {
 		musicIDs = append(musicIDs, m.ID)
-		link := &app.BluelensMusicLink{Href: fmt.Sprintf("/music/%s", m.ID), ID: m.ID}
+		link := &app.BluelensMusicLink{Href: fmt.Sprintf("/music/%s", m.ID)}
 		musicLinks = append(musicLinks, link)
 	}
 
 	links := &app.BluelensRecommendationsLinks{
 		List: musicLinks,
-		User: &app.BluelensUserLink{Href: fmt.Sprintf("/users/%s", r.UserID), ID: r.UserID},
+		User: &app.BluelensUserLink{Href: fmt.Sprintf("/users/%s", r.UserID)},
 	}
 	return &app.BluelensRecommendations{
 		MusicID: musicIDs,
@@ -38,7 +38,6 @@ func mediaTypeUser(u *core.User) *app.BluelensUser {
 	followeesLinks := app.BluelensUserLinkCollection{}
 	for _, followee := range u.Followees {
 		link := &app.BluelensUserLink{
-			ID:   followee.ID,
 			Href: fmt.Sprintf("/users/%s", followee.ID),
 		}
 		followeesLinks = append(followeesLinks, link)
@@ -47,7 +46,6 @@ func mediaTypeUser(u *core.User) *app.BluelensUser {
 	historyLinks := app.BluelensMusicLinkCollection{}
 	for _, music := range u.History {
 		link := &app.BluelensMusicLink{
-			ID:   music.ID,
 			Href: fmt.Sprintf("/music/%s", music.ID),
 		}
 		historyLinks = append(historyLinks, link)

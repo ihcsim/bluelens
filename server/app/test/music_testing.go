@@ -28,7 +28,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetMusicNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, musicID string) (http.ResponseWriter, error) {
+func GetMusicNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -49,14 +49,14 @@ func GetMusicNotFound(t goatest.TInterface, ctx context.Context, service *goa.Se
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/music/%v", musicID),
+		Path: fmt.Sprintf("/bluelens/music/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -93,7 +93,7 @@ func GetMusicNotFound(t goatest.TInterface, ctx context.Context, service *goa.Se
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, musicID string) (http.ResponseWriter, *app.BluelensMusic) {
+func GetMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id string) (http.ResponseWriter, *app.BluelensMusic) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -114,14 +114,14 @@ func GetMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/music/%v", musicID),
+		Path: fmt.Sprintf("/bluelens/music/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -162,7 +162,7 @@ func GetMusicOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func GetMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, musicID string) (http.ResponseWriter, *app.BluelensMusicLink) {
+func GetMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MusicController, id string) (http.ResponseWriter, *app.BluelensMusicLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -183,14 +183,14 @@ func GetMusicOKLink(t goatest.TInterface, ctx context.Context, service *goa.Serv
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/music/%v", musicID),
+		Path: fmt.Sprintf("/bluelens/music/%v", id),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
 	prms := url.Values{}
-	prms["musicID"] = []string{fmt.Sprintf("%v", musicID)}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
 	if ctx == nil {
 		ctx = context.Background()
 	}

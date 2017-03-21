@@ -164,7 +164,6 @@ func TestUserController(t *testing.T) {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})
-
 		})
 	})
 }

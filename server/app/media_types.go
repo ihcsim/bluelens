@@ -39,14 +39,10 @@ func (mt *BluelensMusic) Validate() (err error) {
 // Identifier: application/vnd.bluelens.music+json; view=link
 type BluelensMusicLink struct {
 	Href string `form:"href" json:"href" xml:"href"`
-	ID   string `form:"id" json:"id" xml:"id"`
 }
 
 // Validate validates the BluelensMusicLink media type instance.
 func (mt *BluelensMusicLink) Validate() (err error) {
-	if mt.ID == "" {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
-	}
 	if mt.Href == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "href"))
 	}
@@ -217,14 +213,10 @@ func (mt *BluelensUser) Validate() (err error) {
 // Identifier: application/vnd.bluelens.user+json; view=link
 type BluelensUserLink struct {
 	Href string `form:"href" json:"href" xml:"href"`
-	ID   string `form:"id" json:"id" xml:"id"`
 }
 
 // Validate validates the BluelensUserLink media type instance.
 func (mt *BluelensUserLink) Validate() (err error) {
-	if mt.ID == "" {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
-	}
 	if mt.Href == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "href"))
 	}

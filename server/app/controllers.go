@@ -51,8 +51,8 @@ func MountMusicController(service *goa.Service, ctrl MusicController) {
 		}
 		return ctrl.Get(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/music/:musicID", ctrl.MuxHandler("Get", h, nil))
-	service.LogInfo("mount", "ctrl", "Music", "action", "Get", "route", "GET /bluelens/music/:musicID")
+	service.Mux.Handle("GET", "/bluelens/music/:id", ctrl.MuxHandler("Get", h, nil))
+	service.LogInfo("mount", "ctrl", "Music", "action", "Get", "route", "GET /bluelens/music/:id")
 }
 
 // RecommendationsController is the controller interface for the Recommendations actions.
@@ -149,8 +149,8 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Follow(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:userID/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:userID/follows/:followeeID")
+	service.Mux.Handle("POST", "/bluelens/user/:id/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:id/follows/:followeeID")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -164,8 +164,8 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Get(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/user/:userID", ctrl.MuxHandler("Get", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Get", "route", "GET /bluelens/user/:userID")
+	service.Mux.Handle("GET", "/bluelens/user/:id", ctrl.MuxHandler("Get", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Get", "route", "GET /bluelens/user/:id")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -179,6 +179,6 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Listen(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:userID/listen/:musicID", ctrl.MuxHandler("Listen", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:userID/listen/:musicID")
+	service.Mux.Handle("POST", "/bluelens/user/:id/listen/:musicID", ctrl.MuxHandler("Listen", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:id/listen/:musicID")
 }
