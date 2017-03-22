@@ -8,9 +8,9 @@ type Store interface {
 	// LoadUser loads the provided list of users into the store.
 	LoadUsers(UserList) error
 
-	// List users retrieves a list of user resources from the store. The length of the result list
-	// is bounded by limit.
-	ListUsers(limit int) (UserList, error)
+	// List users retrieves a list of user resources from the store. The start and length of the result list
+	// is determined by offset and limit, respectively.
+	ListUsers(limit, offset int) (UserList, error)
 
 	// FindUser looks up the user with the specified ID.
 	FindUser(userID string) (*User, error)
@@ -26,9 +26,9 @@ type Store interface {
 	// LoadMusic loads the provided list of music into the store.
 	LoadMusic(MusicList) error
 
-	// ListMusic retrieves a list of music resources from the store. The length of the result list
-	// is bounded by limit.
-	ListMusic(limit int) (MusicList, error)
+	// ListMusic retrieves a list of music resources from the store. The start and length of the result list
+	// is determined by offset and limit, respectively.
+	ListMusic(limit, offset int) (MusicList, error)
 
 	// FindMusic looks up the music resource with the specified ID.
 	FindMusic(musicID string) (*Music, error)
@@ -40,8 +40,6 @@ type Store interface {
 	// If either the user or music doesn't exist, an error is returned.
 	Listen(userID, musicID string) (*User, error)
 }
-
-const defaultLimit = 20
 
 // InMemoryStore stores all the user and music data in-memory.
 type InMemoryStore struct {
@@ -82,18 +80,11 @@ func (s *InMemoryStore) LoadUsers(users UserList) error {
 	return nil
 }
 
-// ListUsers retrieves a list of user resources from the store. The length of
-// the result list is bounded by limit.
-func (s *InMemoryStore) ListUsers(limit int) (UserList, error) {
-	if limit <= 0 {
-		limit = defaultLimit
-	}
-
-	if limit > len(s.userList) {
-		limit = len(s.userList)
-	}
-
-	return s.userList[:limit], nil
+// ListUsers retrieves a list of user resources from the store. The start and length of
+// the result list is bounded by offset and limit, respectively.
+func (s *InMemoryStore) ListUsers(limit, offset int) (UserList, error) {
+	start, end := calcStartEnd(limit, offset, len(s.userList))
+	return s.userList[start:end], nil
 }
 
 // FindUser looks for the user with the specified id in the store.
@@ -173,18 +164,29 @@ func (s *InMemoryStore) LoadMusic(l MusicList) error {
 	return nil
 }
 
-// ListMusic returns the list of music in the store. The length of the result list
-// is bounded by limit.
-func (s *InMemoryStore) ListMusic(limit int) (MusicList, error) {
-	if limit <= 0 {
-		limit = defaultLimit
+// ListMusic returns the list of music in the store. The start and length of the result list
+// is determined by offset and limit, respectively.
+func (s *InMemoryStore) ListMusic(limit, offset int) (MusicList, error) {
+	start, end := calcStartEnd(limit, offset, len(s.musicList))
+	return s.musicList[start:end], nil
+}
+
+func calcStartEnd(limit, offset, bound int) (int, int) {
+	if limit <= 0 || limit > bound {
+		limit = bound
 	}
 
-	if limit > len(s.musicList) {
-		limit = len(s.musicList)
+	if offset < 0 || offset > bound {
+		offset = 0
 	}
 
-	return s.musicList[:limit], nil
+	start, end := offset, offset+limit
+
+	if end > bound {
+		end = bound
+	}
+
+	return start, end
 }
 
 // FindMusic retrieves the music resource with the specified ID.

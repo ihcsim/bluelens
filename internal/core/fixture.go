@@ -52,7 +52,7 @@ func (f *FixtureStore) Recommendations(limit int) (map[string]*Recommendations, 
 	}
 
 	var err error
-	recommendations["user-new"].List, err = f.ListMusic(limit)
+	recommendations["user-new"].List, err = f.ListMusic(limit, 0)
 	if err != nil {
 		return nil, err
 	}

@@ -41,7 +41,7 @@ func TestMusicController(t *testing.T) {
 		}
 
 		for id, tc := range tests {
-			musicList, err := store().ListMusic(tc.limit)
+			musicList, err := store().ListMusic(tc.limit, tc.offset)
 			if err != nil {
 				t.Error("Unexpected error with test case %d: ", id, err)
 			}

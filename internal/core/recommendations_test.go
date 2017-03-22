@@ -17,7 +17,7 @@ func TestRecommend(t *testing.T) {
 		t.Fatal("Unexpected error: ", err)
 	}
 
-	actual, err := store.ListUsers(limit)
+	actual, err := store.ListUsers(limit, 0)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}

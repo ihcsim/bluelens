@@ -44,7 +44,7 @@ func Recommend(userID string, limit int, store Store) (*Recommendations, error) 
 
 	r := NewRecommendations(userID)
 	if user.IsNew() {
-		recommendations, err := store.ListMusic(limit)
+		recommendations, err := store.ListMusic(limit, 0)
 		if err != nil {
 			return nil, err
 		}

@@ -9,7 +9,10 @@ import (
 	"github.com/ihcsim/bluelens/internal/core"
 )
 
-const limit = 20
+const (
+	limit  = 20
+	offset = 0
+)
 
 func TestRecommendationsController(t *testing.T) {
 	// mock the store() function
@@ -37,7 +40,7 @@ func TestRecommendationsController(t *testing.T) {
 	ctrl := NewRecommendationsController(service)
 
 	// test the recommendations of all users in the store
-	users, err := store().ListUsers(limit)
+	users, err := store().ListUsers(limit, offset)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}

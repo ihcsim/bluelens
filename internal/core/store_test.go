@@ -59,25 +59,26 @@ func TestInMemoryStore(t *testing.T) {
 					limit  int
 					offset int
 				}{
-					{limit: -1, offset: 0},
-					{limit: 0, offset: 0},
-					{limit: 5, offset: 0},
-					{limit: 10, offset: 0},
-					{limit: 20, offset: 0},
+					{offset: 0, limit: -1},
+					{offset: 0, limit: 0},
+					{offset: 0, limit: 5},
+					{offset: 0, limit: 10},
+					{offset: 0, limit: 20},
+					{offset: 10, limit: 20},
+					{offset: 5, limit: 10},
+					{offset: 10, limit: 10},
+					{offset: 15, limit: 10},
+					{offset: -1, limit: 0},
 				}
 
 				for id, tc := range tests {
-					actual, err := store.ListUsers(tc.limit)
+					actual, err := store.ListUsers(tc.limit, tc.offset)
 					if err != nil {
 						t.Fatal("Unexpected error with test case %d: ", id, err)
 					}
 
-					var expected UserList
-					if tc.limit > len(users) || tc.limit <= 0 {
-						expected = users
-					} else {
-						expected = users[:tc.limit]
-					}
+					start, end := calcStartEnd(tc.limit, tc.offset, len(users))
+					expected := users[start:end]
 
 					if !reflect.DeepEqual(expected, actual) {
 						t.Errorf("User list mismatch. Test case: %d\nExpected: %v\nBut got: %v", id, users, actual)
@@ -138,28 +139,29 @@ func TestInMemoryStore(t *testing.T) {
 
 			t.Run("list", func(t *testing.T) {
 				tests := []struct {
-					limit  int
 					offset int
+					limit  int
 				}{
-					{limit: -1, offset: 0},
-					{limit: 0, offset: 0},
-					{limit: 5, offset: 0},
-					{limit: 10, offset: 0},
-					{limit: 20, offset: 0},
+					{offset: 0, limit: -1},
+					{offset: 0, limit: 0},
+					{offset: 0, limit: 5},
+					{offset: 0, limit: 10},
+					{offset: 0, limit: 20},
+					{offset: 10, limit: 20},
+					{offset: 5, limit: 10},
+					{offset: 10, limit: 10},
+					{offset: 15, limit: 10},
+					{offset: -1, limit: 0},
 				}
 
 				for id, tc := range tests {
-					actual, err := store.ListMusic(tc.limit)
+					actual, err := store.ListMusic(tc.limit, tc.offset)
 					if err != nil {
 						t.Fatal("Unexpected error at test case %d: ", id, err)
 					}
 
-					var expected MusicList
-					if tc.limit > len(musicList) || tc.limit <= 0 {
-						expected = musicList
-					} else {
-						expected = musicList[:tc.limit]
-					}
+					start, end := calcStartEnd(tc.limit, tc.offset, len(musicList))
+					expected := musicList[start:end]
 
 					if !reflect.DeepEqual(expected, actual) {
 						t.Errorf("Music list mismatch. Test case %d.\nExpected: %v\nBut got: %v", id, musicList, actual)
@@ -168,4 +170,37 @@ func TestInMemoryStore(t *testing.T) {
 			})
 		})
 	})
+}
+
+func TestCalcStartEnd(t *testing.T) {
+	tests := []struct {
+		offset        int
+		limit         int
+		bound         int
+		expectedStart int
+		expectedEnd   int
+	}{
+		{offset: 0, limit: 0, bound: 10, expectedStart: 0, expectedEnd: 10},
+		{offset: 0, limit: 10, bound: 10, expectedStart: 0, expectedEnd: 10},
+		{offset: 5, limit: 10, bound: 10, expectedStart: 5, expectedEnd: 10},
+		{offset: 10, limit: 10, bound: 10, expectedStart: 10, expectedEnd: 10},
+		{offset: 10, limit: 10, bound: 20, expectedStart: 10, expectedEnd: 20},
+		{offset: 5, limit: 20, bound: 10, expectedStart: 5, expectedEnd: 10},
+		{offset: -1, limit: 10, bound: 10, expectedStart: 0, expectedEnd: 10},
+		{offset: 0, limit: -1, bound: 10, expectedStart: 0, expectedEnd: 10},
+		{offset: -1, limit: -1, bound: 10, expectedStart: 0, expectedEnd: 10},
+		{offset: 11, limit: 10, bound: 10, expectedStart: 0, expectedEnd: 10},
+		{offset: 11, limit: 11, bound: 10, expectedStart: 0, expectedEnd: 10},
+	}
+
+	for id, tc := range tests {
+		actualStart, actualEnd := calcStartEnd(tc.limit, tc.offset, tc.bound)
+		if tc.expectedStart != actualStart {
+			t.Errorf("Start index mismatch. Test case %d. Expected %d, but got %d", id, tc.expectedStart, actualStart)
+		}
+
+		if tc.expectedEnd != actualEnd {
+			t.Errorf("End index mismatch. Test case %d. Expected %d, but got %d", id, tc.expectedEnd, actualEnd)
+		}
+	}
 }

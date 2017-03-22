@@ -29,7 +29,7 @@ func (c *MusicController) Create(ctx *app.CreateMusicContext) error {
 
 // List runs the list action.
 func (c *MusicController) List(ctx *app.ListMusicContext) error {
-	ml, err := store().ListMusic(ctx.Limit)
+	ml, err := store().ListMusic(ctx.Limit, ctx.Offset)
 	if err != nil {
 		return err
 	}
