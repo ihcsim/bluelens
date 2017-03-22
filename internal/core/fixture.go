@@ -9,9 +9,12 @@ type FixtureStore struct {
 func NewFixtureStore() (*FixtureStore, error) {
 	store := &FixtureStore{
 		&InMemoryStore{
-			musicList:       make(map[string]*Music),
-			musicListByTags: make(map[string]MusicList),
-			userBase:        make(map[string]*User),
+			musicList:      MusicList{},
+			musicMap:       make(map[string]*Music),
+			musicMapByTags: make(map[string]MusicList),
+
+			userList: UserList{},
+			userMap:  make(map[string]*User),
 		},
 	}
 

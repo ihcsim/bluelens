@@ -62,7 +62,7 @@ func (u User) String() string {
 		history += h.ID + ", "
 	}
 	history = strings.TrimSuffix(history, ", ")
-	return fmt.Sprintf("%T {\n  ID: %s\n  Followees: [%s]\n  History: [%s]\n}", u, u.ID, followees, history)
+	return fmt.Sprintf("%T {ID: %s, Followees: [%s], History: [%s]}", u, u.ID, followees, history)
 }
 
 // UserList is a collection of user resources.
