@@ -33,11 +33,11 @@ var _ = Resource("recommendations", func() {
 	DefaultMedia(RecommendationsMediaType)
 
 	Action("recommend", func() {
-		Routing(GET("/:userID/:maxCount"))
+		Routing(GET("/:userID/:limit"))
 		Description("Make music recommendations for a user.")
 		Params(func() {
 			Param("userID", String, "ID of the user these recommendations are meant for.")
-			Param("maxCount", Integer, "Maximum number of recommendations to be returned to the user. Set to zero to use server's default.", func() {
+			Param("limit", Integer, "Maximum number of recommendations to be returned to the user. Set to zero to use server's default.", func() {
 				Minimum(0)
 			})
 		})

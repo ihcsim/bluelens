@@ -558,7 +558,7 @@ paths:
       summary: show music
       tags:
       - music
-  /bluelens/recommendations/{userID}/{maxCount}:
+  /bluelens/recommendations/{userID}/{limit}:
     get:
       description: Make music recommendations for a user.
       operationId: recommendations#recommend
@@ -567,7 +567,7 @@ paths:
           Set to zero to use server's default.
         in: path
         minimum: 0
-        name: maxCount
+        name: limit
         required: true
         type: integer
       - description: ID of the user these recommendations are meant for.

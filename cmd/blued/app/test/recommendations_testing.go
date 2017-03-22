@@ -28,7 +28,7 @@ import (
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func RecommendRecommendationsNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, error) {
+func RecommendRecommendationsNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, limit int) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -49,7 +49,7 @@ func RecommendRecommendationsNotFound(t goatest.TInterface, ctx context.Context,
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, maxCount),
+		Path: fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, limit),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -57,7 +57,7 @@ func RecommendRecommendationsNotFound(t goatest.TInterface, ctx context.Context,
 	}
 	prms := url.Values{}
 	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
-	prms["maxCount"] = []string{fmt.Sprintf("%v", maxCount)}
+	prms["limit"] = []string{fmt.Sprintf("%v", limit)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -94,7 +94,7 @@ func RecommendRecommendationsNotFound(t goatest.TInterface, ctx context.Context,
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func RecommendRecommendationsOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, *app.BluelensRecommendationsAll) {
+func RecommendRecommendationsOKAll(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, limit int) (http.ResponseWriter, *app.BluelensRecommendationsAll) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -115,7 +115,7 @@ func RecommendRecommendationsOKAll(t goatest.TInterface, ctx context.Context, se
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, maxCount),
+		Path: fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, limit),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -123,7 +123,7 @@ func RecommendRecommendationsOKAll(t goatest.TInterface, ctx context.Context, se
 	}
 	prms := url.Values{}
 	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
-	prms["maxCount"] = []string{fmt.Sprintf("%v", maxCount)}
+	prms["limit"] = []string{fmt.Sprintf("%v", limit)}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -164,7 +164,7 @@ func RecommendRecommendationsOKAll(t goatest.TInterface, ctx context.Context, se
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func RecommendRecommendationsOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, maxCount int) (http.ResponseWriter, *app.BluelensRecommendations) {
+func RecommendRecommendationsOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.RecommendationsController, userID string, limit int) (http.ResponseWriter, *app.BluelensRecommendations) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -185,7 +185,7 @@ func RecommendRecommendationsOK(t goatest.TInterface, ctx context.Context, servi
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, maxCount),
+		Path: fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, limit),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -193,7 +193,7 @@ func RecommendRecommendationsOK(t goatest.TInterface, ctx context.Context, servi
 	}
 	prms := url.Values{}
 	prms["userID"] = []string{fmt.Sprintf("%v", userID)}
-	prms["maxCount"] = []string{fmt.Sprintf("%v", maxCount)}
+	prms["limit"] = []string{fmt.Sprintf("%v", limit)}
 	if ctx == nil {
 		ctx = context.Background()
 	}

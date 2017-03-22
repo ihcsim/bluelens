@@ -131,8 +131,8 @@ func MountRecommendationsController(service *goa.Service, ctrl RecommendationsCo
 		}
 		return ctrl.Recommend(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:maxCount", ctrl.MuxHandler("Recommend", h, nil))
-	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:maxCount")
+	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:limit", ctrl.MuxHandler("Recommend", h, nil))
+	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:limit")
 }
 
 // SwaggerController is the controller interface for the Swagger actions.

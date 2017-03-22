@@ -35,7 +35,7 @@ func NewFixtureStore() (*FixtureStore, error) {
 
 // Recommendations returns a list of recommendations for the test users in the store.
 // These recommendations are manually crafted based on each user's followees and history details.
-func (f *FixtureStore) Recommendations(maxCount int) (map[string]*Recommendations, error) {
+func (f *FixtureStore) Recommendations(limit int) (map[string]*Recommendations, error) {
 	fixtureMusic := f.music()
 	recommendations := map[string]*Recommendations{
 		"user-new": &Recommendations{UserID: "user-new"},
@@ -52,7 +52,7 @@ func (f *FixtureStore) Recommendations(maxCount int) (map[string]*Recommendation
 	}
 
 	var err error
-	recommendations["user-new"].List, err = f.ListMusic(maxCount)
+	recommendations["user-new"].List, err = f.ListMusic(limit)
 	if err != nil {
 		return nil, err
 	}

@@ -6,23 +6,23 @@ import (
 )
 
 func TestRecommend(t *testing.T) {
-	maxCount := 20
+	limit := 20
 	store, err := NewFixtureStore()
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}
 
-	recommendations, err := store.Recommendations(maxCount)
+	recommendations, err := store.Recommendations(limit)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}
 
-	actual, err := store.ListUsers(maxCount)
+	actual, err := store.ListUsers(limit)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}
 	for _, user := range actual {
-		actual, err := RecommendSort(user.ID, maxCount, store)
+		actual, err := RecommendSort(user.ID, limit, store)
 		if err != nil {
 			t.Fatalf("Unexpected err: %s. Fixture user: %q", err, user.ID)
 		}

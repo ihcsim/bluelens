@@ -22,8 +22,8 @@ func NewRecommendations(userID string) *Recommendations {
 }
 
 // RecommendSort picks a list of recommended music from the system sorted by the music ID.
-func RecommendSort(userID string, maxCount int, store Store) (*Recommendations, error) {
-	r, err := Recommend(userID, maxCount, store)
+func RecommendSort(userID string, limit int, store Store) (*Recommendations, error) {
+	r, err := Recommend(userID, limit, store)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func RecommendSort(userID string, maxCount int, store Store) (*Recommendations, 
 }
 
 // Recommend picks a list of recommended music for the specified user.
-func Recommend(userID string, maxCount int, store Store) (*Recommendations, error) {
+func Recommend(userID string, limit int, store Store) (*Recommendations, error) {
 	user, err := store.FindUser(userID)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func Recommend(userID string, maxCount int, store Store) (*Recommendations, erro
 
 	r := NewRecommendations(userID)
 	if user.IsNew() {
-		recommendations, err := store.ListMusic(maxCount)
+		recommendations, err := store.ListMusic(limit)
 		if err != nil {
 			return nil, err
 		}

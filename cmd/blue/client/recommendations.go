@@ -8,8 +8,8 @@ import (
 )
 
 // RecommendRecommendationsPath computes a request path to the recommend action of recommendations.
-func RecommendRecommendationsPath(userID string, maxCount int) string {
-	return fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, maxCount)
+func RecommendRecommendationsPath(userID string, limit int) string {
+	return fmt.Sprintf("/bluelens/recommendations/%v/%v", userID, limit)
 }
 
 // Make music recommendations for a user.

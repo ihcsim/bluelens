@@ -29,12 +29,16 @@ func (c *MusicController) Create(ctx *app.CreateMusicContext) error {
 
 // List runs the list action.
 func (c *MusicController) List(ctx *app.ListMusicContext) error {
-	// MusicController_List: start_implement
+	ml, err := store().ListMusic(ctx.Limit)
+	if err != nil {
+		return err
+	}
 
-	// Put your logic here
+	var res app.BluelensMusicCollection
+	for _, music := range ml {
+		res = append(res, mediaTypeMusic(music))
+	}
 
-	// MusicController_List: end_implement
-	res := app.BluelensMusicCollection{}
 	return ctx.OK(res)
 }
 

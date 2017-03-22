@@ -147,8 +147,8 @@ type RecommendRecommendationsContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	MaxCount int
-	UserID   string
+	Limit  int
+	UserID string
 }
 
 // NewRecommendRecommendationsContext parses the incoming request URL and body, performs validations and creates the
@@ -159,16 +159,16 @@ func NewRecommendRecommendationsContext(ctx context.Context, service *goa.Servic
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	rctx := RecommendRecommendationsContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramMaxCount := req.Params["maxCount"]
-	if len(paramMaxCount) > 0 {
-		rawMaxCount := paramMaxCount[0]
-		if maxCount, err2 := strconv.Atoi(rawMaxCount); err2 == nil {
-			rctx.MaxCount = maxCount
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) > 0 {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
 		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("maxCount", rawMaxCount, "integer"))
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
 		}
-		if rctx.MaxCount < 0 {
-			err = goa.MergeErrors(err, goa.InvalidRangeError(`maxCount`, rctx.MaxCount, 0, true))
+		if rctx.Limit < 0 {
+			err = goa.MergeErrors(err, goa.InvalidRangeError(`limit`, rctx.Limit, 0, true))
 		}
 	}
 	paramUserID := req.Params["userID"]

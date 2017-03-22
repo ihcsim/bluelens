@@ -41,7 +41,7 @@ type (
 	// RecommendRecommendationsCommand is the command line data structure for the recommend action of recommendations
 	RecommendRecommendationsCommand struct {
 		// Maximum number of recommendations to be returned to the user. Set to zero to use server's default.
-		MaxCount int
+		Limit int
 		// ID of the user these recommendations are meant for.
 		UserID      string
 		PrettyPrint bool
@@ -292,7 +292,7 @@ Payload example:
 	}
 	tmp7 := new(RecommendRecommendationsCommand)
 	sub = &cobra.Command{
-		Use:   `recommendations ["/bluelens/recommendations/USERID/MAXCOUNT"]`,
+		Use:   `recommendations ["/bluelens/recommendations/USERID/LIMIT"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}
@@ -620,7 +620,7 @@ func (cmd *RecommendRecommendationsCommand) Run(c *client.Client, args []string)
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/bluelens/recommendations/%v/%v", url.QueryEscape(cmd.UserID), cmd.MaxCount)
+		path = fmt.Sprintf("/bluelens/recommendations/%v/%v", url.QueryEscape(cmd.UserID), cmd.Limit)
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -636,8 +636,8 @@ func (cmd *RecommendRecommendationsCommand) Run(c *client.Client, args []string)
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *RecommendRecommendationsCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var maxCount int
-	cc.Flags().IntVar(&cmd.MaxCount, "maxCount", maxCount, `Maximum number of recommendations to be returned to the user. Set to zero to use server's default.`)
+	var limit int
+	cc.Flags().IntVar(&cmd.Limit, "limit", limit, `Maximum number of recommendations to be returned to the user. Set to zero to use server's default.`)
 	var userID string
 	cc.Flags().StringVar(&cmd.UserID, "userID", userID, `ID of the user these recommendations are meant for.`)
 }
