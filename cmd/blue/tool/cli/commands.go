@@ -56,7 +56,8 @@ type (
 
 	// FollowUserCommand is the command line data structure for the follow action of user
 	FollowUserCommand struct {
-		// ID of the followee.
+		Payload     string
+		ContentType string
 		FolloweeID  string
 		ID          string
 		PrettyPrint bool
@@ -71,8 +72,9 @@ type (
 
 	// ListenUserCommand is the command line data structure for the listen action of user
 	ListenUserCommand struct {
-		ID string
-		// ID of the music.
+		Payload     string
+		ContentType string
+		ID          string
 		MusicID     string
 		PrettyPrint bool
 	}
@@ -243,7 +245,14 @@ Payload example:
 	sub = &cobra.Command{
 		Use:   `user ["/bluelens/user/ID/follows/FOLLOWEEID"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "followeeID": "Praesentium aperiam magni."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
@@ -280,7 +289,14 @@ Payload example:
 	sub = &cobra.Command{
 		Use:   `user ["/bluelens/user/ID/listen/MUSICID"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "musicID": "Qui non rerum ullam velit."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
 	}
 	tmp6.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
@@ -683,9 +699,16 @@ func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 	} else {
 		path = fmt.Sprintf("/bluelens/user/%v/follows/%v", url.QueryEscape(cmd.ID), url.QueryEscape(cmd.FolloweeID))
 	}
+	var payload client.FollowUserPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.FollowUser(ctx, path)
+	resp, err := c.FollowUser(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -697,8 +720,10 @@ func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *FollowUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 	var followeeID string
-	cc.Flags().StringVar(&cmd.FolloweeID, "followeeID", followeeID, `ID of the followee.`)
+	cc.Flags().StringVar(&cmd.FolloweeID, "followeeID", followeeID, ``)
 	var id string
 	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 }
@@ -738,9 +763,16 @@ func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 	} else {
 		path = fmt.Sprintf("/bluelens/user/%v/listen/%v", url.QueryEscape(cmd.ID), url.QueryEscape(cmd.MusicID))
 	}
+	var payload client.ListenUserPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListenUser(ctx, path)
+	resp, err := c.ListenUser(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -752,10 +784,12 @@ func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ListenUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 	var id string
 	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 	var musicID string
-	cc.Flags().StringVar(&cmd.MusicID, "musicID", musicID, `ID of the music.`)
+	cc.Flags().StringVar(&cmd.MusicID, "musicID", musicID, ``)
 }
 
 // Run makes the HTTP request corresponding to the ShowUserCommand command.

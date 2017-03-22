@@ -223,9 +223,15 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		if err != nil {
 			return err
 		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*FollowUserPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
 		return ctrl.Follow(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:id/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
+	service.Mux.Handle("POST", "/bluelens/user/:id/follows/:followeeID", ctrl.MuxHandler("Follow", h, unmarshalFollowUserPayload))
 	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:id/follows/:followeeID")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
@@ -253,9 +259,15 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		if err != nil {
 			return err
 		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*ListenUserPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
 		return ctrl.Listen(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:id/listen/:musicID", ctrl.MuxHandler("Listen", h, nil))
+	service.Mux.Handle("POST", "/bluelens/user/:id/listen/:musicID", ctrl.MuxHandler("Listen", h, unmarshalListenUserPayload))
 	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:id/listen/:musicID")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
@@ -283,6 +295,26 @@ func unmarshalCreateUserPayload(ctx context.Context, service *goa.Service, req *
 	if err := payload.Validate(); err != nil {
 		// Initialize payload with private data structure so it can be logged
 		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
+}
+
+// unmarshalFollowUserPayload unmarshals the request body into the context request data Payload field.
+func unmarshalFollowUserPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &followUserPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
+}
+
+// unmarshalListenUserPayload unmarshals the request body into the context request data Payload field.
+func unmarshalListenUserPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &listenUserPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
 		return err
 	}
 	goa.ContextRequest(ctx).Payload = payload.Publicize()

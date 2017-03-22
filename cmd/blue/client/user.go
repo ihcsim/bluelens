@@ -42,14 +42,20 @@ func (c *Client) NewCreateUserRequest(ctx context.Context, path string, payload 
 	return req, nil
 }
 
+// FollowUserPayload is the user follow action payload.
+type FollowUserPayload struct {
+	// ID of the followee.
+	FolloweeID *string `form:"followeeID,omitempty" json:"followeeID,omitempty" xml:"followeeID,omitempty"`
+}
+
 // FollowUserPath computes a request path to the follow action of user.
 func FollowUserPath(id string, followeeID string) string {
 	return fmt.Sprintf("/bluelens/user/%v/follows/%v", id, followeeID)
 }
 
 // Update a user's followees list with a new followee.
-func (c *Client) FollowUser(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewFollowUserRequest(ctx, path)
+func (c *Client) FollowUser(ctx context.Context, path string, payload *FollowUserPayload) (*http.Response, error) {
+	req, err := c.NewFollowUserRequest(ctx, path, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -57,13 +63,18 @@ func (c *Client) FollowUser(ctx context.Context, path string) (*http.Response, e
 }
 
 // NewFollowUserRequest create the request corresponding to the follow action endpoint of the user resource.
-func (c *Client) NewFollowUserRequest(ctx context.Context, path string) (*http.Request, error) {
+func (c *Client) NewFollowUserRequest(ctx context.Context, path string, payload *FollowUserPayload) (*http.Request, error) {
+	var body bytes.Buffer
+	err := c.Encoder.Encode(payload, &body, "*/*")
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("POST", u.String(), &body)
 	if err != nil {
 		return nil, err
 	}
@@ -108,14 +119,20 @@ func (c *Client) NewListUserRequest(ctx context.Context, path string, limit *int
 	return req, nil
 }
 
+// ListenUserPayload is the user listen action payload.
+type ListenUserPayload struct {
+	// ID of the music.
+	MusicID *string `form:"musicID,omitempty" json:"musicID,omitempty" xml:"musicID,omitempty"`
+}
+
 // ListenUserPath computes a request path to the listen action of user.
 func ListenUserPath(id string, musicID string) string {
 	return fmt.Sprintf("/bluelens/user/%v/listen/%v", id, musicID)
 }
 
 // Add a music to a user's history.
-func (c *Client) ListenUser(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewListenUserRequest(ctx, path)
+func (c *Client) ListenUser(ctx context.Context, path string, payload *ListenUserPayload) (*http.Response, error) {
+	req, err := c.NewListenUserRequest(ctx, path, payload)
 	if err != nil {
 		return nil, err
 	}
@@ -123,13 +140,18 @@ func (c *Client) ListenUser(ctx context.Context, path string) (*http.Response, e
 }
 
 // NewListenUserRequest create the request corresponding to the listen action endpoint of the user resource.
-func (c *Client) NewListenUserRequest(ctx context.Context, path string) (*http.Request, error) {
+func (c *Client) NewListenUserRequest(ctx context.Context, path string, payload *ListenUserPayload) (*http.Request, error) {
+	var body bytes.Buffer
+	err := c.Encoder.Encode(payload, &body, "*/*")
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("POST", u.String(), &body)
 	if err != nil {
 		return nil, err
 	}

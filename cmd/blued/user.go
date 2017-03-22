@@ -27,7 +27,7 @@ func (c *UserController) Create(ctx *app.CreateUserContext) error {
 
 // Follow runs the follow action.
 func (c *UserController) Follow(ctx *app.FollowUserContext) error {
-	updated, err := store().Follow(ctx.ID, ctx.FolloweeID)
+	updated, err := store().Follow(ctx.ID, *ctx.Payload.FolloweeID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}
@@ -53,7 +53,7 @@ func (c *UserController) List(ctx *app.ListUserContext) error {
 
 // Listen runs the listen action.
 func (c *UserController) Listen(ctx *app.ListenUserContext) error {
-	updated, err := store().Listen(ctx.ID, ctx.MusicID)
+	updated, err := store().Listen(ctx.ID, *ctx.Payload.MusicID)
 	if err != nil {
 		return ctx.NotFound(err)
 	}

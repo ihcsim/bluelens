@@ -61,14 +61,16 @@ define(['axios'] , function (axios) {
 
   // Update a user's followees list with a new followee.
   // path is the request path, the format is "/bluelens/user/:id/follows/:followeeID"
+  // data contains the action payload (request body)
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.followUser = function (path, config) {
+  client.followUser = function (path, data, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'post',
+    data: data,
       responseType: 'json'
     };
     if (config) {
@@ -125,14 +127,16 @@ define(['axios'] , function (axios) {
 
   // Add a music to a user's history.
   // path is the request path, the format is "/bluelens/user/:id/listen/:musicID"
+  // data contains the action payload (request body)
   // config is an optional object to be merged into the config built by the function prior to making the request.
   // The content of the config object is described here: https://github.com/mzabriskie/axios#request-api
   // This function returns a promise which raises an error if the HTTP response is a 4xx or 5xx.
-  client.listenUser = function (path, config) {
+  client.listenUser = function (path, data, config) {
     cfg = {
       timeout: timeout,
       url: urlPrefix + path,
       method: 'post',
+    data: data,
       responseType: 'json'
     };
     if (config) {

@@ -105,7 +105,8 @@ func TestUserController(t *testing.T) {
 		t.Run("self", func(t *testing.T) {
 			// no changes to expected media type result if followee is self
 			expected := mediaTypeUser(user)
-			if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, user.ID); !reflect.DeepEqual(expected, actual) {
+			payload := &app.FollowUserPayload{FolloweeID: &user.ID}
+			if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, user.ID, payload); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("User mismatch. Expected:\n%+v\nBut got:\n%+v\n", expected, actual)
 			}
 		})
@@ -120,15 +121,15 @@ func TestUserController(t *testing.T) {
 				t.Fatal("Unexpected error: ", err)
 			}
 
+			payload := &app.FollowUserPayload{FolloweeID: &followee.ID}
 			expected := mediaTypeUser(user)
-
-			if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, followee.ID); !reflect.DeepEqual(expected, actual) {
+			if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, followee.ID, payload); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("User mismatch. Expected:\n%+v\nBut got:\n%+v\n", expected, actual)
 			}
 
 			t.Run("repeat", func(t *testing.T) {
 				// following the same followee again should have no effects
-				if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, followee.ID); !reflect.DeepEqual(expected, actual) {
+				if _, actual := test.FollowUserOK(t, nil, nil, ctrl, user.ID, followee.ID, payload); !reflect.DeepEqual(expected, actual) {
 					t.Errorf("User mismatch. Expected:\n%+v\nBut got:\n%+v\n", expected, actual)
 				}
 			})
@@ -136,13 +137,17 @@ func TestUserController(t *testing.T) {
 
 		t.Run("not found", func(t *testing.T) {
 			t.Run("user", func(t *testing.T) {
-				if _, err := test.FollowUserNotFound(t, nil, nil, ctrl, "example", "user-01"); err == nil {
+				userID := "user-01"
+				payload := &app.FollowUserPayload{FolloweeID: &userID}
+				if _, err := test.FollowUserNotFound(t, nil, nil, ctrl, "example", userID, payload); err == nil {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})
 
 			t.Run("followee", func(t *testing.T) {
-				if _, err := test.FollowUserNotFound(t, nil, nil, ctrl, user.ID, "example"); err == nil {
+				userID := "example"
+				payload := &app.FollowUserPayload{FolloweeID: &userID}
+				if _, err := test.FollowUserNotFound(t, nil, nil, ctrl, user.ID, userID, payload); err == nil {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})
@@ -157,8 +162,9 @@ func TestUserController(t *testing.T) {
 
 		t.Run("same music", func(t *testing.T) {
 			// re-listening to music already in the history list should have no effects
+			payload := &app.ListenUserPayload{MusicID: &user.History[0].ID}
 			expected := mediaTypeUser(user)
-			if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, user.History[0].ID); !reflect.DeepEqual(expected, actual) {
+			if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, user.History[0].ID, payload); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("User mismatch. Expected:\n%s\nBut got:\n%s\n", expected.Links, actual.Links)
 			}
 		})
@@ -173,14 +179,15 @@ func TestUserController(t *testing.T) {
 				t.Fatal("Unexpected error: ", err)
 			}
 
+			payload := &app.ListenUserPayload{MusicID: &music.ID}
 			expected := mediaTypeUser(user)
-			if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, music.ID); !reflect.DeepEqual(expected, actual) {
+			if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, music.ID, payload); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("User mismatch. Expected:\n%s\nBut got:\n%s\n", expected.Links, actual.Links)
 			}
 
 			t.Run("repeat", func(t *testing.T) {
 				// listening to the same music should have no effects on the user's history list
-				if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, music.ID); !reflect.DeepEqual(expected, actual) {
+				if _, actual := test.ListenUserOK(t, nil, nil, ctrl, user.ID, music.ID, payload); !reflect.DeepEqual(expected, actual) {
 					t.Errorf("User mismatch. Expected:\n%+v\nBut got:\n%+v\n", expected, actual)
 				}
 			})
@@ -188,13 +195,17 @@ func TestUserController(t *testing.T) {
 
 		t.Run("not found", func(t *testing.T) {
 			t.Run("user", func(t *testing.T) {
-				if _, err := test.ListenUserNotFound(t, nil, nil, ctrl, "example", "song-00"); err == nil {
+				musicID := "song-00"
+				payload := &app.ListenUserPayload{MusicID: &musicID}
+				if _, err := test.ListenUserNotFound(t, nil, nil, ctrl, "example", musicID, payload); err == nil {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})
 
 			t.Run("music", func(t *testing.T) {
-				if _, err := test.ListenUserNotFound(t, nil, nil, ctrl, user.ID, "example"); err == nil {
+				musicID := "example"
+				payload := &app.ListenUserPayload{MusicID: &musicID}
+				if _, err := test.ListenUserNotFound(t, nil, nil, ctrl, user.ID, musicID, payload); err == nil {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})

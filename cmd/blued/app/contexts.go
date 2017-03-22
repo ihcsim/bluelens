@@ -229,6 +229,7 @@ type FollowUserContext struct {
 	*goa.RequestData
 	FolloweeID string
 	ID         string
+	Payload    *FollowUserPayload
 }
 
 // NewFollowUserContext parses the incoming request URL and body, performs validations and creates the
@@ -250,6 +251,27 @@ func NewFollowUserContext(ctx context.Context, service *goa.Service) (*FollowUse
 		rctx.ID = rawID
 	}
 	return &rctx, err
+}
+
+// followUserPayload is the user follow action payload.
+type followUserPayload struct {
+	// ID of the followee.
+	FolloweeID *string `form:"followeeID,omitempty" json:"followeeID,omitempty" xml:"followeeID,omitempty"`
+}
+
+// Publicize creates FollowUserPayload from followUserPayload
+func (payload *followUserPayload) Publicize() *FollowUserPayload {
+	var pub FollowUserPayload
+	if payload.FolloweeID != nil {
+		pub.FolloweeID = payload.FolloweeID
+	}
+	return &pub
+}
+
+// FollowUserPayload is the user follow action payload.
+type FollowUserPayload struct {
+	// ID of the followee.
+	FolloweeID *string `form:"followeeID,omitempty" json:"followeeID,omitempty" xml:"followeeID,omitempty"`
 }
 
 // OK sends a HTTP response with status code 200.
@@ -354,6 +376,7 @@ type ListenUserContext struct {
 	*goa.RequestData
 	ID      string
 	MusicID string
+	Payload *ListenUserPayload
 }
 
 // NewListenUserContext parses the incoming request URL and body, performs validations and creates the
@@ -375,6 +398,27 @@ func NewListenUserContext(ctx context.Context, service *goa.Service) (*ListenUse
 		rctx.MusicID = rawMusicID
 	}
 	return &rctx, err
+}
+
+// listenUserPayload is the user listen action payload.
+type listenUserPayload struct {
+	// ID of the music.
+	MusicID *string `form:"musicID,omitempty" json:"musicID,omitempty" xml:"musicID,omitempty"`
+}
+
+// Publicize creates ListenUserPayload from listenUserPayload
+func (payload *listenUserPayload) Publicize() *ListenUserPayload {
+	var pub ListenUserPayload
+	if payload.MusicID != nil {
+		pub.MusicID = payload.MusicID
+	}
+	return &pub
+}
+
+// ListenUserPayload is the user listen action payload.
+type ListenUserPayload struct {
+	// ID of the music.
+	MusicID *string `form:"musicID,omitempty" json:"musicID,omitempty" xml:"musicID,omitempty"`
 }
 
 // OK sends a HTTP response with status code 200.

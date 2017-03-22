@@ -236,13 +236,15 @@ definitions:
           - href: Eum deleniti id.
           history:
           - href: Velit rerum et et ut.
+      - href: Dignissimos dolore aliquam dolores unde qui.
+        id: Ut fugiat hic.
+        links:
+          followees:
+          - href: Eum deleniti id.
+          - href: Eum deleniti id.
+          history:
+          - href: Velit rerum et et ut.
       history:
-      - href: Velit rerum et et ut.
-        id: Necessitatibus exercitationem.
-        tags:
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
-        - Cumque dolorum dolorem voluptas eveniet.
       - href: Velit rerum et et ut.
         id: Necessitatibus exercitationem.
         tags:
@@ -304,6 +306,26 @@ definitions:
       history:
         $ref: '#/definitions/BluelensMusicLinkCollection'
     title: BluelensUserLinks
+    type: object
+  FollowUserPayload:
+    example:
+      followeeID: Praesentium aperiam magni.
+    properties:
+      followeeID:
+        description: ID of the followee.
+        example: Praesentium aperiam magni.
+        type: string
+    title: FollowUserPayload
+    type: object
+  ListenUserPayload:
+    example:
+      musicID: Qui non rerum ullam velit.
+    properties:
+      musicID:
+        description: ID of the music.
+        example: Qui non rerum ullam velit.
+        type: string
+    title: ListenUserPayload
     type: object
   error:
     description: Error response media type (default view)
@@ -662,8 +684,7 @@ paths:
       description: Update a user's followees list with a new followee.
       operationId: user#follow
       parameters:
-      - description: ID of the followee.
-        in: path
+      - in: path
         name: followeeID
         required: true
         type: string
@@ -671,6 +692,11 @@ paths:
         name: id
         required: true
         type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/FollowUserPayload'
       responses:
         "200":
           description: OK
@@ -698,11 +724,15 @@ paths:
         name: id
         required: true
         type: string
-      - description: ID of the music.
-        in: path
+      - in: path
         name: musicID
         required: true
         type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ListenUserPayload'
       responses:
         "200":
           description: OK

@@ -265,11 +265,11 @@ func CreateUserCreatedLink(t goatest.TInterface, ctx context.Context, service *g
 	return rw, mt
 }
 
-// FollowUserBadRequest runs the method Follow of the given controller with the given parameters.
+// FollowUserBadRequest runs the method Follow of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, error) {
+func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string, payload *app.FollowUserPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -307,6 +307,7 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	followCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Follow(followCtx)
@@ -331,11 +332,11 @@ func FollowUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	return rw, mt
 }
 
-// FollowUserNotFound runs the method Follow of the given controller with the given parameters.
+// FollowUserNotFound runs the method Follow of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, error) {
+func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string, payload *app.FollowUserPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -373,6 +374,7 @@ func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	followCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Follow(followCtx)
@@ -397,11 +399,11 @@ func FollowUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 	return rw, mt
 }
 
-// FollowUserOK runs the method Follow of the given controller with the given parameters.
+// FollowUserOK runs the method Follow of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, *app.BluelensUser) {
+func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string, payload *app.FollowUserPayload) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -439,6 +441,7 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	followCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Follow(followCtx)
@@ -467,11 +470,11 @@ func FollowUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	return rw, mt
 }
 
-// FollowUserOKFull runs the method Follow of the given controller with the given parameters.
+// FollowUserOKFull runs the method Follow of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, *app.BluelensUserFull) {
+func FollowUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string, payload *app.FollowUserPayload) (http.ResponseWriter, *app.BluelensUserFull) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -509,6 +512,7 @@ func FollowUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Se
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	followCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Follow(followCtx)
@@ -537,11 +541,11 @@ func FollowUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Se
 	return rw, mt
 }
 
-// FollowUserOKLink runs the method Follow of the given controller with the given parameters.
+// FollowUserOKLink runs the method Follow of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string) (http.ResponseWriter, *app.BluelensUserLink) {
+func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, followeeID string, payload *app.FollowUserPayload) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -579,6 +583,7 @@ func FollowUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Se
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	followCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Follow(followCtx)
@@ -865,11 +870,11 @@ func ListUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Serv
 	return rw, mt
 }
 
-// ListenUserBadRequest runs the method Listen of the given controller with the given parameters.
+// ListenUserBadRequest runs the method Listen of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, error) {
+func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string, payload *app.ListenUserPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -907,6 +912,7 @@ func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	listenCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Listen(listenCtx)
@@ -931,11 +937,11 @@ func ListenUserBadRequest(t goatest.TInterface, ctx context.Context, service *go
 	return rw, mt
 }
 
-// ListenUserNotFound runs the method Listen of the given controller with the given parameters.
+// ListenUserNotFound runs the method Listen of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, error) {
+func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string, payload *app.ListenUserPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -973,6 +979,7 @@ func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	listenCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Listen(listenCtx)
@@ -997,11 +1004,11 @@ func ListenUserNotFound(t goatest.TInterface, ctx context.Context, service *goa.
 	return rw, mt
 }
 
-// ListenUserOK runs the method Listen of the given controller with the given parameters.
+// ListenUserOK runs the method Listen of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, *app.BluelensUser) {
+func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string, payload *app.ListenUserPayload) (http.ResponseWriter, *app.BluelensUser) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1039,6 +1046,7 @@ func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	listenCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Listen(listenCtx)
@@ -1067,11 +1075,11 @@ func ListenUserOK(t goatest.TInterface, ctx context.Context, service *goa.Servic
 	return rw, mt
 }
 
-// ListenUserOKFull runs the method Listen of the given controller with the given parameters.
+// ListenUserOKFull runs the method Listen of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, *app.BluelensUserFull) {
+func ListenUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string, payload *app.ListenUserPayload) (http.ResponseWriter, *app.BluelensUserFull) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1109,6 +1117,7 @@ func ListenUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Se
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	listenCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Listen(listenCtx)
@@ -1137,11 +1146,11 @@ func ListenUserOKFull(t goatest.TInterface, ctx context.Context, service *goa.Se
 	return rw, mt
 }
 
-// ListenUserOKLink runs the method Listen of the given controller with the given parameters.
+// ListenUserOKLink runs the method Listen of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string) (http.ResponseWriter, *app.BluelensUserLink) {
+func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserController, id string, musicID string, payload *app.ListenUserPayload) (http.ResponseWriter, *app.BluelensUserLink) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1179,6 +1188,7 @@ func ListenUserOKLink(t goatest.TInterface, ctx context.Context, service *goa.Se
 	if err != nil {
 		panic("invalid test data " + err.Error()) // bug
 	}
+	listenCtx.Payload = payload
 
 	// Perform action
 	err = ctrl.Listen(listenCtx)

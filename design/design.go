@@ -90,8 +90,8 @@ var _ = Resource("user", func() {
 	Action("listen", func() {
 		Routing(POST("/:id/listen/:musicID"))
 		Description("Add a music to a user's history.")
-		Params(func() {
-			Param("musicID", String, "ID of the music.")
+		Payload(func() {
+			Member("musicID", String, "ID of the music.")
 		})
 
 		Response(OK)
@@ -102,8 +102,8 @@ var _ = Resource("user", func() {
 	Action("follow", func() {
 		Routing(POST("/:id/follows/:followeeID"))
 		Description("Update a user's followees list with a new followee.")
-		Params(func() {
-			Param("followeeID", String, "ID of the followee.")
+		Payload(func() {
+			Member("followeeID", String, "ID of the followee.")
 		})
 
 		Response(OK)
