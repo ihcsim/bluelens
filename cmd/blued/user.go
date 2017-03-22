@@ -38,12 +38,16 @@ func (c *UserController) Follow(ctx *app.FollowUserContext) error {
 
 // List runs the list action.
 func (c *UserController) List(ctx *app.ListUserContext) error {
-	// UserController_List: start_implement
+	userList, err := store().ListUsers(ctx.Limit, ctx.Offset)
+	if err != nil {
+		return err
+	}
 
-	// Put your logic here
-
-	// UserController_List: end_implement
 	res := app.BluelensUserCollection{}
+	for _, user := range userList {
+		res = append(res, mediaTypeUser(user))
+	}
+
 	return ctx.OK(res)
 }
 

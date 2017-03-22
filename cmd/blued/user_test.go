@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/goadesign/goa"
+	"github.com/ihcsim/bluelens/cmd/blued/app"
 	"github.com/ihcsim/bluelens/cmd/blued/app/test"
 	"github.com/ihcsim/bluelens/internal/core"
 )
@@ -41,7 +42,41 @@ func TestUserController(t *testing.T) {
 	svc := goa.New("goatest")
 	ctrl := NewUserController(svc)
 
-	t.Run("get", func(t *testing.T) {
+	t.Run("list", func(t *testing.T) {
+		tests := []struct {
+			limit  int
+			offset int
+		}{
+			{offset: 0, limit: -1},
+			{offset: 0, limit: 0},
+			{offset: 0, limit: 5},
+			{offset: 0, limit: 10},
+			{offset: 0, limit: 20},
+			{offset: 10, limit: 20},
+			{offset: 5, limit: 10},
+			{offset: 10, limit: 10},
+			{offset: 15, limit: 10},
+			{offset: -1, limit: 0},
+		}
+
+		for id, tc := range tests {
+			userList, err := store().ListUsers(tc.limit, tc.offset)
+			if err != nil {
+				t.Error("Unexpected error with test case %d: ", id, err)
+			}
+
+			var expected app.BluelensUserCollection
+			for _, user := range userList {
+				expected = append(expected, mediaTypeUser(user))
+			}
+
+			if _, actual := test.ListUserOK(t, nil, nil, ctrl, tc.limit, tc.offset); !reflect.DeepEqual(expected, actual) {
+				t.Errorf("Response mismatch. Test case: %d\nExpected %s\nBut got %s", id, expected, actual)
+			}
+		}
+	})
+
+	t.Run("show", func(t *testing.T) {
 		t.Run("found", func(t *testing.T) {
 			user, err := store().FindUser("user-01")
 			if err != nil {

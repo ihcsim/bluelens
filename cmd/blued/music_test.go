@@ -33,11 +33,16 @@ func TestMusicController(t *testing.T) {
 			limit  int
 			offset int
 		}{
-			{limit: -1, offset: 0},
-			{limit: 0, offset: 0},
-			{limit: 5, offset: 0},
-			{limit: 10, offset: 0},
-			{limit: 20, offset: 0},
+			{offset: 0, limit: -1},
+			{offset: 0, limit: 0},
+			{offset: 0, limit: 5},
+			{offset: 0, limit: 10},
+			{offset: 0, limit: 20},
+			{offset: 10, limit: 20},
+			{offset: 5, limit: 10},
+			{offset: 10, limit: 10},
+			{offset: 15, limit: 10},
+			{offset: -1, limit: 0},
 		}
 
 		for id, tc := range tests {
