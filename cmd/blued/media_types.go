@@ -34,6 +34,20 @@ func mediaTypeMusic(m *core.Music) *app.BluelensMusic {
 	}
 }
 
+func mediaTypeMusicFull(m *core.Music) *app.BluelensMusicFull {
+	return &app.BluelensMusicFull{
+		ID:   m.ID,
+		Href: fmt.Sprintf("/music/%s", m.ID),
+		Tags: m.Tags,
+	}
+}
+
+func mediaTypeMusicLink(m *core.Music) *app.BluelensMusicLink {
+	return &app.BluelensMusicLink{
+		Href: fmt.Sprintf("/music/%s", m.ID),
+	}
+}
+
 func mediaTypeUser(u *core.User) *app.BluelensUser {
 	followeesLinks := app.BluelensUserLinkCollection{}
 	for _, followee := range u.Followees {
@@ -60,5 +74,32 @@ func mediaTypeUser(u *core.User) *app.BluelensUser {
 		ID:    u.ID,
 		Href:  fmt.Sprintf("/users/%s", u.ID),
 		Links: links,
+	}
+}
+
+func mediaTypeUserFull(u *core.User) *app.BluelensUserFull {
+	followees := app.BluelensUserCollection{}
+	for _, followee := range u.Followees {
+		user := mediaTypeUser(followee)
+		followees = append(followees, user)
+	}
+
+	history := app.BluelensMusicCollection{}
+	for _, music := range u.History {
+		music := mediaTypeMusic(music)
+		history = append(history, music)
+	}
+
+	return &app.BluelensUserFull{
+		ID:        u.ID,
+		Followees: followees,
+		History:   history,
+		Href:      fmt.Sprintf("/users/%s", u.ID),
+	}
+}
+
+func mediaTypeUserLink(u *core.User) *app.BluelensUserLink {
+	return &app.BluelensUserLink{
+		Href: fmt.Sprintf("/users/%s", u.ID),
 	}
 }

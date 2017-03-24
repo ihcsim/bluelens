@@ -23,12 +23,12 @@ var (
 	// singleton instance of the store
 	instance core.Store
 
-	// ensures store is init only once
-	initOnce sync.Once
+	// nsures store is init only nce
+	initLiveStore sync.Once
 )
 
 func inmemoryStore() core.Store {
-	initOnce.Do(func() {
+	initLiveStore.Do(func() {
 		instance = core.NewInMemoryStore()
 	})
 

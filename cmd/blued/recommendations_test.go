@@ -9,7 +9,10 @@ import (
 	"github.com/ihcsim/bluelens/internal/core"
 )
 
-const maxCount = 20
+const (
+	limit  = 20
+	offset = 0
+)
 
 func TestRecommendationsController(t *testing.T) {
 	// mock the store() function
@@ -28,7 +31,7 @@ func TestRecommendationsController(t *testing.T) {
 	fixtureStore := store().(*core.FixtureStore)
 
 	// retrieve the expected recommendations from the fixture store
-	recommendations, err := fixtureStore.Recommendations(maxCount)
+	recommendations, err := fixtureStore.Recommendations(limit)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}
@@ -37,12 +40,12 @@ func TestRecommendationsController(t *testing.T) {
 	ctrl := NewRecommendationsController(service)
 
 	// test the recommendations of all users in the store
-	users, err := store().ListUsers(maxCount)
+	users, err := store().ListUsers(limit, offset)
 	if err != nil {
 		t.Fatal("Unexpected error: ", err)
 	}
 	for _, user := range users {
-		_, actual := test.RecommendRecommendationsOK(t, nil, nil, ctrl, user.ID, maxCount)
+		_, actual := test.RecommendRecommendationsOK(t, nil, nil, ctrl, user.ID, limit)
 		expected := mediaTypeRecommendations(recommendations[user.ID])
 		if !reflect.DeepEqual(expected, actual) {
 			t.Errorf("Recommendations response mismatch. Expected:\n%+v\nBut got:\n%+v", expected, actual)

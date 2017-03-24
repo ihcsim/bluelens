@@ -18,8 +18,22 @@ import (
 )
 
 type (
-	// GetMusicCommand is the command line data structure for the get action of music
-	GetMusicCommand struct {
+	// CreateMusicCommand is the command line data structure for the create action of music
+	CreateMusicCommand struct {
+		Payload     string
+		ContentType string
+		PrettyPrint bool
+	}
+
+	// ListMusicCommand is the command line data structure for the list action of music
+	ListMusicCommand struct {
+		Limit       int
+		Offset      int
+		PrettyPrint bool
+	}
+
+	// ShowMusicCommand is the command line data structure for the show action of music
+	ShowMusicCommand struct {
 		ID          string
 		PrettyPrint bool
 	}
@@ -27,31 +41,47 @@ type (
 	// RecommendRecommendationsCommand is the command line data structure for the recommend action of recommendations
 	RecommendRecommendationsCommand struct {
 		// Maximum number of recommendations to be returned to the user. Set to zero to use server's default.
-		MaxCount int
+		Limit int
 		// ID of the user these recommendations are meant for.
 		UserID      string
 		PrettyPrint bool
 	}
 
+	// CreateUserCommand is the command line data structure for the create action of user
+	CreateUserCommand struct {
+		Payload     string
+		ContentType string
+		PrettyPrint bool
+	}
+
 	// FollowUserCommand is the command line data structure for the follow action of user
 	FollowUserCommand struct {
-		// ID of the followee.
+		Payload     string
+		ContentType string
 		FolloweeID  string
 		ID          string
 		PrettyPrint bool
 	}
 
-	// GetUserCommand is the command line data structure for the get action of user
-	GetUserCommand struct {
-		ID          string
+	// ListUserCommand is the command line data structure for the list action of user
+	ListUserCommand struct {
+		Limit       int
+		Offset      int
 		PrettyPrint bool
 	}
 
 	// ListenUserCommand is the command line data structure for the listen action of user
 	ListenUserCommand struct {
-		ID string
-		// ID of the music.
+		Payload     string
+		ContentType string
+		ID          string
 		MusicID     string
+		PrettyPrint bool
+	}
+
+	// ShowUserCommand is the command line data structure for the show action of user
+	ShowUserCommand struct {
+		ID          string
 		PrettyPrint bool
 	}
 
@@ -66,68 +96,247 @@ type (
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "follow",
-		Short: `Update a user's followees list with a new followee.`,
+		Use:   "create",
+		Short: `create action`,
 	}
-	tmp1 := new(FollowUserCommand)
+	tmp1 := new(CreateMusicCommand)
 	sub = &cobra.Command{
-		Use:   `user ["/bluelens/user/ID/follows/FOLLOWEEID"]`,
+		Use:   `music ["/bluelens/music"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+   "tags": [
+      "Cumque dolorum dolorem voluptas eveniet."
+   ]
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "get",
-		Short: `get action`,
-	}
-	tmp2 := new(GetMusicCommand)
+	tmp2 := new(CreateUserCommand)
 	sub = &cobra.Command{
-		Use:   `music ["/bluelens/music/ID"]`,
+		Use:   `user ["/bluelens/user"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "followees": [
+      {
+         "followees": [
+            {
+               "history": [
+                  {
+                     "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+                     "tags": [
+                        "Cumque dolorum dolorem voluptas eveniet."
+                     ]
+                  }
+               ],
+               "id": "Iste saepe quam."
+            },
+            {
+               "history": [
+                  {
+                     "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+                     "tags": [
+                        "Cumque dolorum dolorem voluptas eveniet."
+                     ]
+                  }
+               ],
+               "id": "Iste saepe quam."
+            },
+            {
+               "history": [
+                  {
+                     "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+                     "tags": [
+                        "Cumque dolorum dolorem voluptas eveniet."
+                     ]
+                  }
+               ],
+               "id": "Iste saepe quam."
+            }
+         ],
+         "history": [
+            {
+               "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+               "tags": [
+                  "Cumque dolorum dolorem voluptas eveniet."
+               ]
+            }
+         ],
+         "id": "Iste saepe quam."
+      },
+      {
+         "followees": [
+            {
+               "history": [
+                  {
+                     "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+                     "tags": [
+                        "Cumque dolorum dolorem voluptas eveniet."
+                     ]
+                  }
+               ],
+               "id": "Iste saepe quam."
+            },
+            {
+               "history": [
+                  {
+                     "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+                     "tags": [
+                        "Cumque dolorum dolorem voluptas eveniet."
+                     ]
+                  }
+               ],
+               "id": "Iste saepe quam."
+            },
+            {
+               "history": [
+                  {
+                     "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+                     "tags": [
+                        "Cumque dolorum dolorem voluptas eveniet."
+                     ]
+                  }
+               ],
+               "id": "Iste saepe quam."
+            }
+         ],
+         "history": [
+            {
+               "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+               "tags": [
+                  "Cumque dolorum dolorem voluptas eveniet."
+               ]
+            }
+         ],
+         "id": "Iste saepe quam."
+      }
+   ],
+   "history": [
+      {
+         "id": "Exercitationem architecto dolorum quis dignissimos odio.",
+         "tags": [
+            "Cumque dolorum dolorem voluptas eveniet."
+         ]
+      }
+   ],
+   "id": "Iste saepe quam."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp3 := new(GetUserCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "follow",
+		Short: `Update a user's followees list with a new followee.`,
+	}
+	tmp3 := new(FollowUserCommand)
 	sub = &cobra.Command{
-		Use:   `user ["/bluelens/user/ID"]`,
+		Use:   `user ["/bluelens/user/ID/follows/FOLLOWEEID"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "followeeID": "Praesentium aperiam magni."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
 	}
 	tmp3.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "listen",
-		Short: `Add a music to a user's history.`,
+		Use:   "list",
+		Short: `list action`,
 	}
-	tmp4 := new(ListenUserCommand)
+	tmp4 := new(ListMusicCommand)
 	sub = &cobra.Command{
-		Use:   `user ["/bluelens/user/ID/listen/MUSICID"]`,
+		Use:   `music ["/bluelens/music"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp4.Run(c, args) },
 	}
 	tmp4.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp4.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "recommend",
-		Short: `Make music recommendations for a user.`,
-	}
-	tmp5 := new(RecommendRecommendationsCommand)
+	tmp5 := new(ListUserCommand)
 	sub = &cobra.Command{
-		Use:   `recommendations ["/bluelens/recommendations/USERID/MAXCOUNT"]`,
+		Use:   `user ["/bluelens/user"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
 	}
 	tmp5.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp5.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "listen",
+		Short: `Add a music to a user's history.`,
+	}
+	tmp6 := new(ListenUserCommand)
+	sub = &cobra.Command{
+		Use:   `user ["/bluelens/user/ID/listen/MUSICID"]`,
+		Short: ``,
+		Long: `
+
+Payload example:
+
+{
+   "musicID": "Qui non rerum ullam velit."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
+	}
+	tmp6.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "recommend",
+		Short: `Make music recommendations for a user.`,
+	}
+	tmp7 := new(RecommendRecommendationsCommand)
+	sub = &cobra.Command{
+		Use:   `recommendations ["/bluelens/recommendations/USERID/LIMIT"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
+	}
+	tmp7.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "show",
+		Short: `show action`,
+	}
+	tmp8 := new(ShowMusicCommand)
+	sub = &cobra.Command{
+		Use:   `music ["/bluelens/music/ID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp8.Run(c, args) },
+	}
+	tmp8.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp8.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	tmp9 := new(ShowUserCommand)
+	sub = &cobra.Command{
+		Use:   `user ["/bluelens/user/ID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp9.Run(c, args) },
+	}
+	tmp9.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp9.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 
@@ -335,17 +544,24 @@ found:
 	return nil
 }
 
-// Run makes the HTTP request corresponding to the GetMusicCommand command.
-func (cmd *GetMusicCommand) Run(c *client.Client, args []string) error {
+// Run makes the HTTP request corresponding to the CreateMusicCommand command.
+func (cmd *CreateMusicCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/bluelens/music/%v", url.QueryEscape(cmd.ID))
+		path = "/bluelens/music"
+	}
+	var payload client.Music
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.GetMusic(ctx, path)
+	resp, err := c.CreateMusic(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -356,7 +572,60 @@ func (cmd *GetMusicCommand) Run(c *client.Client, args []string) error {
 }
 
 // RegisterFlags registers the command flags with the command line.
-func (cmd *GetMusicCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+func (cmd *CreateMusicCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
+}
+
+// Run makes the HTTP request corresponding to the ListMusicCommand command.
+func (cmd *ListMusicCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/bluelens/music"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ListMusic(ctx, path, intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ListMusicCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().IntVar(&cmd.Limit, "limit", 20, ``)
+	var offset int
+	cc.Flags().IntVar(&cmd.Offset, "offset", offset, ``)
+}
+
+// Run makes the HTTP request corresponding to the ShowMusicCommand command.
+func (cmd *ShowMusicCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/bluelens/music/%v", url.QueryEscape(cmd.ID))
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ShowMusic(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ShowMusicCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var id string
 	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 }
@@ -367,7 +636,7 @@ func (cmd *RecommendRecommendationsCommand) Run(c *client.Client, args []string)
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/bluelens/recommendations/%v/%v", url.QueryEscape(cmd.UserID), cmd.MaxCount)
+		path = fmt.Sprintf("/bluelens/recommendations/%v/%v", url.QueryEscape(cmd.UserID), cmd.Limit)
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -383,10 +652,43 @@ func (cmd *RecommendRecommendationsCommand) Run(c *client.Client, args []string)
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *RecommendRecommendationsCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var maxCount int
-	cc.Flags().IntVar(&cmd.MaxCount, "maxCount", maxCount, `Maximum number of recommendations to be returned to the user. Set to zero to use server's default.`)
+	var limit int
+	cc.Flags().IntVar(&cmd.Limit, "limit", limit, `Maximum number of recommendations to be returned to the user. Set to zero to use server's default.`)
 	var userID string
 	cc.Flags().StringVar(&cmd.UserID, "userID", userID, `ID of the user these recommendations are meant for.`)
+}
+
+// Run makes the HTTP request corresponding to the CreateUserCommand command.
+func (cmd *CreateUserCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/bluelens/user"
+	}
+	var payload client.User
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.CreateUser(ctx, path, &payload)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *CreateUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the FollowUserCommand command.
@@ -397,9 +699,16 @@ func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 	} else {
 		path = fmt.Sprintf("/bluelens/user/%v/follows/%v", url.QueryEscape(cmd.ID), url.QueryEscape(cmd.FolloweeID))
 	}
+	var payload client.FollowUserPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.FollowUser(ctx, path)
+	resp, err := c.FollowUser(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -411,23 +720,25 @@ func (cmd *FollowUserCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *FollowUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 	var followeeID string
-	cc.Flags().StringVar(&cmd.FolloweeID, "followeeID", followeeID, `ID of the followee.`)
+	cc.Flags().StringVar(&cmd.FolloweeID, "followeeID", followeeID, ``)
 	var id string
 	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 }
 
-// Run makes the HTTP request corresponding to the GetUserCommand command.
-func (cmd *GetUserCommand) Run(c *client.Client, args []string) error {
+// Run makes the HTTP request corresponding to the ListUserCommand command.
+func (cmd *ListUserCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/bluelens/user/%v", url.QueryEscape(cmd.ID))
+		path = "/bluelens/user"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.GetUser(ctx, path)
+	resp, err := c.ListUser(ctx, path, intFlagVal("limit", cmd.Limit), intFlagVal("offset", cmd.Offset))
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -438,9 +749,10 @@ func (cmd *GetUserCommand) Run(c *client.Client, args []string) error {
 }
 
 // RegisterFlags registers the command flags with the command line.
-func (cmd *GetUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var id string
-	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
+func (cmd *ListUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().IntVar(&cmd.Limit, "limit", 20, ``)
+	var offset int
+	cc.Flags().IntVar(&cmd.Offset, "offset", offset, ``)
 }
 
 // Run makes the HTTP request corresponding to the ListenUserCommand command.
@@ -451,9 +763,16 @@ func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 	} else {
 		path = fmt.Sprintf("/bluelens/user/%v/listen/%v", url.QueryEscape(cmd.ID), url.QueryEscape(cmd.MusicID))
 	}
+	var payload client.ListenUserPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.ListenUser(ctx, path)
+	resp, err := c.ListenUser(ctx, path, &payload)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -465,8 +784,36 @@ func (cmd *ListenUserCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *ListenUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 	var id string
 	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 	var musicID string
-	cc.Flags().StringVar(&cmd.MusicID, "musicID", musicID, `ID of the music.`)
+	cc.Flags().StringVar(&cmd.MusicID, "musicID", musicID, ``)
+}
+
+// Run makes the HTTP request corresponding to the ShowUserCommand command.
+func (cmd *ShowUserCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/bluelens/user/%v", url.QueryEscape(cmd.ID))
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ShowUser(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ShowUserCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var id string
+	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
 }

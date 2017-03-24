@@ -18,7 +18,7 @@ func NewRecommendationsController(service *goa.Service) *RecommendationsControll
 
 // Recommend runs the recommend action.
 func (c *RecommendationsController) Recommend(ctx *app.RecommendRecommendationsContext) error {
-	recommendations, err := core.RecommendSort(ctx.UserID, ctx.MaxCount, store())
+	recommendations, err := core.RecommendSort(ctx.UserID, ctx.Limit, store())
 	if err != nil {
 		return err
 	}

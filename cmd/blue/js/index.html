@@ -15,7 +15,7 @@
         }
       });
       requirejs(['client'], function (client) {
-        client().getMusic ("/bluelens/music/Exercitationem architecto dolorum quis dignissimos odio.")
+        client().listMusic ("/bluelens/music", 955168419991172962, 2041547675446981966)
           .then(function (resp) {
             document.getElementById('response').innerHTML = resp.statusText;
           })

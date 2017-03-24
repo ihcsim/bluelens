@@ -14,7 +14,7 @@ import (
 	"github.com/goadesign/goa"
 )
 
-// A music resource (default view)
+// Media type of a music resource (default view)
 //
 // Identifier: application/vnd.bluelens.music+json; view=default
 type BluelensMusic struct {
@@ -34,7 +34,27 @@ func (mt *BluelensMusic) Validate() (err error) {
 	return
 }
 
-// A music resource (link view)
+// Media type of a music resource (full view)
+//
+// Identifier: application/vnd.bluelens.music+json; view=full
+type BluelensMusicFull struct {
+	Href string   `form:"href" json:"href" xml:"href"`
+	ID   string   `form:"id" json:"id" xml:"id"`
+	Tags []string `form:"tags,omitempty" json:"tags,omitempty" xml:"tags,omitempty"`
+}
+
+// Validate validates the BluelensMusicFull media type instance.
+func (mt *BluelensMusicFull) Validate() (err error) {
+	if mt.ID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	if mt.Href == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "href"))
+	}
+	return
+}
+
+// Media type of a music resource (link view)
 //
 // Identifier: application/vnd.bluelens.music+json; view=link
 type BluelensMusicLink struct {
@@ -56,6 +76,23 @@ type BluelensMusicCollection []*BluelensMusic
 
 // Validate validates the BluelensMusicCollection media type instance.
 func (mt BluelensMusicCollection) Validate() (err error) {
+	for _, e := range mt {
+		if e != nil {
+			if err2 := e.Validate(); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// BluelensMusicCollection is the media type for an array of BluelensMusic (full view)
+//
+// Identifier: application/vnd.bluelens.music+json; type=collection; view=full
+type BluelensMusicFullCollection []*BluelensMusicFull
+
+// Validate validates the BluelensMusicFullCollection media type instance.
+func (mt BluelensMusicFullCollection) Validate() (err error) {
 	for _, e := range mt {
 		if e != nil {
 			if err2 := e.Validate(); err2 != nil {
@@ -155,34 +192,7 @@ func (ut *BluelensRecommendationsLinks) Validate() (err error) {
 	return
 }
 
-// A user resource (all view)
-//
-// Identifier: application/vnd.bluelens.user+json; view=all
-type BluelensUserAll struct {
-	Followees BluelensUserCollection  `form:"followees,omitempty" json:"followees,omitempty" xml:"followees,omitempty"`
-	History   BluelensMusicCollection `form:"history,omitempty" json:"history,omitempty" xml:"history,omitempty"`
-	Href      string                  `form:"href" json:"href" xml:"href"`
-	ID        string                  `form:"id" json:"id" xml:"id"`
-}
-
-// Validate validates the BluelensUserAll media type instance.
-func (mt *BluelensUserAll) Validate() (err error) {
-	if mt.ID == "" {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
-	}
-	if mt.Href == "" {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "href"))
-	}
-	if err2 := mt.Followees.Validate(); err2 != nil {
-		err = goa.MergeErrors(err, err2)
-	}
-	if err2 := mt.History.Validate(); err2 != nil {
-		err = goa.MergeErrors(err, err2)
-	}
-	return
-}
-
-// A user resource (default view)
+// Media type of a user resource (default view)
 //
 // Identifier: application/vnd.bluelens.user+json; view=default
 type BluelensUser struct {
@@ -208,7 +218,34 @@ func (mt *BluelensUser) Validate() (err error) {
 	return
 }
 
-// A user resource (link view)
+// Media type of a user resource (full view)
+//
+// Identifier: application/vnd.bluelens.user+json; view=full
+type BluelensUserFull struct {
+	Followees BluelensUserCollection  `form:"followees,omitempty" json:"followees,omitempty" xml:"followees,omitempty"`
+	History   BluelensMusicCollection `form:"history,omitempty" json:"history,omitempty" xml:"history,omitempty"`
+	Href      string                  `form:"href" json:"href" xml:"href"`
+	ID        string                  `form:"id" json:"id" xml:"id"`
+}
+
+// Validate validates the BluelensUserFull media type instance.
+func (mt *BluelensUserFull) Validate() (err error) {
+	if mt.ID == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "id"))
+	}
+	if mt.Href == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "href"))
+	}
+	if err2 := mt.Followees.Validate(); err2 != nil {
+		err = goa.MergeErrors(err, err2)
+	}
+	if err2 := mt.History.Validate(); err2 != nil {
+		err = goa.MergeErrors(err, err2)
+	}
+	return
+}
+
+// Media type of a user resource (link view)
 //
 // Identifier: application/vnd.bluelens.user+json; view=link
 type BluelensUserLink struct {
@@ -240,13 +277,13 @@ func (ut *BluelensUserLinks) Validate() (err error) {
 	return
 }
 
-// BluelensUserCollection is the media type for an array of BluelensUser (all view)
+// BluelensUserCollection is the media type for an array of BluelensUser (default view)
 //
-// Identifier: application/vnd.bluelens.user+json; type=collection; view=all
-type BluelensUserAllCollection []*BluelensUserAll
+// Identifier: application/vnd.bluelens.user+json; type=collection; view=default
+type BluelensUserCollection []*BluelensUser
 
-// Validate validates the BluelensUserAllCollection media type instance.
-func (mt BluelensUserAllCollection) Validate() (err error) {
+// Validate validates the BluelensUserCollection media type instance.
+func (mt BluelensUserCollection) Validate() (err error) {
 	for _, e := range mt {
 		if e != nil {
 			if err2 := e.Validate(); err2 != nil {
@@ -257,13 +294,13 @@ func (mt BluelensUserAllCollection) Validate() (err error) {
 	return
 }
 
-// BluelensUserCollection is the media type for an array of BluelensUser (default view)
+// BluelensUserCollection is the media type for an array of BluelensUser (full view)
 //
-// Identifier: application/vnd.bluelens.user+json; type=collection; view=default
-type BluelensUserCollection []*BluelensUser
+// Identifier: application/vnd.bluelens.user+json; type=collection; view=full
+type BluelensUserFullCollection []*BluelensUserFull
 
-// Validate validates the BluelensUserCollection media type instance.
-func (mt BluelensUserCollection) Validate() (err error) {
+// Validate validates the BluelensUserFullCollection media type instance.
+func (mt BluelensUserFullCollection) Validate() (err error) {
 	for _, e := range mt {
 		if e != nil {
 			if err2 := e.Validate(); err2 != nil {

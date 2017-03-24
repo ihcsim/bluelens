@@ -8,12 +8,10 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
-
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-
 	config, err := parseFlags(os.Args[1:])
 	if err != nil {
 		log.WithFields(log.Fields{

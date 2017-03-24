@@ -31,7 +31,9 @@ func initService(service *goa.Service) {
 // MusicController is the controller interface for the Music actions.
 type MusicController interface {
 	goa.Muxer
-	Get(*GetMusicContext) error
+	Create(*CreateMusicContext) error
+	List(*ListMusicContext) error
+	Show(*ShowMusicContext) error
 }
 
 // MountMusicController "mounts" a Music resource controller on the given service.
@@ -45,14 +47,65 @@ func MountMusicController(service *goa.Service, ctrl MusicController) {
 			return err
 		}
 		// Build the context
-		rctx, err := NewGetMusicContext(ctx, service)
+		rctx, err := NewCreateMusicContext(ctx, service)
 		if err != nil {
 			return err
 		}
-		return ctrl.Get(rctx)
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*Music)
+		} else {
+			return goa.MissingPayloadError()
+		}
+		return ctrl.Create(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/music/:id", ctrl.MuxHandler("Get", h, nil))
-	service.LogInfo("mount", "ctrl", "Music", "action", "Get", "route", "GET /bluelens/music/:id")
+	service.Mux.Handle("POST", "/bluelens/music", ctrl.MuxHandler("Create", h, unmarshalCreateMusicPayload))
+	service.LogInfo("mount", "ctrl", "Music", "action", "Create", "route", "POST /bluelens/music")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewListMusicContext(ctx, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.List(rctx)
+	}
+	service.Mux.Handle("GET", "/bluelens/music", ctrl.MuxHandler("List", h, nil))
+	service.LogInfo("mount", "ctrl", "Music", "action", "List", "route", "GET /bluelens/music")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewShowMusicContext(ctx, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Show(rctx)
+	}
+	service.Mux.Handle("GET", "/bluelens/music/:id", ctrl.MuxHandler("Show", h, nil))
+	service.LogInfo("mount", "ctrl", "Music", "action", "Show", "route", "GET /bluelens/music/:id")
+}
+
+// unmarshalCreateMusicPayload unmarshals the request body into the context request data Payload field.
+func unmarshalCreateMusicPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &music{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }
 
 // RecommendationsController is the controller interface for the Recommendations actions.
@@ -78,8 +131,8 @@ func MountRecommendationsController(service *goa.Service, ctrl RecommendationsCo
 		}
 		return ctrl.Recommend(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:maxCount", ctrl.MuxHandler("Recommend", h, nil))
-	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:maxCount")
+	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:limit", ctrl.MuxHandler("Recommend", h, nil))
+	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:limit")
 }
 
 // SwaggerController is the controller interface for the Swagger actions.
@@ -127,9 +180,11 @@ func handleSwaggerOrigin(h goa.Handler) goa.Handler {
 // UserController is the controller interface for the User actions.
 type UserController interface {
 	goa.Muxer
+	Create(*CreateUserContext) error
 	Follow(*FollowUserContext) error
-	Get(*GetUserContext) error
+	List(*ListUserContext) error
 	Listen(*ListenUserContext) error
+	Show(*ShowUserContext) error
 }
 
 // MountUserController "mounts" a User resource controller on the given service.
@@ -143,13 +198,40 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 			return err
 		}
 		// Build the context
+		rctx, err := NewCreateUserContext(ctx, service)
+		if err != nil {
+			return err
+		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*User)
+		} else {
+			return goa.MissingPayloadError()
+		}
+		return ctrl.Create(rctx)
+	}
+	service.Mux.Handle("POST", "/bluelens/user", ctrl.MuxHandler("Create", h, unmarshalCreateUserPayload))
+	service.LogInfo("mount", "ctrl", "User", "action", "Create", "route", "POST /bluelens/user")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
 		rctx, err := NewFollowUserContext(ctx, service)
 		if err != nil {
 			return err
 		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*FollowUserPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
 		return ctrl.Follow(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:id/follows/:followeeID", ctrl.MuxHandler("Follow", h, nil))
+	service.Mux.Handle("POST", "/bluelens/user/:id/follows/:followeeID", ctrl.MuxHandler("Follow", h, unmarshalFollowUserPayload))
 	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:id/follows/:followeeID")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
@@ -158,14 +240,14 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 			return err
 		}
 		// Build the context
-		rctx, err := NewGetUserContext(ctx, service)
+		rctx, err := NewListUserContext(ctx, service)
 		if err != nil {
 			return err
 		}
-		return ctrl.Get(rctx)
+		return ctrl.List(rctx)
 	}
-	service.Mux.Handle("GET", "/bluelens/user/:id", ctrl.MuxHandler("Get", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Get", "route", "GET /bluelens/user/:id")
+	service.Mux.Handle("GET", "/bluelens/user", ctrl.MuxHandler("List", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "List", "route", "GET /bluelens/user")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -177,8 +259,64 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		if err != nil {
 			return err
 		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*ListenUserPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
 		return ctrl.Listen(rctx)
 	}
-	service.Mux.Handle("POST", "/bluelens/user/:id/listen/:musicID", ctrl.MuxHandler("Listen", h, nil))
+	service.Mux.Handle("POST", "/bluelens/user/:id/listen/:musicID", ctrl.MuxHandler("Listen", h, unmarshalListenUserPayload))
 	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:id/listen/:musicID")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewShowUserContext(ctx, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Show(rctx)
+	}
+	service.Mux.Handle("GET", "/bluelens/user/:id", ctrl.MuxHandler("Show", h, nil))
+	service.LogInfo("mount", "ctrl", "User", "action", "Show", "route", "GET /bluelens/user/:id")
+}
+
+// unmarshalCreateUserPayload unmarshals the request body into the context request data Payload field.
+func unmarshalCreateUserPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &user{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
+}
+
+// unmarshalFollowUserPayload unmarshals the request body into the context request data Payload field.
+func unmarshalFollowUserPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &followUserPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
+}
+
+// unmarshalListenUserPayload unmarshals the request body into the context request data Payload field.
+func unmarshalListenUserPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &listenUserPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }

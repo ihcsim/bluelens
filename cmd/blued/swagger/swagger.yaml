@@ -2,7 +2,7 @@ consumes:
 - application/json
 definitions:
   BluelensMusic:
-    description: A music resource (default view)
+    description: Media type of a music resource (default view)
     example:
       href: Velit rerum et et ut.
       id: Necessitatibus exercitationem.
@@ -31,8 +31,59 @@ definitions:
     - href
     title: 'Mediatype identifier: application/vnd.bluelens.music+json; view=default'
     type: object
+  BluelensMusicCollection:
+    description: BluelensMusicCollection is the media type for an array of BluelensMusic
+      (default view)
+    example:
+    - href: Velit rerum et et ut.
+      id: Necessitatibus exercitationem.
+      tags:
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+    - href: Velit rerum et et ut.
+      id: Necessitatibus exercitationem.
+      tags:
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+    items:
+      $ref: '#/definitions/BluelensMusic'
+    title: 'Mediatype identifier: application/vnd.bluelens.music+json; type=collection;
+      view=default'
+    type: array
+  BluelensMusicFull:
+    description: Media type of a music resource (full view)
+    example:
+      href: Velit rerum et et ut.
+      id: Necessitatibus exercitationem.
+      tags:
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+      - Cumque dolorum dolorem voluptas eveniet.
+    properties:
+      href:
+        example: Velit rerum et et ut.
+        type: string
+      id:
+        example: Necessitatibus exercitationem.
+        type: string
+      tags:
+        example:
+        - Cumque dolorum dolorem voluptas eveniet.
+        - Cumque dolorum dolorem voluptas eveniet.
+        - Cumque dolorum dolorem voluptas eveniet.
+        items:
+          example: Cumque dolorum dolorem voluptas eveniet.
+          type: string
+        type: array
+    required:
+    - id
+    - href
+    title: 'Mediatype identifier: application/vnd.bluelens.music+json; view=full'
+    type: object
   BluelensMusicLink:
-    description: A music resource (link view)
+    description: Media type of a music resource (link view)
     example:
       href: Velit rerum et et ut.
     properties:
@@ -70,6 +121,7 @@ definitions:
       links:
         list:
         - href: Velit rerum et et ut.
+        - href: Velit rerum et et ut.
         user:
           href: Eum deleniti id.
       musicID:
@@ -96,6 +148,7 @@ definitions:
     example:
       list:
       - href: Velit rerum et et ut.
+      - href: Velit rerum et et ut.
       user:
         href: Eum deleniti id.
     properties:
@@ -106,7 +159,7 @@ definitions:
     title: BluelensRecommendationsLinks
     type: object
   BluelensUser:
-    description: A user resource (default view)
+    description: Media type of a user resource (default view)
     example:
       href: Dignissimos dolore aliquam dolores unde qui.
       id: Ut fugiat hic.
@@ -130,8 +183,94 @@ definitions:
     - href
     title: 'Mediatype identifier: application/vnd.bluelens.user+json; view=default'
     type: object
+  BluelensUserCollection:
+    description: BluelensUserCollection is the media type for an array of BluelensUser
+      (default view)
+    example:
+    - href: Dignissimos dolore aliquam dolores unde qui.
+      id: Ut fugiat hic.
+      links:
+        followees:
+        - href: Eum deleniti id.
+        - href: Eum deleniti id.
+        history:
+        - href: Velit rerum et et ut.
+    - href: Dignissimos dolore aliquam dolores unde qui.
+      id: Ut fugiat hic.
+      links:
+        followees:
+        - href: Eum deleniti id.
+        - href: Eum deleniti id.
+        history:
+        - href: Velit rerum et et ut.
+    - href: Dignissimos dolore aliquam dolores unde qui.
+      id: Ut fugiat hic.
+      links:
+        followees:
+        - href: Eum deleniti id.
+        - href: Eum deleniti id.
+        history:
+        - href: Velit rerum et et ut.
+    items:
+      $ref: '#/definitions/BluelensUser'
+    title: 'Mediatype identifier: application/vnd.bluelens.user+json; type=collection;
+      view=default'
+    type: array
+  BluelensUserFull:
+    description: Media type of a user resource (full view)
+    example:
+      followees:
+      - href: Dignissimos dolore aliquam dolores unde qui.
+        id: Ut fugiat hic.
+        links:
+          followees:
+          - href: Eum deleniti id.
+          - href: Eum deleniti id.
+          history:
+          - href: Velit rerum et et ut.
+      - href: Dignissimos dolore aliquam dolores unde qui.
+        id: Ut fugiat hic.
+        links:
+          followees:
+          - href: Eum deleniti id.
+          - href: Eum deleniti id.
+          history:
+          - href: Velit rerum et et ut.
+      - href: Dignissimos dolore aliquam dolores unde qui.
+        id: Ut fugiat hic.
+        links:
+          followees:
+          - href: Eum deleniti id.
+          - href: Eum deleniti id.
+          history:
+          - href: Velit rerum et et ut.
+      history:
+      - href: Velit rerum et et ut.
+        id: Necessitatibus exercitationem.
+        tags:
+        - Cumque dolorum dolorem voluptas eveniet.
+        - Cumque dolorum dolorem voluptas eveniet.
+        - Cumque dolorum dolorem voluptas eveniet.
+      href: Dolorem consequuntur nisi ipsam quo et.
+      id: Alias sed nisi quis voluptatem quis.
+    properties:
+      followees:
+        $ref: '#/definitions/BluelensUserCollection'
+      history:
+        $ref: '#/definitions/BluelensMusicCollection'
+      href:
+        example: Dolorem consequuntur nisi ipsam quo et.
+        type: string
+      id:
+        example: Alias sed nisi quis voluptatem quis.
+        type: string
+    required:
+    - id
+    - href
+    title: 'Mediatype identifier: application/vnd.bluelens.user+json; view=full'
+    type: object
   BluelensUserLink:
-    description: A user resource (link view)
+    description: Media type of a user resource (link view)
     example:
       href: Eum deleniti id.
     properties:
@@ -167,6 +306,26 @@ definitions:
       history:
         $ref: '#/definitions/BluelensMusicLinkCollection'
     title: BluelensUserLinks
+    type: object
+  FollowUserPayload:
+    example:
+      followeeID: Praesentium aperiam magni.
+    properties:
+      followeeID:
+        description: ID of the followee.
+        example: Praesentium aperiam magni.
+        type: string
+    title: FollowUserPayload
+    type: object
+  ListenUserPayload:
+    example:
+      musicID: Qui non rerum ullam velit.
+    properties:
+      musicID:
+        description: ID of the music.
+        example: Qui non rerum ullam velit.
+        type: string
+    title: ListenUserPayload
     type: object
   error:
     description: Error response media type (default view)
@@ -205,6 +364,141 @@ definitions:
         type: string
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
+  music:
+    description: A music resource
+    example:
+      id: Exercitationem architecto dolorum quis dignissimos odio.
+      tags:
+      - Cumque dolorum dolorem voluptas eveniet.
+    properties:
+      id:
+        example: Exercitationem architecto dolorum quis dignissimos odio.
+        type: string
+      tags:
+        example:
+        - Cumque dolorum dolorem voluptas eveniet.
+        items:
+          example: Cumque dolorum dolorem voluptas eveniet.
+          type: string
+        type: array
+    required:
+    - id
+    title: music
+    type: object
+  user:
+    description: A user resource
+    example:
+      followees:
+      - followees:
+        - history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        - history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        - history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        history:
+        - id: Exercitationem architecto dolorum quis dignissimos odio.
+          tags:
+          - Cumque dolorum dolorem voluptas eveniet.
+        id: Iste saepe quam.
+      - followees:
+        - history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        - history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        - history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        history:
+        - id: Exercitationem architecto dolorum quis dignissimos odio.
+          tags:
+          - Cumque dolorum dolorem voluptas eveniet.
+        id: Iste saepe quam.
+      history:
+      - id: Exercitationem architecto dolorum quis dignissimos odio.
+        tags:
+        - Cumque dolorum dolorem voluptas eveniet.
+      id: Iste saepe quam.
+    properties:
+      followees:
+        example:
+        - followees:
+          - history:
+            - id: Exercitationem architecto dolorum quis dignissimos odio.
+              tags:
+              - Cumque dolorum dolorem voluptas eveniet.
+            id: Iste saepe quam.
+          - history:
+            - id: Exercitationem architecto dolorum quis dignissimos odio.
+              tags:
+              - Cumque dolorum dolorem voluptas eveniet.
+            id: Iste saepe quam.
+          - history:
+            - id: Exercitationem architecto dolorum quis dignissimos odio.
+              tags:
+              - Cumque dolorum dolorem voluptas eveniet.
+            id: Iste saepe quam.
+          history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        - followees:
+          - history:
+            - id: Exercitationem architecto dolorum quis dignissimos odio.
+              tags:
+              - Cumque dolorum dolorem voluptas eveniet.
+            id: Iste saepe quam.
+          - history:
+            - id: Exercitationem architecto dolorum quis dignissimos odio.
+              tags:
+              - Cumque dolorum dolorem voluptas eveniet.
+            id: Iste saepe quam.
+          - history:
+            - id: Exercitationem architecto dolorum quis dignissimos odio.
+              tags:
+              - Cumque dolorum dolorem voluptas eveniet.
+            id: Iste saepe quam.
+          history:
+          - id: Exercitationem architecto dolorum quis dignissimos odio.
+            tags:
+            - Cumque dolorum dolorem voluptas eveniet.
+          id: Iste saepe quam.
+        items:
+          $ref: '#/definitions/user'
+        type: array
+      history:
+        example:
+        - id: Exercitationem architecto dolorum quis dignissimos odio.
+          tags:
+          - Cumque dolorum dolorem voluptas eveniet.
+        items:
+          $ref: '#/definitions/music'
+        type: array
+      id:
+        example: Iste saepe quam.
+        type: string
+    required:
+    - id
+    title: user
+    type: object
 externalDocs:
   description: Swagger docs
   url: http://localhost:8080/swagger.json
@@ -218,10 +512,59 @@ info:
   title: The bluelens API
   version: ""
 paths:
+  /bluelens/music:
+    get:
+      description: List up to N music resources. N can be adjusted using the 'limit'
+        and 'offset' parameters.
+      operationId: music#list
+      parameters:
+      - default: 20
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        in: query
+        name: offset
+        required: false
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/BluelensMusicCollection'
+      schemes:
+      - http
+      summary: list music
+      tags:
+      - music
+    post:
+      operationId: music#create
+      parameters:
+      - description: A music resource
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/music'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/BluelensMusicLink'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: create music
+      tags:
+      - music
   /bluelens/music/{id}:
     get:
       description: Get a music resource with the given ID
-      operationId: music#get
+      operationId: music#show
       parameters:
       - in: path
         name: id
@@ -231,17 +574,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/BluelensMusic'
+            $ref: '#/definitions/BluelensMusicFull'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
-      summary: get music
+      summary: show music
       tags:
       - music
-  /bluelens/recommendations/{userID}/{maxCount}:
+  /bluelens/recommendations/{userID}/{limit}:
     get:
       description: Make music recommendations for a user.
       operationId: recommendations#recommend
@@ -250,7 +593,7 @@ paths:
           Set to zero to use server's default.
         in: path
         minimum: 0
-        name: maxCount
+        name: limit
         required: true
         type: integer
       - description: ID of the user these recommendations are meant for.
@@ -272,10 +615,59 @@ paths:
       summary: recommend recommendations
       tags:
       - recommendations
+  /bluelens/user:
+    get:
+      description: List up to N user resources. N can be adjusted using the 'limit'
+        and 'offset' parameters.
+      operationId: user#list
+      parameters:
+      - default: 20
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        in: query
+        name: offset
+        required: false
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/BluelensUserCollection'
+      schemes:
+      - http
+      summary: list user
+      tags:
+      - user
+    post:
+      operationId: user#create
+      parameters:
+      - description: A user resource
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/user'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/BluelensUserLink'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: create user
+      tags:
+      - user
   /bluelens/user/{id}:
     get:
-      description: Get a user resource with the given ID
-      operationId: user#get
+      description: Get a user resource with the given ID.
+      operationId: user#show
       parameters:
       - in: path
         name: id
@@ -285,14 +677,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/BluelensUser'
+            $ref: '#/definitions/BluelensUserFull'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
-      summary: get user
+      summary: show user
       tags:
       - user
   /bluelens/user/{id}/follows/{followeeID}:
@@ -300,8 +692,7 @@ paths:
       description: Update a user's followees list with a new followee.
       operationId: user#follow
       parameters:
-      - description: ID of the followee.
-        in: path
+      - in: path
         name: followeeID
         required: true
         type: string
@@ -309,6 +700,11 @@ paths:
         name: id
         required: true
         type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/FollowUserPayload'
       responses:
         "200":
           description: OK
@@ -336,11 +732,15 @@ paths:
         name: id
         required: true
         type: string
-      - description: ID of the music.
-        in: path
+      - in: path
         name: musicID
         required: true
         type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ListenUserPayload'
       responses:
         "200":
           description: OK
@@ -376,7 +776,7 @@ responses:
   OK:
     description: OK
     schema:
-      $ref: '#/definitions/BluelensMusic'
+      $ref: '#/definitions/BluelensRecommendations'
 schemes:
 - http
 swagger: "2.0"

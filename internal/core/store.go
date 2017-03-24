@@ -8,9 +8,9 @@ type Store interface {
 	// LoadUser loads the provided list of users into the store.
 	LoadUsers(UserList) error
 
-	// List users retrieves a list of user resources from the store. The length of the result list
-	// is bounded by maxCount.
-	ListUsers(maxCount int) (UserList, error)
+	// List users retrieves a list of user resources from the store. The start and length of the result list
+	// is determined by offset and limit, respectively.
+	ListUsers(limit, offset int) (UserList, error)
 
 	// FindUser looks up the user with the specified ID.
 	FindUser(userID string) (*User, error)
@@ -26,9 +26,9 @@ type Store interface {
 	// LoadMusic loads the provided list of music into the store.
 	LoadMusic(MusicList) error
 
-	// ListMusic retrieves a list of music resources from the store. The length of the result list
-	// is bounded by maxCount.
-	ListMusic(maxCount int) (MusicList, error)
+	// ListMusic retrieves a list of music resources from the store. The start and length of the result list
+	// is determined by offset and limit, respectively.
+	ListMusic(limit, offset int) (MusicList, error)
 
 	// FindMusic looks up the music resource with the specified ID.
 	FindMusic(musicID string) (*Music, error)
@@ -36,68 +36,65 @@ type Store interface {
 	// FindMusicByTags looks up music resources that satisfied the given tags.
 	FindMusicByTags(tag string) (MusicList, error)
 
+	// UpdateMusic updates the attributes of the specified music. If the music doesn't exist, it will
+	// be added to the music list.
+	UpdateMusic(m *Music) (*Music, error)
+
 	// Listen updates a user's history listen with the specified music to indicate that the user has listened to that music. The updated user is returned.
 	// If either the user or music doesn't exist, an error is returned.
 	Listen(userID, musicID string) (*User, error)
 }
 
-const defaultMaxCount = 20
-
 // InMemoryStore stores all the user and music data in-memory.
 type InMemoryStore struct {
-	musicList       map[string]*Music
-	musicListByTags map[string]MusicList
-	userBase        map[string]*User
+	musicList      MusicList
+	musicMap       map[string]*Music
+	musicMapByTags map[string]MusicList
+
+	userList UserList
+	userMap  map[string]*User
 }
 
 // NewInMemoryStore returns a new instance of InMemoryStore.
 func NewInMemoryStore() Store {
 	return &InMemoryStore{
-		musicList:       make(map[string]*Music),
-		musicListByTags: make(map[string]MusicList),
-		userBase:        make(map[string]*User),
+		musicList:      MusicList{},
+		musicMap:       make(map[string]*Music),
+		musicMapByTags: make(map[string]MusicList),
+
+		userList: UserList{},
+		userMap:  make(map[string]*User),
 	}
 }
 
 // LoadUsers loads the list of provided users into the store.
 func (s *InMemoryStore) LoadUsers(users UserList) error {
 	for _, u := range users {
-		s.userBase[u.ID] = u
+		if err := s.userList.Add(u); err != nil {
+			return err
+		}
+
+		s.userMap[u.ID] = u
 	}
+
+	sort.Slice(s.userList, func(i, j int) bool {
+		return s.userList[i].ID < s.userList[j].ID
+	})
+
 	return nil
 }
 
-// ListUsers retrieves a list of user resources from the store. The length of
-// the result list is bounded by maxCount.
-func (s *InMemoryStore) ListUsers(maxCount int) (UserList, error) {
-	if maxCount <= 0 {
-		maxCount = defaultMaxCount
-	}
-
-	list := UserList{}
-	var index int
-	for _, u := range s.userBase {
-		if err := list.Add(u); err != nil {
-			return nil, err
-		}
-
-		index++
-		if index == maxCount {
-			break
-		}
-	}
-
-	sort.Slice(list, func(i, j int) bool {
-		return list[i].ID < list[j].ID
-	})
-
-	return list, nil
+// ListUsers retrieves a list of user resources from the store. The start and length of
+// the result list is bounded by offset and limit, respectively.
+func (s *InMemoryStore) ListUsers(limit, offset int) (UserList, error) {
+	start, end := calcStartEnd(limit, offset, len(s.userList))
+	return s.userList[start:end], nil
 }
 
 // FindUser looks for the user with the specified id in the store.
 // If the user doesn't exist, an EntityNotFound error is returned.
 func (s *InMemoryStore) FindUser(id string) (*User, error) {
-	v, exists := s.userBase[id]
+	v, exists := s.userMap[id]
 	if !exists {
 		return nil, NewEntityNotFound(id, "user")
 	}
@@ -109,7 +106,20 @@ func (s *InMemoryStore) FindUser(id string) (*User, error) {
 // UpdateUser updates the attributes of the specified user. If the user doesn't exist, it will be
 // created.
 func (s *InMemoryStore) UpdateUser(u *User) (*User, error) {
-	s.userBase[u.ID] = u
+	var exist bool
+	for index, user := range s.userList {
+		if user.ID == u.ID {
+			s.userList[index] = u
+			exist = true
+			break
+		}
+	}
+
+	if !exist {
+		s.userList.Add(u)
+	}
+
+	s.userMap[u.ID] = u
 	return u, nil
 }
 
@@ -119,6 +129,11 @@ func (s *InMemoryStore) Follow(userID, followeeID string) (*User, error) {
 	user, err := s.FindUser(userID)
 	if err != nil {
 		return nil, NewEntityNotFound(userID, "user")
+	}
+
+	// don't follow self
+	if userID == followeeID {
+		return user, nil
 	}
 
 	followee, err := s.FindUser(followeeID)
@@ -135,50 +150,53 @@ func (s *InMemoryStore) Follow(userID, followeeID string) (*User, error) {
 
 // LoadMusic loads the provided list of music into the store.
 func (s *InMemoryStore) LoadMusic(l MusicList) error {
+	s.musicList = l
+	sort.Slice(s.musicList, func(i, j int) bool {
+		return s.musicList[i].ID <= s.musicList[j].ID
+	})
+
 	for _, m := range l {
-		s.musicList[m.ID] = m
+		s.musicMap[m.ID] = m
 
 		for _, tag := range m.Tags {
-			if s.musicListByTags[tag] == nil {
-				s.musicListByTags[tag] = MusicList{}
+			if s.musicMapByTags[tag] == nil {
+				s.musicMapByTags[tag] = MusicList{}
 			}
-			s.musicListByTags[tag] = append(s.musicListByTags[tag], m)
+			s.musicMapByTags[tag] = append(s.musicMapByTags[tag], m)
 		}
 	}
 	return nil
 }
 
-// ListMusic returns the list of music in the store. The length of the result list
-// is bounded by maxCount.
-func (s *InMemoryStore) ListMusic(maxCount int) (MusicList, error) {
-	if maxCount <= 0 {
-		maxCount = defaultMaxCount
+// ListMusic returns the list of music in the store. The start and length of the result list
+// is determined by offset and limit, respectively.
+func (s *InMemoryStore) ListMusic(limit, offset int) (MusicList, error) {
+	start, end := calcStartEnd(limit, offset, len(s.musicList))
+	return s.musicList[start:end], nil
+}
+
+func calcStartEnd(limit, offset, bound int) (int, int) {
+	if limit <= 0 || limit > bound {
+		limit = bound
 	}
 
-	var ml MusicList
-	var index int
-	for _, m := range s.musicList {
-		if err := ml.Add(m); err != nil {
-			return nil, err
-		}
-
-		index++
-		if index == maxCount {
-			break
-		}
+	if offset < 0 || offset > bound {
+		offset = 0
 	}
 
-	sort.Slice(ml, func(i, j int) bool {
-		return ml[i].ID <= ml[j].ID
-	})
+	start, end := offset, offset+limit
 
-	return ml, nil
+	if end > bound {
+		end = bound
+	}
+
+	return start, end
 }
 
 // FindMusic retrieves the music resource with the specified ID.
 // If no music resource has the provided ID, a EntityNotFound error is returned.
 func (s *InMemoryStore) FindMusic(musicID string) (*Music, error) {
-	v, exists := s.musicList[musicID]
+	v, exists := s.musicMap[musicID]
 	if !exists {
 		return nil, NewEntityNotFound(musicID, "music")
 	}
@@ -189,11 +207,34 @@ func (s *InMemoryStore) FindMusic(musicID string) (*Music, error) {
 
 // FindMusicByTags retrieves a list of music resources that satisfy the given tags.
 func (s *InMemoryStore) FindMusicByTags(tag string) (MusicList, error) {
-	v, exists := s.musicListByTags[tag]
+	v, exists := s.musicMapByTags[tag]
 	if !exists {
 		return nil, NewEntityNotFound(tag, "music tag")
 	}
 	return v, nil
+}
+
+// UpdateMusic updates the attributes of the specified music resource. If the resource doesn't exist, it will be created.
+func (s *InMemoryStore) UpdateMusic(m *Music) (*Music, error) {
+	s.musicMap[m.ID] = m
+
+	for index, music := range s.musicList {
+		if music.ID == m.ID {
+			s.musicList[index] = m
+			break
+		}
+	}
+
+	for _, tag := range m.Tags {
+		ml, exist := s.musicMapByTags[tag]
+		if !exist {
+			s.musicMapByTags[tag] = MusicList{m}
+		} else {
+			s.musicMapByTags[tag] = append(ml, m)
+		}
+	}
+
+	return m, nil
 }
 
 // Listen updates the user's history list with the specified music. The updated user is returned.
