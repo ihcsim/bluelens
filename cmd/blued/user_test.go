@@ -12,11 +12,21 @@ import (
 )
 
 var (
-	// store singleton
-	userCtrlStoreFixture core.Store
+	// store fixture used for the user controller tests
+	storeFixtureUser core.Store
 
-	// ensures test store is init only once
-	testStoreInit sync.Once
+	// ensures the store fixture used for the user controller tests are initialized once
+	initStoreFixtureUser sync.Once
+
+	// helper function to retrieve user fixtures from store
+	userFixture = func(t *testing.T, id string) *core.User {
+		u, err := store().FindUser(id)
+		if err != nil {
+			t.Fatalf("Unexpected error with user ID %s: %", id, err)
+		}
+
+		return u
+	}
 )
 
 func TestUserController(t *testing.T) {
@@ -24,19 +34,19 @@ func TestUserController(t *testing.T) {
 	storeFunc := store
 	storeFuncMock := func() core.Store {
 		var err error
-		testStoreInit.Do(func() {
-			userCtrlStoreFixture, err = core.NewFixtureStore()
+		initStoreFixtureUser.Do(func() {
+			storeFixtureUser, err = core.NewFixtureStore()
 			if err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
 		})
 
-		return userCtrlStoreFixture
+		return storeFixtureUser
 	}
 	store = storeFuncMock
 	defer func() {
 		store = storeFunc
-		userCtrlStoreFixture = nil
+		storeFixtureUser = nil
 	}()
 
 	svc := goa.New("goatest")
@@ -78,11 +88,7 @@ func TestUserController(t *testing.T) {
 
 	t.Run("show", func(t *testing.T) {
 		t.Run("found", func(t *testing.T) {
-			user, err := store().FindUser("user-01")
-			if err != nil {
-				t.Fatal("Unexpected error: ", err)
-			}
-
+			user := userFixture(t, "user-01")
 			expected := mediaTypeUserFull(user)
 			if _, actual := test.ShowUserOKFull(t, nil, nil, ctrl, user.ID); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("Media type mismatch. Expected %+v, but got %+v", expected, actual)
@@ -96,11 +102,61 @@ func TestUserController(t *testing.T) {
 		})
 	})
 
-	t.Run("follow", func(t *testing.T) {
-		user, err := store().FindUser("user-01")
-		if err != nil {
-			t.Fatal("Unexpected error: ", err)
+	t.Run("create", func(t *testing.T) {
+		followeesID := []string{"user-02", "user-03"}
+		musicID := []string{"song-07", "song-03"}
+		fixture := &core.User{
+			ID: "user-00.v2",
+			Followees: core.UserList{
+				userFixture(t, followeesID[0]),
+				userFixture(t, followeesID[1]),
+			},
+			History: core.MusicList{
+				musicFixture(t, musicID[0]),
+				musicFixture(t, musicID[1]),
+			},
 		}
+
+		payload := &app.User{
+			ID: fixture.ID,
+			Followees: []*app.User{
+				&app.User{ID: followeesID[0]},
+				&app.User{ID: followeesID[1]},
+			},
+			History: []*app.Music{
+				&app.Music{ID: musicID[0]},
+				&app.Music{ID: musicID[1]},
+			},
+		}
+
+		expected := &app.BluelensUserLink{Href: "/users/user-00.v2"}
+		if _, actual := test.CreateUserCreatedLink(t, nil, nil, ctrl, payload); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("Resource mismatch. Expected %+v\nBut got:%+v", expected, actual)
+		}
+
+		u := userFixture(t, fixture.ID)
+		if !reflect.DeepEqual(fixture, u) {
+			t.Errorf("Resource mismatch. Expected %s\nBut got %s", fixture, u)
+		}
+
+		t.Run("bad request", func(t *testing.T) {
+			tests := []struct {
+				payload *app.User
+			}{
+				{payload: &app.User{}},
+				{payload: &app.User{ID: ""}},
+			}
+
+			for _, tc := range tests {
+				if _, err := test.CreateUserBadRequest(t, nil, nil, ctrl, tc.payload); err == nil {
+					t.Error("Expected error to occur. Should have failed with a 400 response status.")
+				}
+			}
+		})
+	})
+
+	t.Run("follow", func(t *testing.T) {
+		user := userFixture(t, "user-01")
 
 		t.Run("self", func(t *testing.T) {
 			// no changes to expected media type result if followee is self
@@ -112,11 +168,7 @@ func TestUserController(t *testing.T) {
 		})
 
 		t.Run("new followee", func(t *testing.T) {
-			followee, err := store().FindUser("user-03")
-			if err != nil {
-				t.Fatal("Unexpected error: ", err)
-			}
-
+			followee := userFixture(t, "user-03")
 			if err := user.AddFollowees(followee); err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}
@@ -155,11 +207,7 @@ func TestUserController(t *testing.T) {
 	})
 
 	t.Run("listen", func(t *testing.T) {
-		user, err := store().FindUser("user-01")
-		if err != nil {
-			t.Fatal("Unexpected error: ", err)
-		}
-
+		user := userFixture(t, "user-01")
 		t.Run("same music", func(t *testing.T) {
 			// re-listening to music already in the history list should have no effects
 			payload := &app.ListenUserPayload{MusicID: &user.History[0].ID}
@@ -170,11 +218,7 @@ func TestUserController(t *testing.T) {
 		})
 
 		t.Run("new music", func(t *testing.T) {
-			music, err := store().FindMusic("song-05")
-			if err != nil {
-				t.Fatal("Unexpected error: ", err)
-			}
-
+			music := musicFixture(t, "song-05")
 			if err := user.AddHistory(music); err != nil {
 				t.Fatal("Unexpected error: ", err)
 			}

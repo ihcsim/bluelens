@@ -44,7 +44,7 @@ func TestMediaTypeMusic(t *testing.T) {
 			Tags: music.Tags,
 		}
 		if actual := mediaTypeMusic(music); !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Meida type mismatch. Expected %v, but got %v", expected, actual)
+			t.Errorf("media type mismatch. Expected %v, but got %v", expected, actual)
 		}
 	})
 
@@ -56,6 +56,16 @@ func TestMediaTypeMusic(t *testing.T) {
 		}
 		if actual := mediaTypeMusicFull(music); !reflect.DeepEqual(expected, actual) {
 			t.Errorf("Media type mismatch. Expected %v, but got %v", expected, actual)
+		}
+	})
+
+	t.Run("view=link", func(t *testing.T) {
+		expected := &app.BluelensMusicLink{
+			Href: "/music/song-00",
+		}
+
+		if actual := mediaTypeMusicLink(music); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("media type mismatch. Expected %v, but got %v\n", expected, actual)
 		}
 	})
 }
@@ -123,6 +133,15 @@ func TestMediaTypeUser(t *testing.T) {
 
 		if actual := mediaTypeUserFull(user); !reflect.DeepEqual(expected, actual) {
 			t.Errorf("Media type mismatch.\nExpected %s\nBut got %s", expected, actual)
+		}
+	})
+
+	t.Run("view=link", func(t *testing.T) {
+		expected := &app.BluelensUserLink{
+			Href: "/users/user-00",
+		}
+		if actual := mediaTypeUserLink(user); !reflect.DeepEqual(expected, actual) {
+			t.Errorf("Media type mismatched. Expected %v, but got %v", expected, actual)
 		}
 	})
 }

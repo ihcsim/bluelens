@@ -5,6 +5,7 @@ import (
 
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
+	"github.com/ihcsim/bluelens/internal/core"
 )
 
 // MusicController implements the music resource.
@@ -19,12 +20,19 @@ func NewMusicController(service *goa.Service) *MusicController {
 
 // Create runs the create action.
 func (c *MusicController) Create(ctx *app.CreateMusicContext) error {
-	// MusicController_Create: start_implement
+	music := &core.Music{
+		ID:   ctx.Payload.ID,
+		Tags: ctx.Payload.Tags,
+	}
+	updated, err := store().UpdateMusic(music)
+	if err != nil {
+		return err
+	}
 
-	// Put your logic here
-
-	// MusicController_Create: end_implement
-	return nil
+	res := &app.BluelensMusicLink{
+		Href: "/music/" + updated.ID,
+	}
+	return ctx.CreatedLink(res)
 }
 
 // List runs the list action.

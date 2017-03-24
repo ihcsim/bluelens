@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
+	"github.com/ihcsim/bluelens/internal/core"
 )
 
 // UserController implements the user resource.
@@ -17,12 +18,38 @@ func NewUserController(service *goa.Service) *UserController {
 
 // Create runs the create action.
 func (c *UserController) Create(ctx *app.CreateUserContext) error {
-	// UserController_Create: start_implement
+	user := &core.User{
+		ID: ctx.Payload.ID,
+	}
 
-	// Put your logic here
+	var followees core.UserList
+	for _, f := range ctx.Payload.Followees {
+		followee, err := store().FindUser(f.ID)
+		if err != nil {
+			return err
+		}
 
-	// UserController_Create: end_implement
-	return nil
+		followees = append(followees, followee)
+	}
+	user.Followees = followees
+
+	var history core.MusicList
+	for _, h := range ctx.Payload.History {
+		music, err := store().FindMusic(h.ID)
+		if err != nil {
+			return err
+		}
+		history = append(history, music)
+	}
+	user.History = history
+
+	updated, err := store().UpdateUser(user)
+	if err != nil {
+		return err
+	}
+
+	res := mediaTypeUserLink(updated)
+	return ctx.CreatedLink(res)
 }
 
 // Follow runs the follow action.

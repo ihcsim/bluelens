@@ -36,6 +36,10 @@ type Store interface {
 	// FindMusicByTags looks up music resources that satisfied the given tags.
 	FindMusicByTags(tag string) (MusicList, error)
 
+	// UpdateMusic updates the attributes of the specified music. If the music doesn't exist, it will
+	// be added to the music list.
+	UpdateMusic(m *Music) (*Music, error)
+
 	// Listen updates a user's history listen with the specified music to indicate that the user has listened to that music. The updated user is returned.
 	// If either the user or music doesn't exist, an error is returned.
 	Listen(userID, musicID string) (*User, error)
@@ -208,6 +212,29 @@ func (s *InMemoryStore) FindMusicByTags(tag string) (MusicList, error) {
 		return nil, NewEntityNotFound(tag, "music tag")
 	}
 	return v, nil
+}
+
+// UpdateMusic updates the attributes of the specified music resource. If the resource doesn't exist, it will be created.
+func (s *InMemoryStore) UpdateMusic(m *Music) (*Music, error) {
+	s.musicMap[m.ID] = m
+
+	for index, music := range s.musicList {
+		if music.ID == m.ID {
+			s.musicList[index] = m
+			break
+		}
+	}
+
+	for _, tag := range m.Tags {
+		ml, exist := s.musicMapByTags[tag]
+		if !exist {
+			s.musicMapByTags[tag] = MusicList{m}
+		} else {
+			s.musicMapByTags[tag] = append(ml, m)
+		}
+	}
+
+	return m, nil
 }
 
 // Listen updates the user's history list with the specified music. The updated user is returned.

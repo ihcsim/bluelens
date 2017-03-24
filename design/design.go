@@ -85,6 +85,7 @@ var _ = Resource("user", func() {
 		Response(Created, func() {
 			Media(UserMediaType, "link")
 		})
+		Response(BadRequest, ErrorMedia)
 	})
 
 	Action("listen", func() {
@@ -151,6 +152,7 @@ var _ = Resource("music", func() {
 		Response(Created, func() {
 			Media(MusicMediaType, "link")
 		})
+		Response(BadRequest, ErrorMedia)
 	})
 })
 

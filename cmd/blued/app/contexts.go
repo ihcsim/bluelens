@@ -41,6 +41,12 @@ func (ctx *CreateMusicContext) CreatedLink(r *BluelensMusicLink) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
 }
 
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *CreateMusicContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
 // ListMusicContext provides the music list action context.
 type ListMusicContext struct {
 	context.Context
@@ -220,6 +226,12 @@ func NewCreateUserContext(ctx context.Context, service *goa.Service) (*CreateUse
 func (ctx *CreateUserContext) CreatedLink(r *BluelensUserLink) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *CreateUserContext) BadRequest(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
 // FollowUserContext provides the user follow action context.

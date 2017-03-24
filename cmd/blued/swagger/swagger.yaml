@@ -552,6 +552,10 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/BluelensMusicLink'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
       summary: create music
@@ -651,6 +655,10 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/BluelensUserLink'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
       schemes:
       - http
       summary: create user
