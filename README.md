@@ -14,8 +14,9 @@ The following is the list of rules to determine the recommendations:
 * Preferences to be given to songs that are new to the user.
 
 ## Getting Started
-Use the Makefile to build the server and client:
+Set the `${PACKAGE_ROOT}` in the Makefile to match your project package. Use the Makefile to build the server and client:
 ```sh
+$ make goagen # install goagen
 $ make
 ```
 Run the `bluelens` binary to start the server:

@@ -11,6 +11,8 @@ SERVER_DIR = cmd/blued
 SERVER_HOSTNAME ?= localhost
 SERVER_SCHEME ?= http
 
+GOAGEN_VERSION = v1.1.0
+
 SHELL := /bin/bash
 GLIDE := $(shell command -v glide 2> /dev/null)
 ifndef GLIDE
@@ -43,3 +45,6 @@ test:
 
 vendor:
 	glide install
+
+goagen: vendor
+	go install ${PACKAGE_ROOT}/bluelens/vendor/github.com/goadesign/goa/goagen
