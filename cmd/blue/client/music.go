@@ -39,6 +39,9 @@ func (c *Client) NewCreateMusicRequest(ctx context.Context, path string, payload
 	if err != nil {
 		return nil, err
 	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
+	}
 	return req, nil
 }
 
@@ -77,6 +80,9 @@ func (c *Client) NewListMusicRequest(ctx context.Context, path string, limit *in
 	if err != nil {
 		return nil, err
 	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
+	}
 	return req, nil
 }
 
@@ -104,6 +110,9 @@ func (c *Client) NewShowMusicRequest(ctx context.Context, path string) (*http.Re
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
 	}
 	return req, nil
 }

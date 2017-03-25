@@ -10,6 +10,9 @@ type userConfig struct {
 	musicFile     string
 	historyFile   string
 	followeesFile string
+	user          string
+	password      string
+	apiKey        string
 }
 
 func newUserConfig() *userConfig {

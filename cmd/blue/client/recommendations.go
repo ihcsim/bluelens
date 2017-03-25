@@ -32,5 +32,8 @@ func (c *Client) NewRecommendRecommendationsRequest(ctx context.Context, path st
 	if err != nil {
 		return nil, err
 	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
+	}
 	return req, nil
 }

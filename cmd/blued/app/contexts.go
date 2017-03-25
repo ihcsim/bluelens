@@ -47,6 +47,12 @@ func (ctx *CreateMusicContext) BadRequest(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *CreateMusicContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
+}
+
 // ListMusicContext provides the music list action context.
 type ListMusicContext struct {
 	context.Context
@@ -112,6 +118,12 @@ func (ctx *ListMusicContext) OKLink(r BluelensMusicLinkCollection) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *ListMusicContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
+}
+
 // ShowMusicContext provides the music show action context.
 type ShowMusicContext struct {
 	context.Context
@@ -140,6 +152,12 @@ func NewShowMusicContext(ctx context.Context, service *goa.Service) (*ShowMusicC
 func (ctx *ShowMusicContext) OKFull(r *BluelensMusicFull) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *ShowMusicContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
 }
 
 // NotFound sends a HTTP response with status code 404.
@@ -197,6 +215,12 @@ func (ctx *RecommendRecommendationsContext) OK(r *BluelensRecommendations) error
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }
 
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *RecommendRecommendationsContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
+}
+
 // NotFound sends a HTTP response with status code 404.
 func (ctx *RecommendRecommendationsContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
@@ -232,6 +256,12 @@ func (ctx *CreateUserContext) CreatedLink(r *BluelensUserLink) error {
 func (ctx *CreateUserContext) BadRequest(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *CreateUserContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
 }
 
 // FollowUserContext provides the user follow action context.
@@ -310,6 +340,12 @@ func (ctx *FollowUserContext) BadRequest(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *FollowUserContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
+}
+
 // NotFound sends a HTTP response with status code 404.
 func (ctx *FollowUserContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
@@ -379,6 +415,12 @@ func (ctx *ListUserContext) OKLink(r BluelensUserLinkCollection) error {
 		r = BluelensUserLinkCollection{}
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *ListUserContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
 }
 
 // ListenUserContext provides the user listen action context.
@@ -457,6 +499,12 @@ func (ctx *ListenUserContext) BadRequest(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
 }
 
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *ListenUserContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
+}
+
 // NotFound sends a HTTP response with status code 404.
 func (ctx *ListenUserContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
@@ -491,6 +539,12 @@ func NewShowUserContext(ctx context.Context, service *goa.Service) (*ShowUserCon
 func (ctx *ShowUserContext) OKFull(r *BluelensUserFull) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// Unauthorized sends a HTTP response with status code 401.
+func (ctx *ShowUserContext) Unauthorized() error {
+	ctx.ResponseData.WriteHeader(401)
+	return nil
 }
 
 // NotFound sends a HTTP response with status code 404.

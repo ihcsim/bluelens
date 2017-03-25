@@ -533,8 +533,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensMusicCollection'
+        "401":
+          description: Unauthorized
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: list music
       tags:
       - music
@@ -556,8 +560,12 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: create music
       tags:
       - music
@@ -575,12 +583,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensMusicFull'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: show music
       tags:
       - music
@@ -606,15 +618,41 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensRecommendations'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: recommend recommendations
       tags:
       - recommendations
+  /bluelens/swagger.json:
+    get:
+      operationId: swagger#/bluelens/swagger.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download cmd/blued/swagger/swagger.json
+  /bluelens/swagger.yaml:
+    get:
+      operationId: swagger#/bluelens/swagger.yaml
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download cmd/blued/swagger/swagger.yaml
   /bluelens/user:
     get:
       description: List up to N user resources. N can be adjusted using the 'limit'
@@ -636,8 +674,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensUserCollection'
+        "401":
+          description: Unauthorized
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: list user
       tags:
       - user
@@ -659,8 +701,12 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: create user
       tags:
       - user
@@ -678,12 +724,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/BluelensUserFull'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: show user
       tags:
       - user
@@ -714,12 +764,16 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: follow user
       tags:
       - user
@@ -750,26 +804,19 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/error'
       schemes:
       - http
+      security:
+      - APIKey: []
       summary: listen user
       tags:
       - user
-  /swagger.json:
-    get:
-      operationId: swagger#/swagger.json
-      responses:
-        "200":
-          description: File downloaded
-          schema:
-            type: file
-      schemes:
-      - http
-      summary: Download server/swagger/swagger.json
 produces:
 - application/json
 responses:
@@ -779,4 +826,13 @@ responses:
       $ref: '#/definitions/BluelensRecommendations'
 schemes:
 - http
+securityDefinitions:
+  APIKey:
+    description: API key
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    description: Basic Auth
+    type: basic
 swagger: "2.0"
