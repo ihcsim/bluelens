@@ -185,9 +185,9 @@ var RecommendationsMediaType = MediaType("application/vnd.bluelens.recommendatio
 	})
 
 	View("all", func() {
+		Attribute("musicID")
 		Attribute("list")
 		Attribute("user")
-		Attribute("links")
 	})
 })
 
