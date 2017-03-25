@@ -59,8 +59,9 @@ func MountMusicController(service *goa.Service, ctrl MusicController) {
 		}
 		return ctrl.Create(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("POST", "/bluelens/music", ctrl.MuxHandler("Create", h, unmarshalCreateMusicPayload))
-	service.LogInfo("mount", "ctrl", "Music", "action", "Create", "route", "POST /bluelens/music")
+	service.LogInfo("mount", "ctrl", "Music", "action", "Create", "route", "POST /bluelens/music", "security", "APIKey")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -74,8 +75,9 @@ func MountMusicController(service *goa.Service, ctrl MusicController) {
 		}
 		return ctrl.List(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("GET", "/bluelens/music", ctrl.MuxHandler("List", h, nil))
-	service.LogInfo("mount", "ctrl", "Music", "action", "List", "route", "GET /bluelens/music")
+	service.LogInfo("mount", "ctrl", "Music", "action", "List", "route", "GET /bluelens/music", "security", "APIKey")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -89,8 +91,9 @@ func MountMusicController(service *goa.Service, ctrl MusicController) {
 		}
 		return ctrl.Show(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("GET", "/bluelens/music/:id", ctrl.MuxHandler("Show", h, nil))
-	service.LogInfo("mount", "ctrl", "Music", "action", "Show", "route", "GET /bluelens/music/:id")
+	service.LogInfo("mount", "ctrl", "Music", "action", "Show", "route", "GET /bluelens/music/:id", "security", "APIKey")
 }
 
 // unmarshalCreateMusicPayload unmarshals the request body into the context request data Payload field.
@@ -131,8 +134,9 @@ func MountRecommendationsController(service *goa.Service, ctrl RecommendationsCo
 		}
 		return ctrl.Recommend(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("GET", "/bluelens/recommendations/:userID/:limit", ctrl.MuxHandler("Recommend", h, nil))
-	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:limit")
+	service.LogInfo("mount", "ctrl", "Recommendations", "action", "Recommend", "route", "GET /bluelens/recommendations/:userID/:limit", "security", "APIKey")
 }
 
 // SwaggerController is the controller interface for the Swagger actions.
@@ -145,12 +149,18 @@ type SwaggerController interface {
 func MountSwaggerController(service *goa.Service, ctrl SwaggerController) {
 	initService(service)
 	var h goa.Handler
-	service.Mux.Handle("OPTIONS", "/swagger.json", ctrl.MuxHandler("preflight", handleSwaggerOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/bluelens/swagger.json", ctrl.MuxHandler("preflight", handleSwaggerOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/bluelens/swagger.yaml", ctrl.MuxHandler("preflight", handleSwaggerOrigin(cors.HandlePreflight()), nil))
 
-	h = ctrl.FileHandler("/swagger.json", "server/swagger/swagger.json")
+	h = ctrl.FileHandler("/bluelens/swagger.json", "cmd/blued/swagger/swagger.json")
 	h = handleSwaggerOrigin(h)
-	service.Mux.Handle("GET", "/swagger.json", ctrl.MuxHandler("serve", h, nil))
-	service.LogInfo("mount", "ctrl", "Swagger", "files", "server/swagger/swagger.json", "route", "GET /swagger.json")
+	service.Mux.Handle("GET", "/bluelens/swagger.json", ctrl.MuxHandler("serve", h, nil))
+	service.LogInfo("mount", "ctrl", "Swagger", "files", "cmd/blued/swagger/swagger.json", "route", "GET /bluelens/swagger.json")
+
+	h = ctrl.FileHandler("/bluelens/swagger.yaml", "cmd/blued/swagger/swagger.yaml")
+	h = handleSwaggerOrigin(h)
+	service.Mux.Handle("GET", "/bluelens/swagger.yaml", ctrl.MuxHandler("serve", h, nil))
+	service.LogInfo("mount", "ctrl", "Swagger", "files", "cmd/blued/swagger/swagger.yaml", "route", "GET /bluelens/swagger.yaml")
 }
 
 // handleSwaggerOrigin applies the CORS response headers corresponding to the origin.
@@ -168,7 +178,7 @@ func handleSwaggerOrigin(h goa.Handler) goa.Handler {
 			rw.Header().Set("Access-Control-Allow-Credentials", "false")
 			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
 				// We are handling a preflight request
-				rw.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+				rw.Header().Set("Access-Control-Allow-Methods", "GET")
 			}
 			return h(ctx, rw, req)
 		}
@@ -210,8 +220,9 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Create(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("POST", "/bluelens/user", ctrl.MuxHandler("Create", h, unmarshalCreateUserPayload))
-	service.LogInfo("mount", "ctrl", "User", "action", "Create", "route", "POST /bluelens/user")
+	service.LogInfo("mount", "ctrl", "User", "action", "Create", "route", "POST /bluelens/user", "security", "APIKey")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -231,8 +242,9 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Follow(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("POST", "/bluelens/user/:id/follows/:followeeID", ctrl.MuxHandler("Follow", h, unmarshalFollowUserPayload))
-	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:id/follows/:followeeID")
+	service.LogInfo("mount", "ctrl", "User", "action", "Follow", "route", "POST /bluelens/user/:id/follows/:followeeID", "security", "APIKey")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -246,8 +258,9 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.List(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("GET", "/bluelens/user", ctrl.MuxHandler("List", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "List", "route", "GET /bluelens/user")
+	service.LogInfo("mount", "ctrl", "User", "action", "List", "route", "GET /bluelens/user", "security", "APIKey")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -267,8 +280,9 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Listen(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("POST", "/bluelens/user/:id/listen/:musicID", ctrl.MuxHandler("Listen", h, unmarshalListenUserPayload))
-	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:id/listen/:musicID")
+	service.LogInfo("mount", "ctrl", "User", "action", "Listen", "route", "POST /bluelens/user/:id/listen/:musicID", "security", "APIKey")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -282,8 +296,9 @@ func MountUserController(service *goa.Service, ctrl UserController) {
 		}
 		return ctrl.Show(rctx)
 	}
+	h = handleSecurity("APIKey", h)
 	service.Mux.Handle("GET", "/bluelens/user/:id", ctrl.MuxHandler("Show", h, nil))
-	service.LogInfo("mount", "ctrl", "User", "action", "Show", "route", "GET /bluelens/user/:id")
+	service.LogInfo("mount", "ctrl", "User", "action", "Show", "route", "GET /bluelens/user/:id", "security", "APIKey")
 }
 
 // unmarshalCreateUserPayload unmarshals the request body into the context request data Payload field.

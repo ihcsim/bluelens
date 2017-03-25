@@ -521,10 +521,17 @@ func (cmd *DownloadCommand) Run(c *client.Client, args []string) error {
 	if rpath[0] != '/' {
 		rpath = "/" + rpath
 	}
-	if rpath == "/swagger.json" {
+	if rpath == "/bluelens/swagger.json" {
 		fnf = c.DownloadSwaggerJSON
 		if outfile == "" {
 			outfile = "swagger.json"
+		}
+		goto found
+	}
+	if rpath == "/bluelens/swagger.yaml" {
+		fnf = c.DownloadSwaggerYaml
+		if outfile == "" {
+			outfile = "swagger.yaml"
 		}
 		goto found
 	}

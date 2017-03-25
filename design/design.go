@@ -31,6 +31,8 @@ var _ = API("bluelens", func() {
 var _ = Resource("recommendations", func() {
 	BasePath("/recommendations")
 	DefaultMedia(RecommendationsMediaType)
+	Security(APIKey)
+	Response(Unauthorized)
 
 	Action("recommend", func() {
 		Routing(GET("/:userID/:limit"))
@@ -49,6 +51,8 @@ var _ = Resource("recommendations", func() {
 var _ = Resource("user", func() {
 	BasePath("/user")
 	DefaultMedia(UserMediaType)
+	Security(APIKey)
+	Response(Unauthorized)
 
 	Action("list", func() {
 		Routing(GET(""))
@@ -116,6 +120,8 @@ var _ = Resource("user", func() {
 var _ = Resource("music", func() {
 	BasePath("/music")
 	DefaultMedia(MusicMediaType)
+	Security(APIKey)
+	Response(Unauthorized)
 
 	Action("list", func() {
 		Routing(GET(""))
@@ -273,7 +279,17 @@ var MusicMediaType = MediaType("application/vnd.bluelens.music+json", func() {
 
 var _ = Resource("swagger", func() {
 	Origin("*", func() {
-		Methods("GET", "OPTIONS")
+		Methods("GET")
 	})
-	Files("/swagger.json", "server/swagger/swagger.json")
+	Files("/bluelens/swagger.json", "cmd/blued/swagger/swagger.json")
+	Files("/bluelens/swagger.yaml", "cmd/blued/swagger/swagger.yaml")
+})
+
+var APIKey = APIKeySecurity("APIKey", func() {
+	Description("API key")
+	Header("Authorization")
+})
+
+var BasicAuth = BasicAuthSecurity("BasicAuth", func() {
+	Description("Basic Auth")
 })

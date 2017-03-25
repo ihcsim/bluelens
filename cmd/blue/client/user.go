@@ -39,6 +39,9 @@ func (c *Client) NewCreateUserRequest(ctx context.Context, path string, payload 
 	if err != nil {
 		return nil, err
 	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
+	}
 	return req, nil
 }
 
@@ -78,6 +81,9 @@ func (c *Client) NewFollowUserRequest(ctx context.Context, path string, payload 
 	if err != nil {
 		return nil, err
 	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
+	}
 	return req, nil
 }
 
@@ -115,6 +121,9 @@ func (c *Client) NewListUserRequest(ctx context.Context, path string, limit *int
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
 	}
 	return req, nil
 }
@@ -155,6 +164,9 @@ func (c *Client) NewListenUserRequest(ctx context.Context, path string, payload 
 	if err != nil {
 		return nil, err
 	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
+	}
 	return req, nil
 }
 
@@ -182,6 +194,9 @@ func (c *Client) NewShowUserRequest(ctx context.Context, path string) (*http.Req
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+	if c.APIKeySigner != nil {
+		c.APIKeySigner.Sign(req)
 	}
 	return req, nil
 }

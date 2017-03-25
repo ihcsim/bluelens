@@ -7,7 +7,9 @@ import (
 
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
+	"github.com/goadesign/goa/middleware/security/basicauth"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
+	"github.com/ihcsim/bluelens/cmd/blued/middleware/security/apikey"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -27,6 +29,10 @@ func main() {
 
 	// Create service
 	service := goa.New("bluelens")
+
+	// mount security middleware
+	app.UseBasicAuthMiddleware(service, basicauth.New(config.user, config.password))
+	app.UseAPIKeyMiddleware(service, apikey.New(config.apiKey))
 
 	// Mount middleware
 	service.Use(middleware.RequestID())
