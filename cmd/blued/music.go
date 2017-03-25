@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
 	"github.com/ihcsim/bluelens/internal/core"
@@ -29,9 +27,7 @@ func (c *MusicController) Create(ctx *app.CreateMusicContext) error {
 		return err
 	}
 
-	res := &app.BluelensMusicLink{
-		Href: "/music/" + updated.ID,
-	}
+	res := mediaTypeMusicLink(updated)
 	return ctx.CreatedLink(res)
 }
 
@@ -57,10 +53,6 @@ func (c *MusicController) Show(ctx *app.ShowMusicContext) error {
 		return ctx.NotFound(err)
 	}
 
-	res := &app.BluelensMusicFull{
-		ID:   m.ID,
-		Href: fmt.Sprintf("/music/%s", m.ID),
-		Tags: m.Tags,
-	}
+	res := mediaTypeMusicFull(m)
 	return ctx.OKFull(res)
 }
