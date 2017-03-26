@@ -1,9 +1,12 @@
 package main
 
+import "time"
+
 const (
 	defaultMusicFile     = "etc/music.json"
 	defaultHistoryFile   = "etc/history.json"
 	defaultFolloweesFile = "etc/followees.json"
+	defaultTimeout       = time.Second * 10
 )
 
 type userConfig struct {
@@ -13,6 +16,7 @@ type userConfig struct {
 	user          string
 	password      string
 	apiKey        string
+	timeout       time.Duration
 }
 
 func newUserConfig() *userConfig {
@@ -20,5 +24,6 @@ func newUserConfig() *userConfig {
 		musicFile:     defaultMusicFile,
 		historyFile:   defaultHistoryFile,
 		followeesFile: defaultFolloweesFile,
+		timeout:       defaultTimeout,
 	}
 }

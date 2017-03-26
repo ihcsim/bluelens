@@ -44,6 +44,7 @@ func main() {
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
+	service.Use(middleware.Timeout(config.timeout))
 
 	// Mount "music" controller
 	c := NewMusicController(service)

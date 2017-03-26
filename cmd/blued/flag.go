@@ -3,7 +3,7 @@ package main
 import "flag"
 
 func parseFlags(args []string) (*userConfig, error) {
-	c := &userConfig{}
+	c := newUserConfig()
 
 	flagSet := flag.NewFlagSet("bluelensFlags", flag.ContinueOnError)
 	flagSet.StringVar(&c.musicFile, "music", defaultMusicFile, "Path to read music data from")
@@ -12,6 +12,7 @@ func parseFlags(args []string) (*userConfig, error) {
 	flagSet.StringVar(&c.user, "user", "", "Username used for HTTP Basic Authentication")
 	flagSet.StringVar(&c.password, "password", "", "Password used for HTTP Basic Authentication")
 	flagSet.StringVar(&c.apiKey, "apikey", "", "Key used for API key authentication")
+	flagSet.DurationVar(&c.timeout, "timeout", defaultTimeout, "Request timeout in seconds. Default to 10s.")
 
 	if !flagSet.Parsed() {
 		if err := flagSet.Parse(args); err != nil {
