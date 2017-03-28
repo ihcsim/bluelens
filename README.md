@@ -30,6 +30,7 @@ The objectives of this project is to experiment with [goa](https://goa.design/).
 * Generate API swagger documents,
 * Logging HTTP requests,
 * Build websocket endpoints,
+* Timeout middleware with [context](https://golang.org/pkg/context/),
 * Encrypt data transmission over HTTPS.
 
 ## Getting Started
