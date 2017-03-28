@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"reflect"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
@@ -53,37 +55,48 @@ func TestUserController(t *testing.T) {
 	ctrl := NewUserController(svc)
 
 	t.Run("list", func(t *testing.T) {
-		tests := []struct {
-			limit  int
-			offset int
-		}{
-			{offset: 0, limit: -1},
-			{offset: 0, limit: 0},
-			{offset: 0, limit: 5},
-			{offset: 0, limit: 10},
-			{offset: 0, limit: 20},
-			{offset: 10, limit: 20},
-			{offset: 5, limit: 10},
-			{offset: 10, limit: 10},
-			{offset: 15, limit: 10},
-			{offset: -1, limit: 0},
-		}
-
-		for id, tc := range tests {
-			userList, err := store().ListUsers(tc.limit, tc.offset)
-			if err != nil {
-				t.Error("Unexpected error with test case %d: ", id, err)
+		t.Run("ok", func(t *testing.T) {
+			tests := []struct {
+				limit  int
+				offset int
+			}{
+				{offset: 0, limit: -1},
+				{offset: 0, limit: 0},
+				{offset: 0, limit: 5},
+				{offset: 0, limit: 10},
+				{offset: 0, limit: 20},
+				{offset: 10, limit: 20},
+				{offset: 5, limit: 10},
+				{offset: 10, limit: 10},
+				{offset: 15, limit: 10},
+				{offset: -1, limit: 0},
 			}
 
-			var expected app.BluelensUserCollection
-			for _, user := range userList {
-				expected = append(expected, mediaTypeUser(user))
-			}
+			for id, tc := range tests {
+				userList, err := store().ListUsers(tc.limit, tc.offset)
+				if err != nil {
+					t.Error("Unexpected error with test case %d: ", id, err)
+				}
 
-			if _, actual := test.ListUserOK(t, nil, nil, ctrl, tc.limit, tc.offset); !reflect.DeepEqual(expected, actual) {
-				t.Errorf("Response mismatch. Test case: %d\nExpected %s\nBut got %s", id, expected, actual)
+				var expected app.BluelensUserCollection
+				for _, user := range userList {
+					expected = append(expected, mediaTypeUser(user))
+				}
+
+				if _, actual := test.ListUserOK(t, nil, nil, ctrl, tc.limit, tc.offset); !reflect.DeepEqual(expected, actual) {
+					t.Errorf("Response mismatch. Test case: %d\nExpected %s\nBut got %s", id, expected, actual)
+				}
 			}
-		}
+		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			if _, actual := test.ListUserInternalServerError(t, ctx, nil, ctrl, limit, offset); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, byut got %v", context.DeadlineExceeded, actual)
+			}
+		})
 	})
 
 	t.Run("show", func(t *testing.T) {
@@ -100,44 +113,55 @@ func TestUserController(t *testing.T) {
 				t.Errorf("Expected EntityNotFound error to occur")
 			}
 		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			if _, actual := test.ShowUserInternalServerError(t, ctx, nil, ctrl, "example"); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, byut got %v", context.DeadlineExceeded, actual)
+			}
+		})
 	})
 
 	t.Run("create", func(t *testing.T) {
-		followeesID := []string{"user-02", "user-03"}
-		musicID := []string{"song-07", "song-03"}
-		fixture := &core.User{
-			ID: "user-00.v2",
-			Followees: core.UserList{
-				userFixture(t, followeesID[0]),
-				userFixture(t, followeesID[1]),
-			},
-			History: core.MusicList{
-				musicFixture(t, musicID[0]),
-				musicFixture(t, musicID[1]),
-			},
-		}
+		t.Run("ok", func(t *testing.T) {
+			followeesID := []string{"user-02", "user-03"}
+			musicID := []string{"song-07", "song-03"}
+			fixture := &core.User{
+				ID: "user-00.v2",
+				Followees: core.UserList{
+					userFixture(t, followeesID[0]),
+					userFixture(t, followeesID[1]),
+				},
+				History: core.MusicList{
+					musicFixture(t, musicID[0]),
+					musicFixture(t, musicID[1]),
+				},
+			}
 
-		payload := &app.User{
-			ID: fixture.ID,
-			Followees: []*app.User{
-				&app.User{ID: followeesID[0]},
-				&app.User{ID: followeesID[1]},
-			},
-			History: []*app.Music{
-				&app.Music{ID: musicID[0]},
-				&app.Music{ID: musicID[1]},
-			},
-		}
+			payload := &app.User{
+				ID: fixture.ID,
+				Followees: []*app.User{
+					&app.User{ID: followeesID[0]},
+					&app.User{ID: followeesID[1]},
+				},
+				History: []*app.Music{
+					&app.Music{ID: musicID[0]},
+					&app.Music{ID: musicID[1]},
+				},
+			}
 
-		expected := &app.BluelensUserLink{Href: "/bluelens/users/user-00.v2"}
-		if _, actual := test.CreateUserCreatedLink(t, nil, nil, ctrl, payload); !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Resource mismatch. Expected %+v\nBut got:%+v", expected, actual)
-		}
+			expected := &app.BluelensUserLink{Href: "/bluelens/users/user-00.v2"}
+			if _, actual := test.CreateUserCreatedLink(t, nil, nil, ctrl, payload); !reflect.DeepEqual(expected, actual) {
+				t.Errorf("Resource mismatch. Expected %+v\nBut got:%+v", expected, actual)
+			}
 
-		u := userFixture(t, fixture.ID)
-		if !reflect.DeepEqual(fixture, u) {
-			t.Errorf("Resource mismatch. Expected %s\nBut got %s", fixture, u)
-		}
+			u := userFixture(t, fixture.ID)
+			if !reflect.DeepEqual(fixture, u) {
+				t.Errorf("Resource mismatch. Expected %s\nBut got %s", fixture, u)
+			}
+		})
 
 		t.Run("bad request", func(t *testing.T) {
 			tests := []struct {
@@ -151,6 +175,16 @@ func TestUserController(t *testing.T) {
 				if _, err := test.CreateUserBadRequest(t, nil, nil, ctrl, tc.payload); err == nil {
 					t.Error("Expected error to occur. Should have failed with a 400 response status.")
 				}
+			}
+		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			payload := &app.User{ID: "user-02"}
+			if _, actual := test.CreateUserInternalServerError(t, ctx, nil, ctrl, payload); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, but got %v", context.DeadlineExceeded, actual)
 			}
 		})
 	})
@@ -204,6 +238,17 @@ func TestUserController(t *testing.T) {
 				}
 			})
 		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			userID := "example"
+			payload := &app.FollowUserPayload{FolloweeID: &userID}
+			if _, actual := test.FollowUserInternalServerError(t, ctx, nil, ctrl, user.ID, userID, payload); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, but got %v", context.DeadlineExceeded, actual)
+			}
+		})
 	})
 
 	t.Run("listen", func(t *testing.T) {
@@ -253,6 +298,17 @@ func TestUserController(t *testing.T) {
 					t.Error("Expected EntityNotFound error to occur")
 				}
 			})
+		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			musicID := "example"
+			payload := &app.ListenUserPayload{MusicID: &musicID}
+			if _, actual := test.ListenUserInternalServerError(t, ctx, nil, ctrl, user.ID, musicID, payload); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, but got %v", context.DeadlineExceeded, actual)
+			}
 		})
 	})
 }
