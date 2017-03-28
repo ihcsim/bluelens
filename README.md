@@ -9,6 +9,7 @@ bluelens makes music recommendations to its users based on the users' social act
 * [Introduction](#introduction)
 * [Getting Started](#getting-started)
 * [API Design](#api-design)
+* [Security](#security)
 * [Data Model](#data-model)
 * [Development](#development)
 * [License](#license)
