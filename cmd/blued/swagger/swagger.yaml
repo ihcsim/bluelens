@@ -501,8 +501,8 @@ definitions:
     type: object
 externalDocs:
   description: Swagger docs
-  url: http://localhost:8080/swagger.json
-host: localhost:8080
+  url: https://localhost/bluelens/swagger.json
+host: localhost
 info:
   description: This API provides a set of endpoints to manage users' followees, music
     history and recommendations.
@@ -540,7 +540,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: list music
@@ -571,7 +571,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: create music
@@ -602,7 +602,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: show music
@@ -641,7 +641,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: recommend recommendations
@@ -656,7 +656,7 @@ paths:
           schema:
             type: file
       schemes:
-      - http
+      - https
       summary: Download cmd/blued/swagger/swagger.json
   /bluelens/swagger.yaml:
     get:
@@ -667,7 +667,7 @@ paths:
           schema:
             type: file
       schemes:
-      - http
+      - https
       summary: Download cmd/blued/swagger/swagger.yaml
   /bluelens/user:
     get:
@@ -697,7 +697,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: list user
@@ -728,7 +728,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: create user
@@ -759,7 +759,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: show user
@@ -803,7 +803,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: follow user
@@ -847,7 +847,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
       schemes:
-      - http
+      - https
       security:
       - APIKey: []
       summary: listen user
@@ -861,7 +861,7 @@ responses:
     schema:
       $ref: '#/definitions/BluelensRecommendations'
 schemes:
-- http
+- https
 securityDefinitions:
   APIKey:
     description: API key

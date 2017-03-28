@@ -25,7 +25,7 @@ func (c *Client) RecommendRecommendations(ctx context.Context, path string) (*ht
 func (c *Client) NewRecommendRecommendationsRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	req, err := http.NewRequest("GET", u.String(), nil)

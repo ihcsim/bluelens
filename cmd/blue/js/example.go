@@ -3,7 +3,7 @@
 // --design=github.com/ihcsim/bluelens/design
 // --host=localhost
 // --out=$(GOPATH)/src/github.com/ihcsim/bluelens/cmd/blue
-// --scheme=http
+// --scheme=https
 // --version=v1.1.0
 //
 // bluelens JavaScript Client Example

@@ -152,7 +152,7 @@ func TestUserController(t *testing.T) {
 				},
 			}
 
-			expected := &app.BluelensUserLink{Href: "/bluelens/users/user-00.v2"}
+			expected := &app.BluelensUserLink{Href: href("user", "user-00.v2")}
 			if _, actual := test.CreateUserCreatedLink(t, nil, nil, ctrl, payload); !reflect.DeepEqual(expected, actual) {
 				t.Errorf("Resource mismatch. Expected %+v\nBut got:%+v", expected, actual)
 			}

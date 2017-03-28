@@ -18,7 +18,7 @@ func mediaTypeRecommendations(r *core.Recommendations) *app.BluelensRecommendati
 
 	links := &app.BluelensRecommendationsLinks{
 		List: musicLinks,
-		User: &app.BluelensUserLink{Href: href("users", r.UserID)},
+		User: &app.BluelensUserLink{Href: href("user", r.UserID)},
 	}
 	return &app.BluelensRecommendations{
 		MusicID: musicIDs,
@@ -52,7 +52,7 @@ func mediaTypeUser(u *core.User) *app.BluelensUser {
 	followeesLinks := app.BluelensUserLinkCollection{}
 	for _, followee := range u.Followees {
 		link := &app.BluelensUserLink{
-			Href: href("users", followee.ID),
+			Href: href("user", followee.ID),
 		}
 		followeesLinks = append(followeesLinks, link)
 	}
@@ -72,7 +72,7 @@ func mediaTypeUser(u *core.User) *app.BluelensUser {
 
 	return &app.BluelensUser{
 		ID:    u.ID,
-		Href:  href("users", u.ID),
+		Href:  href("user", u.ID),
 		Links: links,
 	}
 }
@@ -94,13 +94,13 @@ func mediaTypeUserFull(u *core.User) *app.BluelensUserFull {
 		ID:        u.ID,
 		Followees: followees,
 		History:   history,
-		Href:      href("users", u.ID),
+		Href:      href("user", u.ID),
 	}
 }
 
 func mediaTypeUserLink(u *core.User) *app.BluelensUserLink {
 	return &app.BluelensUserLink{
-		Href: href("users", u.ID),
+		Href: href("user", u.ID),
 	}
 }
 

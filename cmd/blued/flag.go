@@ -12,6 +12,8 @@ func parseFlags(args []string) (*userConfig, error) {
 	flagSet.StringVar(&c.user, "user", "", "Username used for HTTP Basic Authentication")
 	flagSet.StringVar(&c.password, "password", "", "Password used for HTTP Basic Authentication")
 	flagSet.StringVar(&c.apiKey, "apikey", "", "Key used for API key authentication")
+	flagSet.StringVar(&c.certFile, "cert", defaultCertFile, "Path to the TLS cert file")
+	flagSet.StringVar(&c.keyFile, "private", defaultKeyFile, "Path to the TLS private key file")
 	flagSet.DurationVar(&c.timeout, "timeout", defaultTimeout, "Request timeout in seconds. Default to 10s.")
 
 	if !flagSet.Parsed() {
