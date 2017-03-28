@@ -22,7 +22,7 @@ func TestMediaTypeRecommendations(t *testing.T) {
 				&app.BluelensMusicLink{Href: "/bluelens/music/song-00"},
 				&app.BluelensMusicLink{Href: "/bluelens/music/song-01"},
 			},
-			User: &app.BluelensUserLink{Href: "/bluelens/users/user-00"},
+			User: &app.BluelensUserLink{Href: "/bluelens/user/user-00"},
 		},
 	}
 	actual := mediaTypeRecommendations(recommendations)
@@ -85,8 +85,8 @@ func TestMediaTypeUser(t *testing.T) {
 
 	t.Run("view=default", func(t *testing.T) {
 		followeesLinks := app.BluelensUserLinkCollection{
-			&app.BluelensUserLink{Href: "/bluelens/users/user-01"},
-			&app.BluelensUserLink{Href: "/bluelens/users/user-02"},
+			&app.BluelensUserLink{Href: "/bluelens/user/user-01"},
+			&app.BluelensUserLink{Href: "/bluelens/user/user-02"},
 		}
 		historyLinks := app.BluelensMusicLinkCollection{
 			&app.BluelensMusicLink{Href: "/bluelens/music/song-01"},
@@ -98,7 +98,7 @@ func TestMediaTypeUser(t *testing.T) {
 		}
 		expected := &app.BluelensUser{
 			ID:    user.ID,
-			Href:  fmt.Sprintf("/bluelens/users/%s", user.ID),
+			Href:  fmt.Sprintf("/bluelens/user/%s", user.ID),
 			Links: links,
 		}
 		if actual := mediaTypeUser(user); !reflect.DeepEqual(expected, actual) {
@@ -108,12 +108,12 @@ func TestMediaTypeUser(t *testing.T) {
 
 	t.Run("view=full", func(t *testing.T) {
 		followees := app.BluelensUserCollection{
-			&app.BluelensUser{ID: "user-01", Href: "/bluelens/users/user-01",
+			&app.BluelensUser{ID: "user-01", Href: "/bluelens/user/user-01",
 				Links: &app.BluelensUserLinks{
 					Followees: app.BluelensUserLinkCollection{},
 					History:   app.BluelensMusicLinkCollection{},
 				}},
-			&app.BluelensUser{ID: "user-02", Href: "/bluelens/users/user-02",
+			&app.BluelensUser{ID: "user-02", Href: "/bluelens/user/user-02",
 				Links: &app.BluelensUserLinks{
 					Followees: app.BluelensUserLinkCollection{},
 					History:   app.BluelensMusicLinkCollection{},
@@ -126,7 +126,7 @@ func TestMediaTypeUser(t *testing.T) {
 
 		expected := &app.BluelensUserFull{
 			ID:        user.ID,
-			Href:      fmt.Sprintf("/bluelens/users/%s", user.ID),
+			Href:      fmt.Sprintf("/bluelens/user/%s", user.ID),
 			Followees: followees,
 			History:   history,
 		}
@@ -138,7 +138,7 @@ func TestMediaTypeUser(t *testing.T) {
 
 	t.Run("view=link", func(t *testing.T) {
 		expected := &app.BluelensUserLink{
-			Href: "/bluelens/users/user-00",
+			Href: "/bluelens/user/user-00",
 		}
 		if actual := mediaTypeUserLink(user); !reflect.DeepEqual(expected, actual) {
 			t.Errorf("Media type mismatched. Expected %v, but got %v", expected, actual)

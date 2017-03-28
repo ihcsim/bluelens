@@ -15,7 +15,7 @@ import (
 func (c *Client) DownloadSwaggerJSON(ctx context.Context, dest string) (int64, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: "/bluelens/swagger.json"}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -49,7 +49,7 @@ func (c *Client) DownloadSwaggerJSON(ctx context.Context, dest string) (int64, e
 func (c *Client) DownloadSwaggerYaml(ctx context.Context, dest string) (int64, error) {
 	scheme := c.Scheme
 	if scheme == "" {
-		scheme = "http"
+		scheme = "https"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: "/bluelens/swagger.yaml"}
 	req, err := http.NewRequest("GET", u.String(), nil)

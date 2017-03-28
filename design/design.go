@@ -5,13 +5,13 @@ import (
 	. "github.com/goadesign/goa/design/apidsl"
 )
 
-var apiHost = "localhost:8080"
+var apiHost = "localhost"
 
 var _ = API("bluelens", func() {
 	Title("The bluelens API")
 	Description("This API provides a set of endpoints to manage users' followees, music history and recommendations.")
 	Host(apiHost)
-	Scheme("http")
+	Scheme("https")
 	BasePath("/bluelens")
 
 	License(func() {
@@ -21,7 +21,7 @@ var _ = API("bluelens", func() {
 
 	Docs(func() {
 		Description("Swagger docs")
-		URL("http://localhost:8080/swagger.json")
+		URL("https://localhost/bluelens/swagger.json")
 	})
 
 	Consumes("application/json")

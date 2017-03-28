@@ -9,7 +9,7 @@ PACKAGE_CLI = ${PACKAGE_CLIENT}/tool/blue
 CLIENT_DIR = cmd/blue
 SERVER_DIR = cmd/blued
 SERVER_HOSTNAME ?= localhost
-SERVER_SCHEME ?= http
+SERVER_SCHEME ?= https
 
 GOAGEN_VERSION = v1.1.0
 
@@ -48,3 +48,7 @@ vendor:
 
 goagen: vendor
 	go install ${PACKAGE_ROOT}/vendor/github.com/goadesign/goa/goagen
+
+tls:
+	mkdir -p tls
+	openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout tls/localhost.key -out tls/localhost.crt -subj "/CN=localhost" -days 365

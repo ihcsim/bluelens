@@ -2,20 +2,21 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	goaclient "github.com/goadesign/goa/client"
 	"github.com/ihcsim/bluelens/cmd/blue/client"
 	"github.com/ihcsim/bluelens/cmd/blue/tool/cli"
 	"github.com/spf13/cobra"
-	"net/http"
-	"os"
-	"time"
 )
 
 func main() {
 	// Create command line parser
 	app := &cobra.Command{
-		Use:   "bluelens-cli",
-		Short: `CLI client for the bluelens service (http://localhost:8080/swagger.json)`,
+		Use:   "blue",
+		Short: `CLI client for the bluelens service (https://localhost/bluelens/swagger.json)`,
 	}
 
 	// Create client struct
@@ -24,7 +25,7 @@ func main() {
 
 	// Register global flags
 	app.PersistentFlags().StringVarP(&c.Scheme, "scheme", "s", "", "Set the requests scheme")
-	app.PersistentFlags().StringVarP(&c.Host, "host", "H", "localhost:8080", "API hostname")
+	app.PersistentFlags().StringVarP(&c.Host, "host", "H", "localhost", "API hostname")
 	app.PersistentFlags().DurationVarP(&httpClient.Timeout, "timeout", "t", time.Duration(20)*time.Second, "Set the request timeout")
 	app.PersistentFlags().BoolVar(&c.Dump, "dump", false, "Dump HTTP request and response.")
 
@@ -44,7 +45,7 @@ func main() {
 	// Initialize API client
 	c.SetAPIKeySigner(aPIKeySigner)
 	c.SetBasicAuthSigner(basicAuthSigner)
-	c.UserAgent = "bluelens-cli/0"
+	c.UserAgent = "blue/0"
 
 	// Register API commands
 	cli.RegisterCommands(app, c)

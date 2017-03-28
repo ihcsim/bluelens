@@ -1,4 +1,4 @@
-// This module exports functions that give access to the bluelens API hosted at localhost:8080.
+// This module exports functions that give access to the bluelens API hosted at localhost.
 // It uses the axios javascript library for making the actual HTTP requests.
 define(['axios'] , function (axios) {
   function merge(obj1, obj2) {
@@ -9,7 +9,7 @@ define(['axios'] , function (axios) {
   }
 
   return function (scheme, host, timeout) {
-    scheme = scheme || 'http';
+    scheme = scheme || 'https';
     host = host || 'localhost';
     timeout = timeout || 20000;
 

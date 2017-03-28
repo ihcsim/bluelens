@@ -14,15 +14,19 @@ func TestParseFlags(t *testing.T) {
 			musicFile:     defaultMusicFile,
 			historyFile:   defaultHistoryFile,
 			followeesFile: defaultFolloweesFile,
+			certFile:      defaultCertFile,
+			keyFile:       defaultKeyFile,
 			timeout:       defaultTimeout},
 		},
-		{args: []string{"-music", "music.json", "-history", "history.json", "-followees", "followees.json", "-user", "admin", "-password", "pass", "-apikey", "mykey", "-timeout", "20s"}, expected: &userConfig{
+		{args: []string{"-music", "music.json", "-history", "history.json", "-followees", "followees.json", "-user", "admin", "-password", "pass", "-apikey", "mykey", "-timeout", "20s", "-cert", "tls/cert", "-private", "tls/mykey"}, expected: &userConfig{
 			musicFile:     "music.json",
 			historyFile:   "history.json",
 			followeesFile: "followees.json",
 			user:          "admin",
 			password:      "pass",
 			apiKey:        "mykey",
+			certFile:      "tls/cert",
+			keyFile:       "tls/mykey",
 			timeout:       time.Second * 20},
 		},
 	}
@@ -56,5 +60,16 @@ func TestParseFlags(t *testing.T) {
 		if actual.apiKey != test.expected.apiKey {
 			t.Errorf("API key mismatch. Expected %q, but got %q", test.expected.apiKey, actual.apiKey)
 		}
+
+		if actual.certFile != test.expected.certFile {
+			t.Errorf("Cert file mismatch. Expected %q, but got %q", test.expected.certFile, actual.certFile)
+
+		}
+
+		if actual.keyFile != test.expected.keyFile {
+			t.Errorf("Private key file mismatch. Expected %q, but got %q", test.expected.keyFile, actual.keyFile)
+
+		}
+
 	}
 }

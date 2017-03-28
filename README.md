@@ -38,7 +38,8 @@ The following is the list of prerequisites to build this project:
 
 1. Install [glide](http://glide.sh/)
 1. Set the `${PACKAGE_ROOT}` in the Makefile to match your project package.
-1. Install goagen using this command: `make goagen`.
+1. Install goagen using this command: `make goagen`
+1. Create a self-signed certificate. This content is ignored by git: `make tls`
 
 To build the server and client, use the `all` target of the Makefile:
 ```sh
@@ -47,59 +48,74 @@ $ make
 
 Run the `blued` binary to start the server:
 ```sh
-$ blued -apikey=<api_key> -user=<user> -password=<password>
-2017/03/24 22:43:05 [INFO] mount ctrl=Music action=Create route=POST /bluelens/music security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=Music action=List route=GET /bluelens/music security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=Music action=Show route=GET /bluelens/music/:id security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=Recommendations action=Recommend route=GET /bluelens/recommendations/:userID/:limit security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=Swagger files=cmd/blued/swagger/swagger.json route=GET /bluelens/swagger.json security=BasicAuth
-2017/03/24 22:43:05 [INFO] mount ctrl=Swagger files=cmd/blued/swagger/swagger.yaml route=GET /bluelens/swagger.yaml security=BasicAuth
-2017/03/24 22:43:05 [INFO] mount ctrl=User action=Create route=POST /bluelens/user security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=User action=Follow route=POST /bluelens/user/:id/follows/:followeeID security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=User action=List route=GET /bluelens/user security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=User action=Listen route=POST /bluelens/user/:id/listen/:musicID security=APIKey
-2017/03/24 22:43:05 [INFO] mount ctrl=User action=Show route=GET /bluelens/user/:id security=APIKey
-2017/03/24 22:43:05 [INFO] listen transport=http addr=:8080
+$ sudo ./blued -apikey=<apikey> -user=<user> -password=<password> -private tls/localhost.key -cert tls/localhost.crt
+2017/03/28 11:14:13 [INFO] mount ctrl=Music action=Create route=POST /bluelens/music security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=Music action=List route=GET /bluelens/music security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=Music action=Show route=GET /bluelens/music/:id security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=Recommendations action=Recommend route=GET /bluelens/recommendations/:userID/:limit security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=Swagger files=cmd/blued/swagger/swagger.json route=GET /bluelens/swagger.json
+2017/03/28 11:14:13 [INFO] mount ctrl=Swagger files=cmd/blued/swagger/swagger.yaml route=GET /bluelens/swagger.yaml
+2017/03/28 11:14:13 [INFO] mount ctrl=User action=Create route=POST /bluelens/user security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=User action=Follow route=POST /bluelens/user/:id/follows/:followeeID security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=User action=List route=GET /bluelens/user security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=User action=Listen route=POST /bluelens/user/:id/listen/:musicID security=APIKey
+2017/03/28 11:14:13 [INFO] mount ctrl=User action=Show route=GET /bluelens/user/:id security=APIKey
+2017/03/28 11:14:13 [INFO] listen transport=https addr=:443
 ```
-For a list of all the flags supported by `blued`, see `$ blued -h`.
+Note that the server is started with `sudo` in order to bind the process to port 443. The Swagger docs for the endpoints can be found in https://localhost/bluelens/swagger.json and https://localhost/bluelens/swagger.yaml
 
-Use the `blue` client to interact with the server:
+`blued` supports the following flags:
 ```sh
-$ blue -h
-CLI client for the bluelens service (http://localhost:8080/swagger.json)
+$ blued -h
+  -apikey string
+        Key used for API key authentication
+  -cert string
+        Path to the TLS cert file (default "tls/cert.pem")
+  -followees string
+        Path to read user's followees data from (default "etc/followees.json")
+  -history string
+        Path to read user's history data from (default "etc/history.json")
+  -music string
+        Path to read music data from (default "etc/music.json")
+  -password string
+        Password used for HTTP Basic Authentication
+  -private string
+        Path to the TLS private key file (default "tls/key.pem")
+  -timeout duration
+        Request timeout in seconds. Default to 10s. (default 10s)
+  -user string
+        Username used for HTTP Basic Authentication
+```
 
-Usage:
-  bluelens-cli [command]
+**In goa 1.1.0, the auto-generated client doesn't work with TLS.**
 
-Available Commands:
-  create      create action
-  download    Download file with given path
-  follow      Update a user's followees list with a new followee.
-  help        Help about any command
-  list        list action
-  listen      Add a music to a user's history.
-  recommend   Make music recommendations for a user.
-  show        show action
+To interact with the `blued` server, use `curl`:
+```sh
+# view all music resources
+$ curl --cacert tls/localhost.crt -H "Authorization: Bearer <apikey>" https://localhost/bluelens/music
 
-Flags:
-      --dump               Dump HTTP request and response.
-      --format string      Format used to create auth header or query from key (default "Bearer %s")
-  -H, --host string        API hostname (default "localhost:8080")
-      --key string         API key used for authentication
-      --pass string        Password used for authentication
-  -s, --scheme string      Set the requests scheme
-  -t, --timeout duration   Set the request timeout (default 20s)
-      --user string        Username used for authentication
+# view all user resources
+$ curl --cacert tls/localhost.crt -H "Authorization: Bearer <apikey>" https://localhost/bluelens/user
+
+# make 10 recommendations for user-01
+$ curl --cacert tls/localhost.crt -H "Authorization: Bearer <apikey>" https://localhost/bluelens/recommendations/user-01/10
 ```
 
 ## API Design
-The `design/design.go` contains all the endpoints specifications. The Swagger doc is accessible at http://localhost:8080/bluelens/swagger.json or http://localhost:8080/bluelens/swagger.yaml
+The `design/design.go` contains all the endpoints specifications. The Swagger doc is accessible at https://localhost/bluelens/swagger.json and https://localhost/bluelens/swagger.yaml
 
-All the non-Swagger endpoints are secured by the API key scheme. The Swagger doc endpoints are secured by the HTTP Basic Authentication scheme. `blued` provides the following flags to inject the API key, username and password into the server on start:
+## Security
+All request and responses messages are transmitted over HTTPS. The `make tls` target can be used to generate a self-signed certificate and private key. To change the transporatation scheme to HTTP, update the `design/design.go` specification, and update the server's service (in `cmd/blued/main.go`) to use the Golang [`http.ListenAndServer()`](https://golang.org/pkg/net/http/#ListenAndServe) API.
 
-* `apikey`: API key used to secure all the non-Swagger endpoints.
-* `user`: Basic username used to secure the Swagger endpoints.
-* `password`: Basic password used to secure the Swagger endpoints.
+In addition, the endpoints authorization scheme are detailed below:
+
+Endpoints                    | Authorization Schemes
+---------------------------- | ---------------------
+`/bluelens/music`            | API key
+`/bluelens/user`             | API key
+`/bluelens/recommendations`  | API key
+`/bluelens/swagger.json`     | Basic Authorization
+`/bluelens/swagger.yaml`     | Basic Authorization
 
 ## Data Model
 This system is constrained by the following pre-defined data model:
