@@ -1,5 +1,5 @@
-hash: ce6421ad3b79124163ea1a552bf60cf4675bd75874625dcb771bd7dee4cd4d13
-updated: 2017-03-20T17:09:13.717290074-07:00
+hash: 6236b58939d21099cae5c69796b8277eebecf6335f9bb3ba92055d3d535ad073
+updated: 2017-03-27T23:42:53.049330781-07:00
 imports:
 - name: github.com/armon/go-metrics
   version: 93f237eba9b0602f3e73710416558854a81d9337
@@ -17,6 +17,7 @@ imports:
   - dslengine
   - goatest
   - middleware
+  - middleware/security/basicauth
   - uuid
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
@@ -43,4 +44,10 @@ imports:
   version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
   - unix
+- name: golang.org/x/tools
+  version: 1f0f7f68c993a0ff4e0fe1793c08cdd14cc243cb
+  subpackages:
+  - go/ast/astutil
+- name: gopkg.in/yaml.v2
+  version: a83829b6f1293c91addabc89d0571c246397bbf4
 testImports: []
