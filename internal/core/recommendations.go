@@ -59,7 +59,13 @@ func Recommend(userID string, limit int, store Store) (*Recommendations, error) 
 	go func() {
 		defer close(doneFolloweesTask)
 		for _, f := range user.Followees {
-			for _, m := range f.History {
+			u, err := store.FindUser(f.ID)
+			if err != nil {
+				errChan <- err
+				continue
+			}
+
+			for _, m := range u.History {
 				musicChan <- m
 			}
 		}
@@ -68,10 +74,17 @@ func Recommend(userID string, limit int, store Store) (*Recommendations, error) 
 	go func() {
 		defer close(doneHistoryTask)
 		for _, history := range user.History {
-			for _, tag := range history.Tags {
+			m, err := store.FindMusic(history.ID)
+			if err != nil {
+				errChan <- err
+				continue
+			}
+
+			for _, tag := range m.Tags {
 				musicByTags, err := store.FindMusicByTags(tag)
 				if err != nil {
 					errChan <- err
+					continue
 				}
 				for _, music := range musicByTags {
 					musicChan <- music

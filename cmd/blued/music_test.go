@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"reflect"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/goadesign/goa"
 	"github.com/ihcsim/bluelens/cmd/blued/app"
@@ -51,37 +53,48 @@ func TestMusicController(t *testing.T) {
 	ctrl := NewMusicController(svc)
 
 	t.Run("list", func(t *testing.T) {
-		tests := []struct {
-			limit  int
-			offset int
-		}{
-			{offset: 0, limit: -1},
-			{offset: 0, limit: 0},
-			{offset: 0, limit: 5},
-			{offset: 0, limit: 10},
-			{offset: 0, limit: 20},
-			{offset: 10, limit: 20},
-			{offset: 5, limit: 10},
-			{offset: 10, limit: 10},
-			{offset: 15, limit: 10},
-			{offset: -1, limit: 0},
-		}
-
-		for id, tc := range tests {
-			musicList, err := store().ListMusic(tc.limit, tc.offset)
-			if err != nil {
-				t.Error("Unexpected error with test case %d: ", id, err)
+		t.Run("ok", func(t *testing.T) {
+			tests := []struct {
+				limit  int
+				offset int
+			}{
+				{offset: 0, limit: -1},
+				{offset: 0, limit: 0},
+				{offset: 0, limit: 5},
+				{offset: 0, limit: 10},
+				{offset: 0, limit: 20},
+				{offset: 10, limit: 20},
+				{offset: 5, limit: 10},
+				{offset: 10, limit: 10},
+				{offset: 15, limit: 10},
+				{offset: -1, limit: 0},
 			}
 
-			var expected app.BluelensMusicCollection
-			for _, music := range musicList {
-				expected = append(expected, mediaTypeMusic(music))
-			}
+			for id, tc := range tests {
+				musicList, err := store().ListMusic(tc.limit, tc.offset)
+				if err != nil {
+					t.Error("Unexpected error with test case %d: ", id, err)
+				}
 
-			if _, actual := test.ListMusicOK(t, nil, nil, ctrl, tc.limit, tc.offset); !reflect.DeepEqual(expected, actual) {
-				t.Errorf("Response mismatch. Test case: %d\nExpected %s\nBut got %s", id, expected, actual)
+				var expected app.BluelensMusicCollection
+				for _, music := range musicList {
+					expected = append(expected, mediaTypeMusic(music))
+				}
+
+				if _, actual := test.ListMusicOK(t, nil, nil, ctrl, tc.limit, tc.offset); !reflect.DeepEqual(expected, actual) {
+					t.Errorf("Response mismatch. Test case: %d\nExpected %s\nBut got %s", id, expected, actual)
+				}
 			}
-		}
+		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			if _, actual := test.ListMusicInternalServerError(t, ctx, nil, ctrl, limit, offset); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, but got %v", context.DeadlineExceeded, actual)
+			}
+		})
 	})
 
 	t.Run("show", func(t *testing.T) {
@@ -99,20 +112,33 @@ func TestMusicController(t *testing.T) {
 				t.Error("Expected error to occur", err)
 			}
 		})
+
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			musicID := "song-00"
+			if _, actual := test.ShowMusicInternalServerError(t, ctx, nil, ctrl, musicID); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, but got %v", context.DeadlineExceeded, actual)
+			}
+		})
 	})
 
 	t.Run("create", func(t *testing.T) {
 		fixture := &core.Music{ID: "song-00.v2", Tags: []string{"rock", "90's"}}
 		payload := &app.Music{ID: fixture.ID, Tags: fixture.Tags}
-		expected := mediaTypeMusicLink(fixture)
-		if _, actual := test.CreateMusicCreatedLink(t, nil, nil, ctrl, payload); !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Created music mismatch. Expected %+v, but got %+v", expected, actual)
-		}
 
-		m := musicFixture(t, "song-00.v2")
-		if !reflect.DeepEqual(fixture, m) {
-			t.Errorf("Resource mismatch. Expected %s, but got %s", fixture, m)
-		}
+		t.Run("ok", func(t *testing.T) {
+			expected := mediaTypeMusicLink(fixture)
+			if _, actual := test.CreateMusicCreatedLink(t, nil, nil, ctrl, payload); !reflect.DeepEqual(expected, actual) {
+				t.Errorf("Created music mismatch. Expected %+v, but got %+v", expected, actual)
+			}
+
+			m := musicFixture(t, "song-00.v2")
+			if !reflect.DeepEqual(fixture, m) {
+				t.Errorf("Resource mismatch. Expected %s, but got %s", fixture, m)
+			}
+		})
 
 		t.Run("bad request", func(t *testing.T) {
 			tests := []struct {
@@ -129,5 +155,13 @@ func TestMusicController(t *testing.T) {
 			}
 		})
 
+		t.Run("timeout", func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond*1)
+			defer cancel()
+
+			if _, actual := test.CreateMusicInternalServerError(t, ctx, nil, ctrl, payload); actual != context.DeadlineExceeded {
+				t.Errorf("Error mismatch. Expected %v, but got %v", context.DeadlineExceeded, actual)
+			}
+		})
 	})
 }

@@ -33,6 +33,7 @@ var _ = Resource("recommendations", func() {
 	DefaultMedia(RecommendationsMediaType)
 	Security(APIKey)
 	Response(Unauthorized)
+	Response(InternalServerError, ErrorMedia)
 
 	Action("recommend", func() {
 		Routing(GET("/:userID/:limit"))
@@ -53,6 +54,7 @@ var _ = Resource("user", func() {
 	DefaultMedia(UserMediaType)
 	Security(APIKey)
 	Response(Unauthorized)
+	Response(InternalServerError, ErrorMedia)
 
 	Action("list", func() {
 		Routing(GET(""))
@@ -122,6 +124,7 @@ var _ = Resource("music", func() {
 	DefaultMedia(MusicMediaType)
 	Security(APIKey)
 	Response(Unauthorized)
+	Response(InternalServerError, ErrorMedia)
 
 	Action("list", func() {
 		Routing(GET(""))
@@ -185,9 +188,9 @@ var RecommendationsMediaType = MediaType("application/vnd.bluelens.recommendatio
 	})
 
 	View("all", func() {
+		Attribute("musicID")
 		Attribute("list")
 		Attribute("user")
-		Attribute("links")
 	})
 })
 

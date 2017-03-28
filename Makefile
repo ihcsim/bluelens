@@ -47,4 +47,4 @@ vendor:
 	glide install
 
 goagen: vendor
-	go install ${PACKAGE_ROOT}/bluelens/vendor/github.com/goadesign/goa/goagen
+	go install ${PACKAGE_ROOT}/vendor/github.com/goadesign/goa/goagen

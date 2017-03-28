@@ -124,10 +124,9 @@ func (mt BluelensMusicLinkCollection) Validate() (err error) {
 //
 // Identifier: application/vnd.bluelens.recommendations+json; view=all
 type BluelensRecommendationsAll struct {
-	// Links to related resources
-	Links *BluelensRecommendationsLinks `form:"links,omitempty" json:"links,omitempty" xml:"links,omitempty"`
-	List  BluelensMusicCollection       `form:"list" json:"list" xml:"list"`
-	User  *BluelensUser                 `form:"user" json:"user" xml:"user"`
+	List    BluelensMusicCollection `form:"list" json:"list" xml:"list"`
+	MusicID []string                `form:"musicID,omitempty" json:"musicID,omitempty" xml:"musicID,omitempty"`
+	User    *BluelensUser           `form:"user" json:"user" xml:"user"`
 }
 
 // Validate validates the BluelensRecommendationsAll media type instance.
@@ -137,11 +136,6 @@ func (mt *BluelensRecommendationsAll) Validate() (err error) {
 	}
 	if mt.User == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "user"))
-	}
-	if mt.Links != nil {
-		if err2 := mt.Links.Validate(); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
 	}
 	if err2 := mt.List.Validate(); err2 != nil {
 		err = goa.MergeErrors(err, err2)

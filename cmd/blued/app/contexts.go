@@ -53,6 +53,12 @@ func (ctx *CreateMusicContext) Unauthorized() error {
 	return nil
 }
 
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *CreateMusicContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // ListMusicContext provides the music list action context.
 type ListMusicContext struct {
 	context.Context
@@ -124,6 +130,12 @@ func (ctx *ListMusicContext) Unauthorized() error {
 	return nil
 }
 
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ListMusicContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // ShowMusicContext provides the music show action context.
 type ShowMusicContext struct {
 	context.Context
@@ -164,6 +176,12 @@ func (ctx *ShowMusicContext) Unauthorized() error {
 func (ctx *ShowMusicContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ShowMusicContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
 
 // RecommendRecommendationsContext provides the recommendations recommend action context.
@@ -227,6 +245,12 @@ func (ctx *RecommendRecommendationsContext) NotFound(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *RecommendRecommendationsContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // CreateUserContext provides the user create action context.
 type CreateUserContext struct {
 	context.Context
@@ -262,6 +286,12 @@ func (ctx *CreateUserContext) BadRequest(r error) error {
 func (ctx *CreateUserContext) Unauthorized() error {
 	ctx.ResponseData.WriteHeader(401)
 	return nil
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *CreateUserContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
 
 // FollowUserContext provides the user follow action context.
@@ -352,6 +382,12 @@ func (ctx *FollowUserContext) NotFound(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *FollowUserContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // ListUserContext provides the user list action context.
 type ListUserContext struct {
 	context.Context
@@ -421,6 +457,12 @@ func (ctx *ListUserContext) OKLink(r BluelensUserLinkCollection) error {
 func (ctx *ListUserContext) Unauthorized() error {
 	ctx.ResponseData.WriteHeader(401)
 	return nil
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ListUserContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
 
 // ListenUserContext provides the user listen action context.
@@ -511,6 +553,12 @@ func (ctx *ListenUserContext) NotFound(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ListenUserContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // ShowUserContext provides the user show action context.
 type ShowUserContext struct {
 	context.Context
@@ -551,4 +599,10 @@ func (ctx *ShowUserContext) Unauthorized() error {
 func (ctx *ShowUserContext) NotFound(r error) error {
 	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ShowUserContext) InternalServerError(r error) error {
+	ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }

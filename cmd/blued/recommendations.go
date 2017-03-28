@@ -17,12 +17,33 @@ func NewRecommendationsController(service *goa.Service) *RecommendationsControll
 }
 
 // Recommend runs the recommend action.
-func (c *RecommendationsController) Recommend(ctx *app.RecommendRecommendationsContext) error {
-	recommendations, err := core.RecommendSort(ctx.UserID, ctx.Limit, store())
-	if err != nil {
-		return err
+func (ctrl *RecommendationsController) Recommend(ctx *app.RecommendRecommendationsContext) error {
+	c, e := make(chan *core.Recommendations), make(chan error)
+	recommend := func() {
+		defer func() {
+			close(c)
+			close(e)
+		}()
+
+		recommendations, err := core.RecommendSort(ctx.UserID, ctx.Limit, store())
+		c <- recommendations
+		e <- err
 	}
 
-	res := mediaTypeRecommendations(recommendations)
-	return ctx.OK(res)
+	go invoke(ctx, recommend)
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.InternalServerError(ctx.Err())
+		case err := <-e:
+			if err != nil {
+				return ctx.NotFound(err)
+			}
+		case recommendations := <-c:
+			if recommendations != nil {
+				return ctx.OK(mediaTypeRecommendations(recommendations))
+			}
+		}
+	}
 }

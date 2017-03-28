@@ -3,6 +3,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/goadesign/goa"
@@ -16,6 +17,10 @@ import (
 func main() {
 	config, err := parseFlags(os.Args[1:])
 	if err != nil {
+		if err == flag.ErrHelp {
+			os.Exit(0)
+		}
+
 		log.WithFields(log.Fields{
 			"Cause": err},
 		).Fatal("Error while parsing runtime configuration flags")
@@ -39,6 +44,7 @@ func main() {
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
+	service.Use(middleware.Timeout(config.timeout))
 
 	// Mount "music" controller
 	c := NewMusicController(service)

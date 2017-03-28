@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"time"
 )
 
 func TestParseFlags(t *testing.T) {
@@ -12,15 +13,17 @@ func TestParseFlags(t *testing.T) {
 		{args: []string{}, expected: &userConfig{
 			musicFile:     defaultMusicFile,
 			historyFile:   defaultHistoryFile,
-			followeesFile: defaultFolloweesFile},
+			followeesFile: defaultFolloweesFile,
+			timeout:       defaultTimeout},
 		},
-		{args: []string{"-music", "music.json", "-history", "history.json", "-followees", "followees.json", "-user", "admin", "-password", "pass", "-apikey", "mykey"}, expected: &userConfig{
+		{args: []string{"-music", "music.json", "-history", "history.json", "-followees", "followees.json", "-user", "admin", "-password", "pass", "-apikey", "mykey", "-timeout", "20s"}, expected: &userConfig{
 			musicFile:     "music.json",
 			historyFile:   "history.json",
 			followeesFile: "followees.json",
 			user:          "admin",
 			password:      "pass",
-			apiKey:        "mykey"},
+			apiKey:        "mykey",
+			timeout:       time.Second * 20},
 		},
 	}
 
