@@ -1,0 +1,4 @@
+bluelens:
+  build:
+    image: bluelens
+    dockerfile: Dockerfile
