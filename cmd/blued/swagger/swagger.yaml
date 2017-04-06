@@ -657,7 +657,7 @@ paths:
             type: file
       schemes:
       - https
-      summary: Download cmd/blued/swagger/swagger.json
+      summary: Download /var/www/blued/swagger.json
   /bluelens/swagger.yaml:
     get:
       operationId: swagger#/bluelens/swagger.yaml
@@ -668,7 +668,7 @@ paths:
             type: file
       schemes:
       - https
-      summary: Download cmd/blued/swagger/swagger.yaml
+      summary: Download /var/www/blued/swagger.yaml
   /bluelens/user:
     get:
       description: List up to N user resources. N can be adjusted using the 'limit'

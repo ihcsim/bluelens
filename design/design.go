@@ -284,8 +284,8 @@ var _ = Resource("swagger", func() {
 	Origin("*", func() {
 		Methods("GET")
 	})
-	Files("/bluelens/swagger.json", "cmd/blued/swagger/swagger.json")
-	Files("/bluelens/swagger.yaml", "cmd/blued/swagger/swagger.yaml")
+	Files("/bluelens/swagger.json", "/var/www/blued/swagger.json")
+	Files("/bluelens/swagger.yaml", "/var/www/blued/swagger.yaml")
 })
 
 var APIKey = APIKeySecurity("APIKey", func() {

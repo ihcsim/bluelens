@@ -152,15 +152,15 @@ func MountSwaggerController(service *goa.Service, ctrl SwaggerController) {
 	service.Mux.Handle("OPTIONS", "/bluelens/swagger.json", ctrl.MuxHandler("preflight", handleSwaggerOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/bluelens/swagger.yaml", ctrl.MuxHandler("preflight", handleSwaggerOrigin(cors.HandlePreflight()), nil))
 
-	h = ctrl.FileHandler("/bluelens/swagger.json", "cmd/blued/swagger/swagger.json")
+	h = ctrl.FileHandler("/bluelens/swagger.json", "/var/www/blued/swagger.json")
 	h = handleSwaggerOrigin(h)
 	service.Mux.Handle("GET", "/bluelens/swagger.json", ctrl.MuxHandler("serve", h, nil))
-	service.LogInfo("mount", "ctrl", "Swagger", "files", "cmd/blued/swagger/swagger.json", "route", "GET /bluelens/swagger.json")
+	service.LogInfo("mount", "ctrl", "Swagger", "files", "/var/www/blued/swagger.json", "route", "GET /bluelens/swagger.json")
 
-	h = ctrl.FileHandler("/bluelens/swagger.yaml", "cmd/blued/swagger/swagger.yaml")
+	h = ctrl.FileHandler("/bluelens/swagger.yaml", "/var/www/blued/swagger.yaml")
 	h = handleSwaggerOrigin(h)
 	service.Mux.Handle("GET", "/bluelens/swagger.yaml", ctrl.MuxHandler("serve", h, nil))
-	service.LogInfo("mount", "ctrl", "Swagger", "files", "cmd/blued/swagger/swagger.yaml", "route", "GET /bluelens/swagger.yaml")
+	service.LogInfo("mount", "ctrl", "Swagger", "files", "/var/www/blued/swagger.yaml", "route", "GET /bluelens/swagger.yaml")
 }
 
 // handleSwaggerOrigin applies the CORS response headers corresponding to the origin.
