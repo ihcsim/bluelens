@@ -12,7 +12,7 @@ bluelens makes music recommendations to its users based on the users' social act
 * [Security](#security)
 * [Data Model](#data-model)
 * [Development](#development)
-* [ACI Image](#aci-image)
+* [ACI Image](#aci-image-with-rkt)
 * [License](#license)
 
 ## Introduction
@@ -177,7 +177,7 @@ $ curl -H "Authorization: Bearer <api_key>" --cacert tls/localhost.crt https://l
 ```
 To access the swagger docs,
 ```sh
-curl -H "Authorization: Bearer 123456" --cacert tls/localhost.crt https://admin:admin@localhost/bluelens/swagger.json
+curl -H "Authorization: Bearer <api_key>" --cacert tls/localhost.crt https://admin:admin@localhost/bluelens/swagger.json
 {"swagger":"2.0","info":{"title":"The bluelens API","description":"This API provides a set of endpoints to manage users' followees, music history and recommendations.","license":{"name":"MIT","url":"https://github.com/ihcsim/bluelens/blob/master/LICENSE"},"version":""},"host":"localhost","schemes":["https"],"consumes":["application/json"],"produces":["application/json"],"paths":{"/bluelens/music":{"get":{"tags":["music"],"summary":"list music","description":"List up to N music resources. N can be adjusted using the 'limit' and 'offset' parameters.","operationId":"music#list","parameters":[{"name":"limit","in":"query","required":false,"type":"integer","default":20},{"name":"offset","in":"query","required":false,"type":"integer","default":0}],"responses":{"200":{"description":"OK","schema":{"$ref":"#/definitions/BluelensMusicCollection"}},"401":{"description":"Unauthorized"},"500":{"description":"Internal Server Error","schema":{"$ref":"#/definitions/error"}}}
 ...
 ```
