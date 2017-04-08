@@ -53,5 +53,8 @@ tls:
 	mkdir -p tls
 	openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout tls/localhost.key -out tls/localhost.crt -subj "/CN=localhost" -days 365
 
-aci: tls
-	acbuild.sh
+appc: tls
+	BUILD_MODE=appc acbuild.sh
+
+oci: tls
+	BUILD_MODE=oci acbuild.sh

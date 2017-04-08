@@ -2,9 +2,12 @@
 
 set -e
 
-[ -z "${API_KEY}" ] && echo "Can't build ACI image: Missing required API key. Specify the ${API_KEY} variable." && exit 1
-[ -z "${BASIC_AUTH_USERNAME}" ] && echo "Can't build ACI image: Missing required basic auth username. Specify the ${BASIC_AUTH_USERNAME} variable." && exit 1
-[ -z "${BASIC_AUTH_PASSWORD}" ] && echo "Can't build ACI image: Missing required basic auth password. Speicfy the ${BASIC_AUTH_PASSWORD} variable." && exit 1
+[ -z "${API_KEY}" ] && echo "Can't build image: Missing required API key. Specify the ${API_KEY} variable." && exit 1
+[ -z "${BASIC_AUTH_USERNAME}" ] && echo "Can't build image: Missing required basic auth username. Specify the ${BASIC_AUTH_USERNAME} variable." && exit 1
+[ -z "${BASIC_AUTH_PASSWORD}" ] && echo "Can't build image: Missing required basic auth password. Speicfy the ${BASIC_AUTH_PASSWORD} variable." && exit 1
+
+BUILD_MODE=${BUILD_MODE:-appc}
+BUILD_DIR=build
 
 IMG_VERSION=${IMG_VERSION:-1.0.0}
 IMG_ARCH=${IMG_ARCH:-amd64}
@@ -23,11 +26,10 @@ function acbuild_end {
   acbuild --debug end && exit $EXIT
 }
 
-# begin building ACI image
-acbuild --debug begin
+# begin building image
+acbuild --debug begin --build-mode=${BUILD_MODE}
 trap acbuild_end EXIT
 
-acbuild --debug set-name isim/blued
 acbuild --debug annotation add authors "Ivan Sim <ihcsim@gmail.com>"
 
 home=/opt/blued
@@ -43,8 +45,13 @@ acbuild --debug set-exec -- ${home}/blued \
   -private /etc/ssl/localhost.key -cert /etc/ssl/localhost.crt
 acbuild --debug port add www tcp 443
 
-acbuild --debug label add version ${IMG_VERSION}
-acbuild --debug label add arch ${IMG_ARCH}
-acbuild --debug label add os ${IMG_OS}
+if [ "${BUILD_MODE}" = "appc" ];
+then
+  acbuild --debug set-name isim/blued
+  acbuild --debug label add version ${IMG_VERSION}
+  acbuild --debug label add arch ${IMG_ARCH}
+  acbuild --debug label add os ${IMG_OS}
+fi
 
-acbuild --debug write --overwrite build/${IMG_NAME}
+mkdir -p ${BUILD_DIR}
+acbuild --debug write --overwrite ${BUILD_DIR}/${IMG_NAME}
